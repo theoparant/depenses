@@ -18,6 +18,7 @@
     --accent: #6d5dfc; --accent2: #4f6bff; --up: #ef4444; --down: #16a34a; --danger: #ef4444; --orange: #f59e0b;
     --fab: #17161f; --fab-txt: #ffffff; --ombre: 0 10px 30px rgba(40, 30, 90, .12);
     --degrade: linear-gradient(135deg, #8b5cf6 0%, #6d5dfc 45%, #4f6bff 100%);
+    --bas-barre: max(18px, calc(env(safe-area-inset-bottom) - 12px));
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #0f0e15; --card: #1a1922; --card2: #24232e; --txt: #f4f3fa; --mut: #8f8ca0; --line: #2c2a37;
@@ -25,26 +26,26 @@
       --degrade: linear-gradient(135deg, #5b3fd6 0%, #4b3fc9 45%, #3346c4 100%); }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--txt); overscroll-behavior: none; overflow: hidden;
+  html, body { margin: 0; height: var(--h, 100%); background: var(--bg); color: var(--txt); overscroll-behavior: none; overflow: hidden;
     font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; }
 
-  #appli { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
+  #appli { position: fixed; top: 0; left: 0; right: 0; height: var(--h, 100%); display: flex; flex-direction: column; overflow: hidden; }
   #contenu { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   main { max-width: 560px; margin: 0 auto; padding: 16px 16px calc(130px + env(safe-area-inset-bottom)); }
 
   /* En-tête dégradé (façon Buddy) */
-  .tete { background: var(--degrade); color: #fff; padding: calc(10px + env(safe-area-inset-top)) 16px 12px;
+  .tete { background: var(--degrade); color: #fff; padding: calc(16px + env(safe-area-inset-top)) 16px 10px;
     box-shadow: 0 6px 24px rgba(79, 70, 229, .25); flex: none; position: relative; z-index: 3; }
   .tete-haut { display: flex; align-items: center; justify-content: space-between; max-width: 560px; margin: 0 auto; }
-  .verre { width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.18);
+  .verre { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.18);
     color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
-  .verre svg { width: 23px; height: 23px; }
+  .verre svg { width: 21px; height: 21px; }
   .ic-cal { width: 13px; height: 13px; vertical-align: -1px; margin-right: 6px; }
-  .tete-titre { font-size: 17px; font-weight: 500; opacity: .95; }
+  .tete-titre { font-size: 16px; font-weight: 500; opacity: .95; }
   .tete-titre b { font-weight: 700; }
-  .segments-tete { display: flex; justify-content: center; gap: 6px; margin: 12px auto 0; max-width: 560px; }
+  .segments-tete { display: flex; justify-content: center; gap: 6px; margin: 10px auto 0; max-width: 560px; }
   .segments-tete:empty { display: none; }
   .segments-tete button { border: 0; background: none; color: rgba(255,255,255,.85); font-size: 12.5px; font-weight: 700;
     letter-spacing: .1em; padding: 9px 13px; border-radius: 99px; text-transform: uppercase; white-space: nowrap; }
@@ -52,21 +53,21 @@
   .segments-tete button.actif { background: rgba(255,255,255,.22); color: #fff; }
 
   /* Barre du bas + bouton + */
-  .onglets { position: absolute; left: 50%; transform: translateX(-50%); bottom: max(10px, calc(env(safe-area-inset-bottom) - 6px)); display: flex; gap: 2px;
+  .onglets { position: absolute; left: 50%; transform: translateX(-50%); bottom: var(--bas-barre); display: flex; gap: 2px;
     width: min(76%, 400px);
     background: color-mix(in srgb, var(--card) 86%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--line); border-radius: 99px; padding: 5px; box-shadow: var(--ombre); z-index: 5; }
-  .onglets button { flex: 1; border: 0; background: none; border-radius: 99px; padding: 9px 4px 7px; display: flex; flex-direction: column;
-    align-items: center; gap: 3px; font-size: 12.5px; font-weight: 600; color: var(--mut); }
-  .onglets button svg { width: 25px; height: 25px; }
+  .onglets button { flex: 1; border: 0; background: none; border-radius: 99px; padding: 8px 4px 6px; display: flex; flex-direction: column;
+    align-items: center; gap: 2px; font-size: 11.5px; font-weight: 600; color: var(--mut); }
+  .onglets button svg { width: 23px; height: 23px; }
   .onglets button.actif { background: var(--card2); color: var(--txt); }
   .onglets button.actif svg { color: var(--accent); }
-  .fab { position: absolute; right: 16px; bottom: calc(max(10px, env(safe-area-inset-bottom) - 6px) + 80px); width: 62px; height: 62px; border-radius: 50%; border: 0;
+  .fab { position: absolute; right: 16px; bottom: calc(var(--bas-barre) + 74px); width: 58px; height: 58px; border-radius: 50%; border: 0;
     background: var(--fab); color: var(--fab-txt); font-size: 34px; font-weight: 300; line-height: 1; box-shadow: var(--ombre); z-index: 6; }
   .fab:active { transform: scale(.94); }
 
   /* Cartes */
-  .card { background: var(--card); border-radius: 26px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(40, 30, 90, .04); }
+  .card { background: var(--card); border-radius: 24px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(40, 30, 90, .04); }
   h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--mut); margin: 0 0 12px; }
   .lbl { font-size: 12px; color: var(--mut); }
   .vide { color: var(--mut); text-align: center; padding: 24px 0; }
@@ -78,29 +79,29 @@
 
   /* Carte du mois */
   .carte-mois { display: flex; align-items: center; justify-content: space-between; background: var(--card); border-radius: 99px;
-    padding: 10px 12px; margin-bottom: 14px; box-shadow: var(--ombre); }
-  .carte-mois button { width: 40px; height: 40px; border: 0; background: none; font-size: 26px; color: var(--txt); font-weight: 300; }
+    padding: 7px 10px; margin-bottom: 14px; box-shadow: var(--ombre); }
+  .carte-mois button { width: 38px; height: 38px; border: 0; background: none; font-size: 24px; color: var(--txt); font-weight: 300; }
   .carte-mois button:disabled { opacity: .2; }
   .carte-mois .centre { text-align: center; }
-  .carte-mois .centre b { display: block; font-size: 20px; font-weight: 600; text-transform: capitalize; }
-  .carte-mois .centre span { font-size: 12px; letter-spacing: .18em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
+  .carte-mois .centre b { display: block; font-size: 17px; font-weight: 500; text-transform: capitalize; }
+  .carte-mois .centre span { font-size: 10.5px; letter-spacing: .16em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
   .carte-mois .centre span i { font-style: normal; letter-spacing: 0; }
 
   /* Bloc revenus / dépenses / solde */
-  .bilan3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--card2); border-radius: 18px; padding: 16px 6px; }
-  .bilan3 b { display: block; font-size: 19px; font-weight: 600; margin-bottom: 4px; letter-spacing: -.01em; }
-  .bilan3 span { font-size: 11px; letter-spacing: .14em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
+  .bilan3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--card2); border-radius: 16px; padding: 13px 6px; }
+  .bilan3 b { display: block; font-size: 16.5px; font-weight: 500; margin-bottom: 3px; letter-spacing: -.01em; }
+  .bilan3 span { font-size: 10px; letter-spacing: .14em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
 
   /* Lignes de transaction (façon Buddy) */
-  .tx { display: flex; align-items: center; gap: 14px; padding: 14px 0; background: var(--card); position: relative; }
-  .pastille { width: 48px; height: 48px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .pastille img { width: 30px; height: 30px; border-radius: 8px; object-fit: contain; }
+  .tx { display: flex; align-items: center; gap: 13px; padding: 12px 0; background: var(--card); position: relative; }
+  .pastille { width: 44px; height: 44px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .pastille img { width: 27px; height: 27px; border-radius: 8px; object-fit: contain; }
   .pastille.logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .tx .info { flex: 1; min-width: 0; }
-  .tx .date { font-size: 11px; font-weight: 700; letter-spacing: .14em; color: var(--mut); text-transform: uppercase; margin-bottom: 2px; }
-  .tx .titre { font-size: 17px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tx .sous { font-size: 14px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tx .mt { font-size: 17px; font-weight: 600; text-align: right; white-space: nowrap; }
+  .tx .date { font-size: 10px; font-weight: 700; letter-spacing: .13em; color: var(--mut); text-transform: uppercase; margin-bottom: 2px; }
+  .tx .titre { font-size: 15.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .sous { font-size: 13px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx .mt { font-size: 15.5px; font-weight: 600; text-align: right; white-space: nowrap; }
   .tx .mt.barre-txt { text-decoration: line-through; color: var(--mut); font-weight: 500; }
   .tx .ajout { display: block; border: 0; background: none; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .08em;
     padding: 4px 0 0; text-transform: uppercase; margin-left: auto; }
@@ -201,9 +202,53 @@
   #couche.ouvert { display: block; }
   .voile { position: absolute; inset: 0; background: rgba(15, 10, 40, .45); opacity: 0; transition: opacity .2s; }
   #couche.visible .voile { opacity: 1; }
-  .feuille { position: absolute; left: 0; right: 0; bottom: 0; max-height: 94%; overflow-y: auto; background: var(--card);
+  .feuille { position: absolute; left: 0; right: 0; bottom: 0; max-height: calc(100% - env(safe-area-inset-top) - 18px); overflow-y: auto; background: var(--card);
     border-radius: 30px 30px 0 0; padding: 14px 18px calc(30px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease-out; max-width: 600px; margin: 0 auto; }
   #couche.visible .feuille { transform: none; }
+  .feuille.pleine { height: calc(100% - env(safe-area-inset-top) - 18px); display: flex; flex-direction: column; padding-bottom: 0; }
+
+  /* Nouvelle transaction façon Buddy */
+  .saisie-montant { display: flex; align-items: baseline; justify-content: center; margin: 4px 0 10px; }
+  .saisie-montant input { border: 0; background: none; outline: none; font-size: 60px; font-weight: 300; text-align: right; padding: 0;
+    width: .9em; max-width: 80%; caret-color: var(--accent); }
+  .saisie-montant span { font-size: 30px; font-weight: 300; margin-left: 10px; }
+  .types { display: flex; justify-content: center; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -18px; }
+  .types button { border: 0; background: none; border-radius: 99px; padding: 11px 22px; font-size: 12.5px; font-weight: 600; letter-spacing: .16em; color: var(--txt); }
+  .types button.sel { background: var(--card2); }
+  .rangee { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); min-height: 64px; position: relative; }
+  .rangee .rond-ic { width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 19px; }
+  .rangee .ic-trait { width: 40px; flex: none; display: flex; justify-content: center; color: var(--txt); }
+  .rangee .ic-trait svg { width: 26px; height: 26px; }
+  .rangee .texte { flex: 1; font-size: 16px; color: var(--mut); min-width: 0; }
+  .rangee .texte b { color: var(--txt); font-weight: 600; }
+  .rangee input[type=text] { flex: 1; min-width: 0; border: 0; background: none; outline: none; font-size: 16px; padding: 0; }
+  .rangee select.cache { position: absolute; inset: 0; opacity: 0; width: 100%; font-size: 16px; }
+  .rangee .fleches { display: flex; gap: 6px; }
+  .rangee .fleches button { border: 0; background: none; font-size: 26px; padding: 0 8px; color: var(--txt); }
+  .rangee .fleches button:disabled { opacity: .2; }
+  .sous-champs { padding: 4px 0 6px 54px; border-bottom: 1px solid var(--line); }
+  .sous-champs .ligne-champ { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+  .sous-champs input { flex: 1; min-width: 0; border: 0; background: var(--card2); border-radius: 12px; padding: 10px 12px; font-size: 15px; outline: none; }
+
+  /* Choix de catégorie façon Buddy */
+  .choix-tete { display: flex; align-items: center; justify-content: space-between; padding-bottom: 8px; }
+  .choix-tete h3 { margin: 0; font-size: 18px; }
+  .pilule { display: flex; border: 1px solid var(--line); border-radius: 99px; background: var(--card); box-shadow: var(--ombre); }
+  .pilule button { border: 0; background: none; width: 46px; height: 42px; display: flex; align-items: center; justify-content: center; color: var(--txt); }
+  .pilule button svg { width: 22px; height: 22px; }
+  .choix-corps { flex: 1; overflow-y: auto; margin: 0 -18px; padding: 0 18px calc(100px + env(safe-area-inset-bottom)); }
+  .choix-groupe { font-size: 21px; font-weight: 400; padding: 14px 0 10px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+  .choix-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 6px; margin-bottom: 10px; }
+  .choix-grille button { border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; }
+  .choix-grille .bulle { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+  .choix-grille .bulle.sel { box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--accent); }
+  .choix-grille span { font-size: 11.5px; color: var(--txt); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .choix-recherche { position: absolute; left: 18px; right: 18px; bottom: calc(env(safe-area-inset-bottom) + 12px); display: flex; align-items: center; gap: 10px;
+    background: color-mix(in srgb, var(--card) 85%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: 99px; padding: 12px 18px; box-shadow: var(--ombre); }
+  .choix-recherche svg { width: 20px; height: 20px; flex: none; }
+  .choix-recherche input { flex: 1; border: 0; background: none; outline: none; font-size: 16px; min-width: 0; }
+
   .feuille-tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .feuille-tete h3 { margin: 0; font-size: 18px; }
   .rond { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); font-size: 18px; box-shadow: var(--ombre); }
@@ -269,7 +314,7 @@
 </div>
 
 <script>
-const VERSION = 6.2;
+const VERSION = 6.3;
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const MODE_DEMO = /[?&]demo\b/.test(location.search);
@@ -379,6 +424,19 @@ const dateCourte = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: '
 const lireMontant = v => { const n = parseFloat(String(v).replace(/\s/g, '').replace(',', '.')); return isFinite(n) ? Math.abs(n) : 0; };
 const montantTexte = n => n ? String(n).replace('.', ',') : '';
 const ICONE_CAL = '<svg class="ic-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+const trait = chemin => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${chemin}</svg>`;
+const IC = {
+  note: trait('<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>'),
+  cal: trait('<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+  repeter: trait('<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>'),
+  etiquette: trait('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'),
+  avance: trait('<circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6"/><path d="M16 15h6"/><path d="M19 12v6"/>'),
+  crayon: trait('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+  plus: trait('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
+  loupe: trait('<circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),
+  croix: trait('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+};
+const REPETITIONS = [[0, 'Ne jamais répéter'], [1, 'Chaque mois'], [3, 'Tous les 3 mois'], [6, 'Tous les 6 mois'], [12, 'Chaque année']];
 const parNom = (a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
 
 const commerceCache = {};
@@ -1198,11 +1256,15 @@ function fermerFeuille() {
 }
 function dessinerFeuille() {
   const f = feuilleEtat;
-  const vues = { depense: feuilleDepense, recurrente: feuilleRecurrente, categorie: feuilleCategorie, groupe: feuilleGroupe, dette: feuilleDette, confirmer: feuilleConfirmer };
-  document.getElementById('feuille').innerHTML = vues[f.type](f);
+  const vues = { depense: feuilleDepense, recurrente: feuilleRecurrente, categorie: feuilleCategorie, groupe: feuilleGroupe,
+    dette: feuilleDette, confirmer: feuilleConfirmer, choixCat: feuilleChoixCat };
+  const el = document.getElementById('feuille');
+  el.classList.toggle('pleine', f.type === 'choixCat' || f.type === 'depense');
+  el.innerHTML = vues[f.type](f);
+  if (f.type === 'depense') ajusterLargeurMontant();
 }
 function tete(titre) {
-  return `<div class="feuille-tete"><button class="rond" onclick="fermerFeuille()" aria-label="Fermer">✕</button>
+  return `<div class="feuille-tete"><button class="rond" onclick="fermerFeuille()" aria-label="Fermer" style="display:flex;align-items:center;justify-content:center">${IC.croix.replace('<svg', '<svg width="22" height="22"')}</button>
     <h3>${esc(titre)}</h3><span style="width:42px"></span></div>`;
 }
 function lireChamps() { document.querySelectorAll('#feuille [data-champ]').forEach(el => { feuilleEtat[el.dataset.champ] = el.value; }); }
@@ -1239,45 +1301,124 @@ function grilleCategories(sel, actionJs, filtre) {
 function ouvrirDepense(id, revenu) {
   const r = id ? depenses.find(x => x.id === id) : null;
   ouvrirFeuille({ type: 'depense', id: r ? r.id : null, montant: r ? montantTexte(r.m) : '', categorie: r ? r.c : null,
-    note: r ? r.n : '', date: r ? new Date(r.date) : new Date(), nouvelle: !r, revenu: r ? estRevenu(r) : !!revenu,
+    note: r ? r.n : '', date: r ? new Date(r.date) : new Date(), nouvelle: !r, revenu: r ? estRevenu(r) : !!revenu, repeter: 0,
     etiquette: r ? r.t || '' : '', aRembourser: !!(r && r.qui), qui: r ? r.qui || '' : '', du: r && r.du ? montantTexte(r.du) : '', remb: r ? !!r.remb : false });
-  if (!r) setTimeout(() => { const i = document.querySelector('#feuille .gros-montant input'); if (i) i.focus(); }, 300);
+  if (!r) setTimeout(() => { const i = document.querySelector('#feuille .saisie-montant input'); if (i) i.focus(); }, 320);
 }
 function feuilleDepense(f) {
-  const filtre = f.revenu ? (c => c.groupe === GROUPE_REVENUS) : (c => c.groupe !== GROUPE_REVENUS);
-  const etiqRecentes = etiquettes().slice(0, 6).map(e => e.nom);
   const personnes = [...new Set(elementsDettes().map(x => x.qui))].slice(0, 6);
+  const etiqRecentes = etiquettes().slice(0, 5).map(e => e.nom);
   const titre = f.nouvelle ? 'Nouvelle transaction' : (f.revenu ? 'Modifier le revenu' : 'Modifier la dépense');
-  return `${tete(titre)}
-    <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"
-      style="${f.revenu ? 'color:var(--down)' : ''}" onkeydown="if(event.key==='Enter')this.blur()"><span>€</span></div>
-    <div class="segments" style="margin:0 0 6px">
-      <button class="${f.revenu ? '' : 'sel'}" onclick="majFeuille({revenu:false,categorie:null})">Dépense</button>
-      <button class="${f.revenu ? 'sel' : ''}" onclick="majFeuille({revenu:true,categorie:null,aRembourser:false})">Revenus</button></div>
-    <div class="champ" style="margin-top:10px"><span class="ic">${f.categorie ? esc(emojiCat(f.categorie)) : '🗂️'}</span>
-      <span class="etiq">Catégorie : <b style="color:var(--txt)">${f.categorie ? esc(f.categorie) : 'à choisir'}</b></span></div>
-    ${grilleCategories(f.categorie, 'choisirCatDepense', filtre)}
-    <div class="champ" style="margin-top:14px"><span class="ic">📝</span>
+  const cat = f.categorie;
+  const dateIso = `${f.date.getFullYear()}-${deux(f.date.getMonth() + 1)}-${deux(f.date.getDate())}`;
+  return `<div style="flex:1;overflow-y:auto;margin:0 -18px;padding:0 18px calc(24px + env(safe-area-inset-bottom))">
+    ${tete(titre)}
+    <div class="saisie-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"
+      style="${f.revenu ? 'color:var(--down)' : ''}" oninput="ajusterLargeurMontant()" onkeydown="if(event.key==='Enter')this.blur()"><span>€</span></div>
+    <div class="types">
+      <button class="${f.revenu ? '' : 'sel'}" onclick="majFeuille({revenu:false${f.revenu ? ',categorie:null' : ''}})">DÉPENSE</button>
+      <button class="${f.revenu ? 'sel' : ''}" onclick="majFeuille({revenu:true${f.revenu ? '' : ',categorie:null'},aRembourser:false,repeter:0})">REVENUS</button>
+    </div>
+    <div class="rangee clic" onclick="ouvrirChoixCategorie()">
+      <div class="rond-ic" style="background:${cat ? `color-mix(in srgb, ${couleurGroupe(groupeCat(cat))} 22%, var(--card))` : 'var(--card2)'}">${cat ? esc(emojiCat(cat)) : '🗂️'}</div>
+      <div class="texte">Catégorie : <b>${cat ? esc(cat) : 'à choisir'}</b></div><span class="lbl" style="font-size:22px">›</span></div>
+    <div class="rangee"><div class="ic-trait">${IC.note}</div>
       <input type="text" data-champ="note" placeholder="Remarque" value="${esc(f.note)}" enterkeyhint="done"></div>
-    ${navDate(f)}
-    <div class="champ"><span class="ic">🏷️</span><input type="text" data-champ="etiquette" placeholder="Étiquette (ex. Ski 2027)" value="${esc(f.etiquette)}"></div>
-    ${etiqRecentes.length ? `<div class="grille" style="margin:0 0 6px 42px">${etiqRecentes.map(e =>
-      `<button class="${e === f.etiquette ? 'sel' : ''}" onclick="majFeuille({etiquette:${attr(e === f.etiquette ? '' : e)}})">${esc(e)}</button>`).join('')}</div>` : ''}
+    <div class="rangee"><div class="ic-trait">${IC.cal}</div>
+      <label class="texte" style="position:relative;color:var(--txt)">${esc(libelleJour(f.date))}
+        <input type="date" value="${dateIso}" max="${versTexteDate(new Date()).slice(0, 10)}" onchange="choisirJour(this.value)" style="position:absolute;inset:0;opacity:0;width:100%"></label>
+      <div class="fleches"><button onclick="decalerJour(-1)" aria-label="Jour précédent">‹</button>
+        <button onclick="decalerJour(1)" ${memeJour(f.date, new Date()) ? 'disabled' : ''} aria-label="Jour suivant">›</button></div></div>
+    ${f.nouvelle && !f.revenu ? `
+    <div class="rangee"><div class="ic-trait">${IC.repeter}</div>
+      <div class="texte" style="color:var(--txt)">${esc(REPETITIONS.find(x => x[0] === Number(f.repeter))[1])}${Number(f.repeter) ? ` · le ${f.date.getDate()}` : ''}</div>
+      <select class="cache" onchange="majFeuille({repeter:Number(this.value)})" aria-label="Répéter">
+        ${REPETITIONS.map(([n, l]) => `<option value="${n}" ${Number(f.repeter) === n ? 'selected' : ''}>${l}</option>`).join('')}</select></div>` : ''}
+    <div class="rangee"><div class="ic-trait">${IC.etiquette}</div>
+      <input type="text" data-champ="etiquette" placeholder="Étiquette (ex. Ski 2027)" value="${esc(f.etiquette)}"></div>
+    ${etiqRecentes.length && !f.etiquette ? `<div class="grille" style="padding:10px 0 4px 54px">${etiqRecentes.map(e =>
+      `<button onclick="majFeuille({etiquette:${attr(e)}})">${esc(e)}</button>`).join('')}</div>` : ''}
     ${f.revenu ? '' : `
-    <div class="champ"><span class="ic">💸</span><span class="etiq">J'ai avancé pour quelqu'un</span>
+    <div class="rangee"><div class="ic-trait">${IC.avance}</div><div class="texte" style="color:var(--txt)">J'ai avancé pour quelqu'un</div>
       <label class="switch"><input type="checkbox" ${f.aRembourser ? 'checked' : ''} onchange="basculerRemboursement(this.checked)"><i></i></label></div>
-    ${f.aRembourser ? `
-    <div class="champ"><span class="ic">👤</span><input type="text" data-champ="qui" placeholder="Qui te doit ?" value="${esc(f.qui)}"></div>
-    ${personnes.length ? `<div class="grille" style="margin:0 0 6px 42px">${personnes.map(q =>
-      `<button class="${q === f.qui ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
-    <div class="champ"><span class="ic">🧮</span><span class="etiq">Montant dû</span>
-      <input type="text" data-champ="du" inputmode="decimal" placeholder="0" value="${esc(f.du)}" style="flex:0 0 90px;text-align:right"><span>€</span></div>
-    <div class="grille" style="margin:0 0 6px 42px"><button onclick="partager(2)">La moitié</button><button onclick="partager(3)">Un tiers</button><button onclick="partager(1)">Tout</button></div>
-    ${f.nouvelle ? '' : `<div class="champ"><span class="ic">✅</span><span class="etiq">Déjà remboursé</span>
-      <label class="switch"><input type="checkbox" ${f.remb ? 'checked' : ''} onchange="majFeuille({remb:this.checked})"><i></i></label></div>`}` : ''}`}
-    <button class="btn principal" onclick="validerDepense()">ENREGISTRER</button>
-    ${f.nouvelle ? '' : `<button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}`;
+    ${f.aRembourser ? `<div class="sous-champs">
+      <div class="ligne-champ"><input type="text" data-champ="qui" placeholder="Qui te doit ?" value="${esc(f.qui)}"></div>
+      ${personnes.length ? `<div class="grille" style="padding:2px 0 6px">${personnes.map(q =>
+        `<button class="${q === f.qui ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
+      <div class="ligne-champ"><span class="lbl" style="font-size:14px;flex:none">Montant dû</span>
+        <input type="text" data-champ="du" inputmode="decimal" placeholder="0" value="${esc(f.du)}" style="text-align:right"><span>€</span></div>
+      <div class="grille" style="padding:2px 0 6px"><button onclick="partager(2)">La moitié</button><button onclick="partager(3)">Un tiers</button><button onclick="partager(1)">Tout</button></div>
+      ${f.nouvelle ? '' : `<div class="ligne-champ"><span class="lbl" style="font-size:14px;flex:1">Déjà remboursé</span>
+        <label class="switch"><input type="checkbox" ${f.remb ? 'checked' : ''} onchange="majFeuille({remb:this.checked})"><i></i></label></div>`}
+    </div>` : ''}`}
+    <button class="btn principal" style="margin-top:26px" onclick="validerDepense()">ENREGISTRER</button>
+    ${f.nouvelle ? '' : `<button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}
+  </div>`;
 }
+
+// Le champ du montant prend la largeur du nombre, pour que « € » reste collé (comme Buddy)
+function ajusterLargeurMontant() {
+  const i = document.querySelector('#feuille .saisie-montant input');
+  if (!i) return;
+  const mesure = document.createElement('span');
+  mesure.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font-size:60px;font-weight:300';
+  mesure.textContent = i.value || '0';
+  document.body.appendChild(mesure);
+  i.style.width = (mesure.getBoundingClientRect().width + 4) + 'px';
+  mesure.remove();
+}
+
+/* ===== Choix de catégorie (grille de bulles, façon Buddy) ===== */
+function ouvrirChoixCategorie() {
+  lireChamps();
+  feuilleEtat = { type: 'choixCat', retour: feuilleEtat, recherche: '' };
+  dessinerFeuille();
+}
+function categoriesPlusUtilisees(revenu) {
+  const limite = Date.now() - 90 * 24 * 3600 * 1000, n = {};
+  depenses.forEach(r => { if (r.date.getTime() >= limite && estRevenu(r) === revenu) n[r.c] = (n[r.c] || 0) + 1; });
+  return Object.keys(n).filter(c => categorie(c) && categorie(c).active).sort((a, b) => n[b] - n[a]).slice(0, 8);
+}
+function feuilleChoixCat(f) {
+  const revenu = !!f.retour.revenu;
+  const filtre = c => c.active && (revenu ? c.groupe === GROUPE_REVENUS : c.groupe !== GROUPE_REVENUS);
+  const mots = sansAccents(f.recherche).split(' ').filter(Boolean);
+  const correspondCat = c => mots.every(m => sansAccents(c.nom + ' ' + c.groupe).includes(m));
+  const bulle = c => `<button onclick="choisirCategorie(${attr(c.nom)})">
+      <div class="bulle ${c.nom === f.retour.categorie ? 'sel' : ''}" style="background:color-mix(in srgb, ${couleurGroupe(c.groupe)} 24%, var(--card))">${esc(c.emoji || '•')}</div>
+      <span>${esc(c.nom)}</span></button>`;
+  const actives = categories.filter(filtre).filter(correspondCat);
+  const plus = mots.length ? [] : categoriesPlusUtilisees(revenu).map(categorie);
+  const gs = groupes().filter(g => actives.some(c => c.groupe === g));
+  return `
+    <div class="choix-tete">
+      <button class="rond" onclick="retourChoix()" aria-label="Retour" style="display:flex;align-items:center;justify-content:center">${IC.croix.replace('<svg', '<svg width="22" height="22"')}</button>
+      <h3>Catégories</h3>
+      <div class="pilule"><button onclick="fermerFeuille();changerOnglet('outils','categories')" aria-label="Modifier les catégories">${IC.crayon}</button>
+        <button onclick="fermerFeuille();setTimeout(()=>ouvrirCategorie(null),260)" aria-label="Nouvelle catégorie">${IC.plus}</button></div>
+    </div>
+    <div class="choix-corps">
+      ${plus.length ? `<div class="choix-groupe">Plus utilisées</div><div class="choix-grille">${plus.map(bulle).join('')}</div>` : ''}
+      ${gs.map(g => `<div class="choix-groupe">${esc(g)}</div>
+        <div class="choix-grille">${actives.filter(c => c.groupe === g).sort(parNom).map(bulle).join('')}</div>`).join('')}
+      ${!actives.length ? '<div class="vide">Aucune catégorie trouvée</div>' : ''}
+    </div>
+    <div class="choix-recherche">${IC.loupe}<input id="cherche-cat" type="search" placeholder="Recherche" value="${esc(f.recherche)}"
+      oninput="filtrerChoix(this.value)"></div>`;
+}
+function filtrerChoix(v) {
+  feuilleEtat.recherche = v;
+  dessinerFeuille();
+  const i = document.getElementById('cherche-cat');
+  i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+}
+function choisirCategorie(nom) {
+  const retour = feuilleEtat.retour;
+  retour.categorie = nom;
+  feuilleEtat = retour;
+  dessinerFeuille();
+}
+function retourChoix() { feuilleEtat = feuilleEtat.retour; dessinerFeuille(); }
 function choisirCatDepense(nom) { majFeuille({ categorie: nom }); }
 function basculerRemboursement(oui) {
   lireChamps();
@@ -1312,12 +1453,20 @@ function validerDepense() {
     e: f.nouvelle || changeCat ? emojiCat(f.categorie) : ancienne.e,
     t: envoi.etiquette, qui, du, remb: envoi.rembourse };
   const nouvelle = f.nouvelle;
+  const repeter = nouvelle && !f.revenu ? Number(f.repeter) || 0 : 0;
   moisSel = cleMois(d);
   if (nouvelle) { onglet = onglet === 'dettes' ? 'dettes' : 'accueil'; if (onglet === 'accueil') sousOnglets.accueil = 'liste'; }
   feuilleEtat = null; fermerFeuille();
   ecrire('enregistrerDepense', [envoi], () => {
     depenses = nouvelle ? depenses.concat(locale) : depenses.map(x => x.id === f.id ? locale : x);
   }, nouvelle ? (f.revenu ? '✅ Revenu ajouté' : '✅ Dépense ajoutée') : '✅ Modifié');
+  if (repeter) {
+    const rec = { libelle: envoi.note || envoi.categorie, montant: m, categorie: envoi.categorie, jour: d.getDate(),
+      frequence: repeter, moisDepart: d.getMonth() + 1, actif: true, dejaAjoute: cleMois(d) === cleMois(new Date()) };
+    ecrire('enregistrerRecurrente', [rec], () => {
+      recurrentes = recurrentes.concat({ ...rec, ligne: -Date.now(), dernierAjout: rec.dejaAjoute ? cleMois(d) : '' });
+    }, '🔁 Ajoutée aux récurrentes');
+  }
 }
 function supprimerDepenseUI() {
   const id = feuilleEtat.id;
@@ -1398,9 +1547,8 @@ function feuilleRecurrente(f) {
     <div class="aide">${esc(libellePeriode({ jour: Number(f.jour) || 1, frequence: Number(f.frequence), moisDepart: Number(f.moisDepart) || 1 }))}. Ajoutée automatiquement vers 8h.</div>
     <div class="champ" style="margin-top:12px"><span class="ic">⏯</span><span class="etiq">Active</span>
       <label class="switch"><input type="checkbox" ${f.actif ? 'checked' : ''} onchange="majFeuille({actif:this.checked})"><i></i></label></div>
-    <div class="champ"><span class="ic">${f.categorie ? esc(emojiCat(f.categorie)) : '🗂️'}</span>
-      <span class="etiq">Catégorie : <b style="color:var(--txt)">${f.categorie ? esc(f.categorie) : 'à choisir'}</b></span></div>
-    ${grilleCategories(f.categorie, 'choisirCatRecurrente', c => c.groupe !== GROUPE_REVENUS)}
+    <div class="champ clic" onclick="ouvrirChoixCategorie()"><span class="ic">${f.categorie ? esc(emojiCat(f.categorie)) : '🗂️'}</span>
+      <span class="etiq">Catégorie : <b style="color:var(--txt)">${f.categorie ? esc(f.categorie) : 'à choisir'}</b></span><span class="lbl" style="font-size:20px">›</span></div>
     <button class="btn principal" onclick="validerRecurrente()">ENREGISTRER</button>
     ${f.nouvelle ? '' : '<button class="btn danger" onclick="supprimerRecurrenteUI()">Supprimer</button>'}`;
 }
@@ -1596,7 +1744,7 @@ const DEMO = (function () {
     renommerGroupe: (a, b) => { cats.forEach(c => { if (c.groupe === a) c.groupe = b; }); },
     enregistrerRecurrente: x => {
       if (x.ligne > 0) Object.assign(recs.find(r => r.ligne === x.ligne), x);
-      else recs.push({ ...x, ligne: Math.max(1, ...recs.map(r => r.ligne)) + 1, dernierAjout: '' });
+      else recs.push({ ...x, ligne: Math.max(1, ...recs.map(r => r.ligne)) + 1, dernierAjout: x.dejaAjoute ? moisCourant : '' });
     },
     supprimerRecurrente: ligne => { recs = recs.filter(r => r.ligne !== ligne).map(r => r.ligne > ligne ? { ...r, ligne: r.ligne - 1 } : r); },
     ajouterRecurrenteMaintenant: ligne => {
@@ -1614,6 +1762,16 @@ const DEMO = (function () {
 })();
 
 /* ---------- Démarrage ---------- */
+// En mode appli (écran d'accueil), certains iPhone annoncent une hauteur trop courte : on prend celle de l'écran
+function ajusterHauteur() {
+  const appliIos = navigator.standalone === true;
+  const portrait = innerHeight > innerWidth;
+  const h = appliIos && portrait ? Math.max(innerHeight, screen.height) : innerHeight;
+  document.documentElement.style.setProperty('--h', h + 'px');
+}
+ajusterHauteur();
+addEventListener('resize', ajusterHauteur);
+addEventListener('orientationchange', () => setTimeout(ajusterHauteur, 300));
 if ('serviceWorker' in navigator && !MODE_DEMO && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
