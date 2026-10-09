@@ -1,7 +1,7 @@
 {
   "name": "Dépenses",
   "short_name": "Dépenses",
-  "description": "Mes dépenses, budgets et dettes",
+  "description": "Mes dépenses, revenus et budgets",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
