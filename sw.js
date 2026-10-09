@@ -1,6 +1,6 @@
 // Service worker : l'appli s'ouvre tout de suite (et même hors ligne) depuis le cache,
 // puis se met à jour en arrière-plan pour la prochaine ouverture.
-const CACHE = 'depenses-v6';
+const CACHE = 'depenses-v6.1';
 const FICHIERS = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {

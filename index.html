@@ -266,7 +266,7 @@
 </div>
 
 <script>
-const VERSION = 6;
+const VERSION = 6.1;
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const MODE_DEMO = /[?&]demo\b/.test(location.search);
@@ -431,7 +431,29 @@ function pastille(note, emoji, groupe, classe) {
 }
 
 /* ---------- Échanges avec le serveur ---------- */
-const lireCode = () => { try { return localStorage.getItem(CLE_CODE) || ''; } catch (e) { return ''; } };
+// Le code est gardé à deux endroits (stockage local + cookie de 10 ans) pour ne jamais le redemander
+function lireCookie() { const m = document.cookie.match(/(?:^|; )depcode=([^;]*)/); return m ? decodeURIComponent(m[1]) : ''; }
+function lireCode() {
+  let c = '';
+  try { c = localStorage.getItem(CLE_CODE) || ''; } catch (e) {}
+  if (!c) { c = lireCookie(); if (c) try { localStorage.setItem(CLE_CODE, c); } catch (e) {} }
+  return c;
+}
+function enregistrerCode(v) {
+  try { localStorage.setItem(CLE_CODE, v); } catch (e) {}
+  document.cookie = `depcode=${encodeURIComponent(v)}; max-age=${10 * 365 * 24 * 3600}; path=/; SameSite=Strict; Secure`;
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  return !!lireCode();
+}
+function oublierCode() {
+  try { localStorage.removeItem(CLE_CODE); } catch (e) {}
+  document.cookie = 'depcode=; max-age=0; path=/; SameSite=Strict; Secure';
+}
+// Lien d'installation : …/depenses/#code=XXXX enregistre le code puis l'efface de l'adresse
+(function () {
+  const m = location.hash.match(/code=([^&]+)/);
+  if (m) { enregistrerCode(decodeURIComponent(m[1])); history.replaceState(null, '', location.pathname + location.search); }
+})();
 
 function appel(action, ...args) {
   if (MODE_DEMO) {
@@ -445,7 +467,7 @@ function appel(action, ...args) {
     .then(r => r.json())
     .then(j => {
       if (j.ok) return j.resultat;
-      if (/Accès refusé/.test(j.message)) { try { localStorage.removeItem(CLE_CODE); } catch (e) {} afficherConnexion('Code refusé, vérifie-le.'); }
+      if (/Accès refusé/.test(j.message)) afficherConnexion('Code refusé, vérifie-le.');
       throw new Error(j.message.replace(/^❌\s*/, ''));
     });
 }
@@ -460,6 +482,7 @@ function charger() {
     if (ecrituresEnCours > 0 || debut < derniereEcriture) return;
     recevoir(t);
   }).catch(err => {
+    if (/Accès refusé/.test(err.message)) return; // l'écran du code est déjà affiché
     if (!charge) document.querySelector('main').innerHTML = `<div class="chargement">⚠️ ${esc(err.message)}<br><br><button class="puce" onclick="charger()">Réessayer</button></div>`;
     else if (!/Accès refusé/.test(err.message)) toast('⚠️ Synchro impossible : ' + err.message);
   });
@@ -537,7 +560,7 @@ function afficherConnexion(erreur) {
 function validerCode() {
   const v = document.getElementById('code').value.trim();
   if (!v) return;
-  try { localStorage.setItem(CLE_CODE, v); } catch (e) { return toast('Stockage impossible sur ce navigateur'); }
+  if (!enregistrerCode(v)) return toast('Stockage impossible (navigation privée ?)');
   document.getElementById('fab').style.display = '';
   document.querySelector('.onglets').style.display = '';
   document.querySelector('main').innerHTML = '<div class="chargement">Connexion…</div>';
@@ -546,7 +569,7 @@ function validerCode() {
 function seDeconnecter() {
   confirmer('Changer de code ?', 'Tes données restent dans le Google Sheet. Il faudra recoller le code.', 'Se déconnecter').then(oui => {
     if (!oui) return;
-    try { localStorage.removeItem(CLE_CODE); localStorage.removeItem(CLE_CACHE); } catch (e) {}
+    oublierCode(); try { localStorage.removeItem(CLE_CACHE); } catch (e) {}
     charge = false; afficherConnexion();
   });
 }
@@ -1588,6 +1611,7 @@ const DEMO = (function () {
 
 /* ---------- Démarrage ---------- */
 if ('serviceWorker' in navigator && !MODE_DEMO && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
 else { chargerCache(); charger(); }
 </script>
