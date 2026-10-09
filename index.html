@@ -17,17 +17,20 @@
     --bg: #f3f2f8; --card: #ffffff; --card2: #f1f0f6; --txt: #17161f; --mut: #8a8799; --line: #ecebf2;
     --accent: #6d5dfc; --accent2: #4f6bff; --up: #ef4444; --down: #16a34a; --danger: #ef4444; --orange: #f59e0b;
     --fab: #17161f; --fab-txt: #ffffff; --ombre: 0 10px 30px rgba(40, 30, 90, .12);
-    --degrade: linear-gradient(135deg, #8b5cf6 0%, #6d5dfc 45%, #4f6bff 100%);
+    --degrade: radial-gradient(120% 160% at 0% 0%, rgba(196, 181, 253, .55) 0%, transparent 55%), linear-gradient(135deg, #8b5cf6 0%, #6d5dfc 50%, #5b6cff 100%);
     --bas-barre: max(18px, calc(env(safe-area-inset-bottom) - 12px));
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #0f0e15; --card: #1a1922; --card2: #24232e; --txt: #f4f3fa; --mut: #8f8ca0; --line: #2c2a37;
       --fab: #f4f3fa; --fab-txt: #0f0e15; --ombre: 0 10px 30px rgba(0, 0, 0, .5); --up: #f87171; --down: #4ade80;
-      --degrade: linear-gradient(135deg, #5b3fd6 0%, #4b3fc9 45%, #3346c4 100%); }
+      --degrade: radial-gradient(120% 160% at 0% 0%, rgba(167, 139, 250, .28) 0%, transparent 55%), linear-gradient(135deg, #5b3fd6 0%, #4b3fc9 50%, #3a4bc9 100%); }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: var(--h, 100%); background: var(--bg); color: var(--txt); overscroll-behavior: none; overflow: hidden;
-    font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
+    font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; font-variant-numeric: tabular-nums; }
+  .vide, .aide, .maj, .lbl, .sous { text-wrap: pretty; }
+  /* 7. Repère de focus (clavier, accessibilité) */
+  button:focus-visible, a:focus-visible, .clic:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; }
 
@@ -64,14 +67,19 @@
   .onglets button.actif svg { color: var(--accent); }
   .fab { position: absolute; right: 16px; bottom: calc(var(--bas-barre) + 74px); width: 58px; height: 58px; border-radius: 50%; border: 0;
     background: var(--fab); color: var(--fab-txt); font-size: 34px; font-weight: 300; line-height: 1; box-shadow: var(--ombre); z-index: 6; }
+  .fab { transition: transform .25s cubic-bezier(.2, .9, .3, 1.2), opacity .2s; }
   .fab:active { transform: scale(.94); }
+  .fab.cache { transform: translateY(24px) scale(.6); opacity: 0; pointer-events: none; }
 
   /* Cartes */
   .card { background: var(--card); border-radius: 24px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(40, 30, 90, .04); }
-  h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--mut); margin: 0 0 12px; }
+  h2 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; color: var(--txt); margin: 0 0 12px; }
   .lbl { font-size: 12px; color: var(--mut); }
   .vide { color: var(--mut); text-align: center; padding: 24px 0; }
   .chargement { color: var(--mut); text-align: center; padding: 80px 0; }
+  .squelette > div { background: var(--card); border-radius: 24px; margin-bottom: 14px; padding: 16px; }
+  .squelette i { display: block; border-radius: 10px; background: var(--card2); animation: lueur 1.2s ease-in-out infinite alternate; }
+  @keyframes lueur { to { opacity: .45; } }
   .maj { text-align: center; font-size: 12px; color: var(--mut); margin-top: 6px; }
   .positif { color: var(--down); }
   .negatif { color: var(--up); }
@@ -84,13 +92,13 @@
   .carte-mois button:disabled { opacity: .2; }
   .carte-mois .centre { text-align: center; }
   .carte-mois .centre b { display: block; font-size: 17px; font-weight: 500; text-transform: capitalize; }
-  .carte-mois .centre span { font-size: 10.5px; letter-spacing: .16em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
+  .carte-mois .centre span { font-size: 12px; color: var(--mut); font-weight: 500; }
   .carte-mois .centre span i { font-style: normal; letter-spacing: 0; }
 
   /* Bloc revenus / dépenses / solde */
   .bilan3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--card2); border-radius: 16px; padding: 13px 6px; }
-  .bilan3 b { display: block; font-size: 16.5px; font-weight: 500; margin-bottom: 3px; letter-spacing: -.01em; }
-  .bilan3 span { font-size: 10px; letter-spacing: .14em; color: var(--mut); font-weight: 600; text-transform: uppercase; }
+  .bilan3 b { display: block; font-size: 17px; font-weight: 600; margin-bottom: 2px; letter-spacing: -.02em; }
+  .bilan3 span { font-size: 12px; color: var(--mut); font-weight: 500; }
 
   /* Lignes de transaction (façon Buddy) */
   .tx { display: flex; align-items: center; gap: 13px; padding: 12px 0; background: var(--card); position: relative; }
@@ -419,7 +427,7 @@
     </div>
     <div class="segments-tete" id="segments"></div>
   </header>
-  <div id="contenu"><div class="tirer" id="tirer"><span>↻</span></div><main><div class="chargement">Chargement…</div></main></div>
+  <div id="contenu"><div class="tirer" id="tirer"><span>↻</span></div><main><div class="squelette" aria-label="Chargement"><div style="border-radius:99px;padding:14px 60px"><i style="height:20px;margin:0 auto;width:60%"></i></div><div><i style="height:62px;border-radius:16px"></i><i style="height:14px;width:40%;margin:22px 0 14px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px"></i></div></div></main></div>
   <button class="fab" id="fab" onclick="boutonPlus()" aria-label="Ajouter">+</button>
   <nav class="onglets">
     <button data-o="accueil" onclick="changerOnglet('accueil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/></svg>Accueil</button>
@@ -432,7 +440,7 @@
 </div>
 
 <script>
-const VERSION = '7.1';
+const VERSION = '7.2';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -862,7 +870,7 @@ function validerCode() {
   if (!enregistrerCode(v)) return toast('Stockage impossible (navigation privée ?)');
   document.getElementById('fab').style.display = '';
   document.querySelector('.onglets').style.display = '';
-  document.querySelector('main').innerHTML = '<div class="chargement">Connexion…</div>';
+  document.querySelector('main').innerHTML = '<div class="squelette" aria-label="Chargement"><div style="border-radius:99px;padding:14px 60px"><i style="height:20px;margin:0 auto;width:60%"></i></div><div><i style="height:62px;border-radius:16px"></i><i style="height:14px;width:40%;margin:22px 0 14px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px"></i></div></div>';
   charger();
 }
 function seDeconnecter() {
@@ -886,7 +894,8 @@ function render() {
   document.getElementById('segments').innerHTML = segs.map(([k, l]) =>
     `<button class="${sousOnglets[onglet] === k ? 'actif' : ''}" onclick="changerSousOnglet('${k}')">${l}</button>`).join('');
   document.getElementById('titre').innerHTML = rechercheActive ? '<b>Recherche</b>'
-    : onglet === 'dettes' ? '<b>+ / -</b>' : onglet === 'revenus' ? '<b>Revenus</b>' : onglet === 'outils' ? '<b>Outils</b>' : 'Aperçu : <b>Perso</b>';
+    : onglet === 'dettes' ? '<b>+ / -</b>' : onglet === 'revenus' ? '<b>Revenus</b>' : onglet === 'outils' ? '<b>Outils</b>'
+    : `<b>${{ liste: 'Mes dépenses', apercu: 'Aperçu', budget: 'Budget' }[sousOnglets.accueil] || 'Mes dépenses'}</b>`;
   if (rechercheActive) return renderRecherche();
   let html;
   if (onglet === 'dettes') html = vueDettes();
@@ -1140,15 +1149,16 @@ function vueApercu() {
       <div class="legende">${ordreGroupes.map(g => `<span><i style="background:${couleurGroupe(g)}"></i>${esc(g)}<b>${eur0(parGroupe[g])}</b></span>`).join('')}</div>
     </section>
     <section class="card">
-      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="text-transform:none;letter-spacing:0;font-weight:500">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
+      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
       ${cats.map(([c, v]) => {
         const b = (categorie(c) || {}).budget;
         return `
         <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
           <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
           <div class="info"><div class="nom">${esc(c)}</div>
-            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div></div>
-          <div class="mt">${eur(v)}<small>${(v / total * 100).toFixed(0)} %${b ? ' · ' + Math.round(v / b * 100) + ' % budget' : ''}</small>${delta(c)}</div>
+            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
+            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois${b ? ' · ' + Math.round(v / b * 100) + ' % du budget' : ''}</div></div>
+          <div class="mt">${eur(v)}${delta(c)}</div>
         </div>`;
       }).join('')}
     </section>`;
@@ -2224,6 +2234,18 @@ function changerMois(n) {
 }
 function allerMois(k) { if (k > moisMax()) return; moisSel = k; catFiltre = null; jourFiltre = null; animerEntree = true; render(); }
 function rafraichir() { synchro = true; render(); envoyerFile(); charger(); }
+
+// Le bouton + s'efface pendant qu'on descend (il ne cache plus les montants) et revient dès qu'on remonte
+(function () {
+  const zone = document.getElementById('contenu'), fab = document.getElementById('fab');
+  let dernier = 0;
+  zone.addEventListener('scroll', () => {
+    const y = zone.scrollTop, d = y - dernier;
+    if (Math.abs(d) < 6) return;
+    fab.classList.toggle('cache', d > 0 && y > 80);
+    dernier = y;
+  }, { passive: true });
+})();
 
 /* ---------- Tirer vers le bas pour rafraîchir ---------- */
 let tirerActif = false;
