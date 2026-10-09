@@ -25,21 +25,23 @@
       --degrade: linear-gradient(135deg, #5b3fd6 0%, #4b3fc9 45%, #3346c4 100%); }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--txt); overscroll-behavior: none;
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--txt); overscroll-behavior: none; overflow: hidden;
     font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; }
 
-  #appli { position: relative; height: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  #appli { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
   #contenu { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  main { max-width: 560px; margin: 0 auto; padding: 16px 16px calc(120px + env(safe-area-inset-bottom)); }
+  main { max-width: 560px; margin: 0 auto; padding: 16px 16px calc(130px + env(safe-area-inset-bottom)); }
 
   /* En-tête dégradé (façon Buddy) */
   .tete { background: var(--degrade); color: #fff; padding: calc(10px + env(safe-area-inset-top)) 16px 12px;
     box-shadow: 0 6px 24px rgba(79, 70, 229, .25); flex: none; position: relative; z-index: 3; }
   .tete-haut { display: flex; align-items: center; justify-content: space-between; max-width: 560px; margin: 0 auto; }
-  .verre { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.18);
-    color: #fff; font-size: 19px; display: flex; align-items: center; justify-content: center; }
+  .verre { width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.18);
+    color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .verre svg { width: 23px; height: 23px; }
+  .ic-cal { width: 13px; height: 13px; vertical-align: -1px; margin-right: 6px; }
   .tete-titre { font-size: 17px; font-weight: 500; opacity: .95; }
   .tete-titre b { font-weight: 700; }
   .segments-tete { display: flex; justify-content: center; gap: 6px; margin: 12px auto 0; max-width: 560px; }
@@ -50,15 +52,16 @@
   .segments-tete button.actif { background: rgba(255,255,255,.22); color: #fff; }
 
   /* Barre du bas + bouton + */
-  .onglets { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; gap: 2px;
+  .onglets { position: absolute; left: 50%; transform: translateX(-50%); bottom: max(10px, calc(env(safe-area-inset-bottom) - 6px)); display: flex; gap: 2px;
+    width: min(76%, 400px);
     background: color-mix(in srgb, var(--card) 86%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--line); border-radius: 99px; padding: 5px; box-shadow: var(--ombre); z-index: 5; }
-  .onglets button { border: 0; background: none; border-radius: 99px; padding: 7px 18px 6px; display: flex; flex-direction: column;
-    align-items: center; gap: 1px; font-size: 12px; font-weight: 600; color: var(--mut); min-width: 82px; }
-  .onglets button span { font-size: 20px; line-height: 1.15; filter: grayscale(1); opacity: .65; }
+  .onglets button { flex: 1; border: 0; background: none; border-radius: 99px; padding: 9px 4px 7px; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; font-size: 12.5px; font-weight: 600; color: var(--mut); }
+  .onglets button svg { width: 25px; height: 25px; }
   .onglets button.actif { background: var(--card2); color: var(--txt); }
-  .onglets button.actif span { filter: none; opacity: 1; }
-  .fab { position: absolute; right: 16px; bottom: calc(88px + env(safe-area-inset-bottom)); width: 62px; height: 62px; border-radius: 50%; border: 0;
+  .onglets button.actif svg { color: var(--accent); }
+  .fab { position: absolute; right: 16px; bottom: calc(max(10px, env(safe-area-inset-bottom) - 6px) + 80px); width: 62px; height: 62px; border-radius: 50%; border: 0;
     background: var(--fab); color: var(--fab-txt); font-size: 34px; font-weight: 300; line-height: 1; box-shadow: var(--ombre); z-index: 6; }
   .fab:active { transform: scale(.94); }
 
@@ -248,25 +251,25 @@
 <div id="appli">
   <header class="tete">
     <div class="tete-haut">
-      <button class="verre" onclick="changerOnglet('outils', 'reglages')" aria-label="Réglages">⚙️</button>
+      <button class="verre" onclick="changerOnglet('outils', 'reglages')" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
       <div class="tete-titre" id="titre"><b>Dépenses</b></div>
-      <button class="verre" onclick="ouvrirRecherche()" aria-label="Rechercher">🔍</button>
+      <button class="verre" onclick="ouvrirRecherche()" aria-label="Rechercher"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></button>
     </div>
     <div class="segments-tete" id="segments"></div>
   </header>
   <div id="contenu"><main><div class="chargement">Chargement…</div></main></div>
   <button class="fab" id="fab" onclick="boutonPlus()" aria-label="Ajouter">+</button>
   <nav class="onglets">
-    <button data-o="accueil" onclick="changerOnglet('accueil')"><span>🏠</span>Accueil</button>
-    <button data-o="dettes" onclick="changerOnglet('dettes')"><span>💸</span>Dettes</button>
-    <button data-o="outils" onclick="changerOnglet('outils')"><span>🧰</span>Outils</button>
+    <button data-o="accueil" onclick="changerOnglet('accueil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/></svg>Accueil</button>
+    <button data-o="dettes" onclick="changerOnglet('dettes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Dettes</button>
+    <button data-o="outils" onclick="changerOnglet('outils')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/></svg>Outils</button>
   </nav>
   <div id="couche"><div class="voile" onclick="fermerFeuille()"></div><div class="feuille" id="feuille"></div></div>
   <div id="toast"></div>
 </div>
 
 <script>
-const VERSION = 6.1;
+const VERSION = 6.2;
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const MODE_DEMO = /[?&]demo\b/.test(location.search);
@@ -375,6 +378,7 @@ const majuscule = t => t.charAt(0).toUpperCase() + t.slice(1);
 const dateCourte = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '');
 const lireMontant = v => { const n = parseFloat(String(v).replace(/\s/g, '').replace(',', '.')); return isFinite(n) ? Math.abs(n) : 0; };
 const montantTexte = n => n ? String(n).replace('.', ',') : '';
+const ICONE_CAL = '<svg class="ic-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
 const parNom = (a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
 
 const commerceCache = {};
@@ -625,7 +629,7 @@ function carteMois() {
   return `
     <div class="carte-mois">
       <button onclick="changerMois(-1)" ${moisSel <= premier ? 'disabled' : ''} aria-label="Mois précédent">‹</button>
-      <div class="centre"><b>${nomMois(moisSel)}</b><span>${nb} transaction${nb > 1 ? 's' : ''} <i>🗓️</i></span></div>
+      <div class="centre"><b>${nomMois(moisSel)}</b><span>${nb} transaction${nb > 1 ? 's' : ''}</span></div>
       <button onclick="changerMois(1)" ${estMoisActuel ? 'disabled' : ''} aria-label="Mois suivant">›</button>
     </div>`;
 }
@@ -659,7 +663,7 @@ function vueListe() {
       ${aVenir.map(({ r, d }) => `
         <div class="tx clic" onclick="ouvrirRecurrente(${r.ligne})">
           ${pastille(r.libelle, emojiCat(r.categorie), groupeCat(r.categorie))}
-          <div class="info"><div class="date">🗓️ ${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
+          <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
           <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
             <button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne})">+ Ajouter</button></div>
         </div>`).join('')}
@@ -678,7 +682,7 @@ function ligneTx(r) {
     <div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
       <div class="tx clic" onclick="if(!gesteEnCours)ouvrirDepense(${attr(r.id)})">
         ${pastille(r.n, emojiDe(r), groupeDe(r))}
-        <div class="info"><div class="date">🗓️ ${dateCourte(r.date)}</div>
+        <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div>
           <div class="titre">${esc(r.n || r.c)}</div>
           <div class="sous">${r.n ? esc(r.c) : ''}${badges}</div></div>
         <div class="mt ${rev ? 'positif' : ''}">${rev ? '+' : '-'}${eur(r.m)}</div>
