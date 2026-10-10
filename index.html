@@ -117,6 +117,46 @@
   .pop-ligne .c { font-weight: 600; flex: none; max-width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pop-ligne .n { color: var(--mut); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pop-ligne b { flex: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pop-ligne.sep, .swipe + .pop-groupe, .pop-groupe + .pop-groupe, .pop-deplie + .pop-groupe { border-top: 1px solid var(--line); }
+  .pop-groupe { display: flex; align-items: baseline; gap: 8px; padding: 11px 0; font-size: 14.5px; }
+  .pop-groupe .c { font-weight: 700; flex: none; }
+  .pop-groupe .n { flex: 1; min-width: 0; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pop-groupe .n em { font-style: normal; font-weight: 700; color: var(--accent); }
+  .pop-groupe b { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pop-groupe.sous { padding-left: 14px; border-top: 0 !important; padding-top: 6px; }
+  .pop-groupe.sous .n { color: var(--txt); }
+  .pop-groupe.vide-g { color: var(--mut); }
+  .pop-groupe.vide-g b { color: var(--mut); font-weight: 500; }
+  .pop-groupe .chevron { color: var(--mut); transition: transform .2s; width: 10px; text-align: center; }
+  .pop-groupe .chevron.ouvert { transform: rotate(90deg); }
+  .pop-deplie { margin: -2px 0 6px 14px; padding-left: 10px; border-left: 2px solid color-mix(in srgb, var(--accent) 35%, var(--line)); animation: deplie .25s ease-out; }
+  .pop-deplie .pop-ligne { padding: 7px 0; font-size: 13.5px; }
+  .pop-graphe { margin-top: 16px; }
+  .pop-graphe #histo6 { height: 130px; }
+  .pop-graphe { padding-top: 4px; }
+  .pile { margin-top: 16px; position: relative; }
+  .pile-tete { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 18px; position: relative; z-index: 1;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--card)), color-mix(in srgb, var(--accent) 5%, var(--card)));
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 14%, transparent); }
+  .pile:not(.ouverte) { margin-bottom: 14px; }
+  .pile:not(.ouverte)::before, .pile:not(.ouverte)::after { content: ''; position: absolute; left: 10px; right: 10px; height: 100%; bottom: -7px; border-radius: 18px;
+    background: color-mix(in srgb, var(--accent) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--line)); }
+  .pile:not(.ouverte)::after { left: 22px; right: 22px; bottom: -13px; opacity: .6; z-index: -1; }
+  .pile-tete .info { flex: 1; display: flex; flex-direction: column; }
+  .pile-tete .info b { font-size: 15.5px; }
+  .pile-tete .info span { font-size: 13px; color: var(--mut); }
+  .pile-tete .chevron { font-size: 22px; color: var(--accent); transition: transform .25s; }
+  .pile-tete .chevron.ouvert { transform: rotate(90deg); }
+  .pile-icones { display: flex; }
+  .pile-icones i { font-style: normal; width: 30px; height: 30px; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center;
+    font-size: 15px; border: 2px solid color-mix(in srgb, var(--accent) 10%, var(--card)); }
+  .pile-icones i + i { margin-left: -9px; }
+  .pile-carte { background: var(--card2); border-radius: 16px; padding: 0 12px; margin-top: 8px; }
+  .pile-carte.anime { animation: deplie .35s cubic-bezier(.2,.8,.2,1) both; }
+  .pile-carte .tx { background: transparent; }
+  .ajoutee { font-size: 11px; font-weight: 700; color: var(--down); letter-spacing: .02em; }
+  @keyframes deplie { from { opacity: 0; transform: translateY(-14px) scale(.97); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .pile-carte, .pop-deplie { animation: none; } }
   .pop-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--line); margin-top: 4px; padding-top: 10px; font-size: 17px; }
   .pop-total span { color: var(--mut); font-weight: 600; }
   .pop-total b { font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -481,7 +521,7 @@
 </div>
 
 <script>
-const VERSION = '8.0';
+const VERSION = '8.1';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -736,7 +776,7 @@ function charger() {
     if (synchro && charge) { synchro = false; if (!feuilleOuverte()) render(); }
     if (/Accès refusé/.test(err.message)) return; // l'écran du code est déjà affiché
     if (!charge) document.querySelector('main').innerHTML = `<div class="chargement">⚠️ ${esc(err.message)}<br><br><button class="puce" onclick="charger()">Réessayer</button></div>`;
-    else if (estErreurReseau(err)) toast('📴 Hors ligne : tes données locales restent affichées');
+    else if (estErreurReseau(err)) return; // réseau coupé : les données locales restent affichées, sans message
     else toast('⚠️ Synchro impossible : ' + err.message);
   });
 }
@@ -1009,26 +1049,70 @@ function bilan3(tout, libelleDepenses) {
     <b data-v="${v}">${v < -0.5 ? '-' : ''}${eur0(Math.abs(v))}</b><span>${lib}</span></div>`;
   return `<div class="bilan3 bilan4">
     ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep, libelleDepenses || 'Dépenses', 'dep')}
-    <div><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
+    <div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('delta')"` : ''}><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
       <span>Delta${taux === null ? '' : `<br><em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} % épargné</em>`}</span></div>
   </div>`;
 }
 
 /* ===== Détail d'un chiffre du mois (petite carte) ===== */
 function ouvrirDetailBilan(quoi) { haptique(); ouvrirFeuille({ type: 'detailBilan', quoi }); }
-// Petite carte au centre : une ligne par versement (date · catégorie · libellé · montant), puis = total
+// Petite carte au centre.
+// Revenus : regroupés par catégorie puis par libellé (IJ ×3 = total), un toucher déplie les versements datés.
+// Dépenses : de la plus grosse à la plus petite. Delta : le graphique des 6 derniers mois.
 function feuilleDetailBilan(f) {
-  const rev = f.quoi === 'rev';
-  const rs = duMois(moisSel).filter(r => estRevenu(r) === rev).sort((a, b) => a.date - b.date); // du 1er au dernier jour du mois
+  const tout = duMois(moisSel);
   const jour = d => deux(d.getDate()) + '/' + deux(d.getMonth() + 1);
-  const ligne = r => `<div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
+  const tete = titre => `<div class="pop-tete"><b>${titre} · ${esc(nomMois(moisSel))}</b>
+      <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>`;
+  if (f.quoi === 'delta') {
+    const rev = somme(tout.filter(estRevenu)), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep;
+    return `${tete('Delta')}
+      <div class="pop-ligne"><span class="c">Revenus</span><span class="n"></span><b class="positif">+${eur(rev)}</b></div>
+      <div class="pop-ligne sep"><span class="c">Dépenses</span><span class="n"></span><b>-${eur(dep)}</b></div>
+      <div class="pop-total"><span>= ${rev > 0 ? Math.round(delta / rev * 100) + ' % épargné' : ''}</span><b class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < 0 ? '-' : '+'}${eur(Math.abs(delta))}</b></div>
+      <div class="pop-graphe">${histo6()}
+        <div class="legende"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div>
+        <div class="maj" style="margin:6px 0 0">Glisse le doigt sur le graphique pour voir les chiffres</div></div>`;
+  }
+  const rev = f.quoi === 'rev';
+  const rs = tout.filter(r => estRevenu(r) === rev);
+  const ligneDatee = (r, sansCat) => `<div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
     <div class="pop-ligne clic" onclick="if(!gesteEnCours)ouvrirDepuisDetail(${attr(r.id)})">
-      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b></div></div>`;
-  return `<div class="pop-tete"><b>${rev ? 'Revenus' : 'Dépenses'} · ${esc(nomMois(moisSel))}</b>
-      <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>
-    ${rs.length ? rs.map(ligne).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>'}
+      <span class="d">${jour(r.date)}</span>${sansCat ? '' : `<span class="c">${esc(r.c)}</span>`}<span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b></div></div>`;
+  let corps;
+  if (rev) {
+    f.ouverts = f.ouverts || {};
+    const cats = REVENUS.concat([...new Set(rs.map(r => r.c))].filter(c => !REVENUS.includes(c)));
+    corps = cats.map(c => {
+      const lc = rs.filter(r => r.c === c).sort((a, b) => a.date - b.date);
+      if (!lc.length) return `<div class="pop-groupe vide-g"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(0)}</b></div>`;
+      // un groupe par libellé (« IJ » et « ij » ensemble)
+      const groupes = [];
+      lc.forEach(r => {
+        const k = sansAccents(r.n) || '—';
+        let g = groupes.find(x => x.k === k);
+        if (!g) groupes.push(g = { k, nom: r.n || 'Sans libellé', rs: [] });
+        g.rs.push(r);
+      });
+      const ligneGroupe = (g, seul) => {
+        const cle = c + '|' + g.k, ouvert = !!f.ouverts[cle];
+        return `<div class="pop-groupe clic ${seul ? '' : 'sous'}" onclick="basculerGroupePop(${attr(cle)})">
+            ${seul ? `<span class="c">${esc(c)}</span>` : ''}<span class="n">${esc(g.nom)}${g.rs.length > 1 ? ` <em>×${g.rs.length}</em>` : ''}</span>
+            <b>${eur(somme(g.rs))}</b><span class="chevron ${ouvert ? 'ouvert' : ''}">›</span></div>
+          ${ouvert ? `<div class="pop-deplie">${g.rs.map(r => ligneDatee(r, true)).join('')}</div>` : ''}`;
+      };
+      if (groupes.length === 1) return ligneGroupe(groupes[0], true);
+      return `<div class="pop-groupe"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(somme(lc))}</b><span class="chevron" style="visibility:hidden">›</span></div>
+        ${groupes.map(g => ligneGroupe(g, false)).join('')}`;
+    }).join('');
+  } else {
+    corps = rs.length ? rs.slice().sort((a, b) => b.m - a.m).map(r => ligneDatee(r)).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
+  }
+  return `${tete(rev ? 'Revenus' : 'Dépenses')}
+    <div class="pop-corps">${corps}</div>
     <div class="pop-total"><span>=</span><b class="${rev ? 'positif' : ''}">${eur(somme(rs))}</b></div>`;
 }
+function basculerGroupePop(cle) { feuilleEtat.ouverts[cle] = !feuilleEtat.ouverts[cle]; haptique(); dessinerFeuille(); }
 // Depuis la carte : après l'enregistrement, on revient sur la carte
 function ouvrirDepuisDetail(id) { const quoi = feuilleEtat.quoi; ouvrirDepense(id); feuilleEtat.retourDetail = quoi; }
 function animerMontants() {
@@ -1086,23 +1170,38 @@ function vueListe() {
       ${futur ? bilan3(prevus, 'Prévu') : bilan3(tout)}
       ${libFiltre ? `<div class="filtre-actif"><b style="text-transform:capitalize">${esc(libFiltre)}</b>
         <button class="puce" onclick="catFiltre=null;jourFiltre=null;render()">Tout voir</button></div>` : ''}
-      ${aVenir.length || prevues.length ? `<div class="a-venir-titre">${futur ? 'Prévues ce mois-là' : 'À venir'}</div>` : ''}
-      ${aVenir.map(({ r, d }) => ({ d, html: `
-        <div class="tx clic" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
-          ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
-          <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
-          <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
-            ${futur ? '' : `<button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne})">+ Ajouter</button>`}</div>
-        </div>` })).concat(prevues.map(r => ({ d: r.date, html: `
-        <div class="tx clic" onclick="ouvrirDepense(${attr(r.id)})">
-          ${pastille(r.n, emojiDe(r), couleurDe(r))}
-          <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div><div class="titre">${esc(r.n || r.c)}</div><div class="sous">${r.n ? esc(r.c) : 'Prévue'}</div></div>
-          <div class="droite"><div class="mt barre-txt">${estRevenu(r) ? '+' : ''}${eur(r.m)}</div>
-            <button class="ajout" onclick="event.stopPropagation();validerPrevue(${attr(r.id)})">+ Ajouter</button></div>
-        </div>` }))).sort((x, y) => x.d - y.d).map(x => x.html).join('')}
+      ${pileAVenir(aVenir, prevues, futur)}
       ${liste.length ? listeParJour(liste) : (aVenir.length || prevues.length ? '' : `<div class="vide">${futur ? 'Rien de prévu ce mois-là.' : 'Aucune transaction ce mois-ci.<br>Touche + pour en ajouter une.'}</div>`)}
     </section>
     ${liste.length > 2 ? '<div class="maj" style="margin-bottom:8px">Glisse une ligne vers la gauche pour la supprimer</div>' : ''}`;
+}
+
+/* « À venir » : une pile de cartes ; un toucher la déplie (cartes qui glissent une à une), un autre la replie */
+let pileOuverte = false, pileAnimee = false; // l'animation ne se joue qu'à l'ouverture, pas à chaque rafraîchissement
+function basculerPile() { pileOuverte = !pileOuverte; pileAnimee = pileOuverte; haptique(); render(); }
+function pileAVenir(aVenir, prevues, futur) {
+  const items = aVenir.map(({ r, d }) => ({ d, m: r.montant, titre: r.libelle, emoji: emojiCat(r.categorie), html: `
+    <div class="tx clic" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
+      ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
+      <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
+      <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
+        ${futur ? '' : `<button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})">+ Ajouter</button>`}</div>
+    </div>` })).concat(prevues.map(r => ({ d: r.date, m: r.m, titre: r.n || r.c, emoji: emojiDe(r), html: `
+    <div class="tx clic" onclick="ouvrirDepense(${attr(r.id)})">
+      ${pastille(r.n, emojiDe(r), couleurDe(r))}
+      <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div><div class="titre">${esc(r.n || r.c)}</div><div class="sous">${esc(r.c)}</div></div>
+      <div class="droite"><div class="mt barre-txt">${estRevenu(r) ? '+' : ''}${eur(r.m)}</div><span class="ajoutee">✓ ajoutée</span></div>
+    </div>` }))).sort((x, y) => x.d - y.d);
+  if (!items.length) return '';
+  const total = items.reduce((t, x) => t + x.m, 0);
+  const ouverte = pileOuverte || futur;
+  const tete = `<div class="pile-tete clic" onclick="basculerPile()">
+      <div class="pile-icones">${items.slice(0, 3).map(x => `<i>${esc(x.emoji)}</i>`).join('')}</div>
+      <div class="info"><b>${futur ? 'Prévues ce mois-là' : 'À venir'}</b><span>${items.length} prélèvement${items.length > 1 ? 's' : ''} · ${eur(total)}</span></div>
+      <span class="chevron ${ouverte ? 'ouvert' : ''}">›</span></div>`;
+  const anime = pileAnimee; pileAnimee = false;
+  return `<div class="pile ${ouverte ? 'ouverte' : ''}">${tete}
+    ${ouverte ? items.map((x, i) => `<div class="pile-carte ${anime ? 'anime' : ''}" style="animation-delay:${i * 45}ms">${x.html}</div>`).join('') : ''}</div>`;
 }
 
 // Une transaction (avec le geste « glisser pour supprimer ») ; sansDate : la date est déjà dans l'en-tête du jour
@@ -1169,6 +1268,8 @@ function vueApercu() {
       </div>
       ${bilan3(tout)}
     </section>
+    <section class="card"><h2>6 derniers mois</h2>${histo6()}
+      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>
     ${carteRessources(tout)}`;
 
   if (total > 0) {
@@ -1202,8 +1303,6 @@ function vueApercu() {
           <div class="info"><div class="nom">${esc(t.nom)}</div><div class="sous">${t.nb} fois</div></div>
           <div class="mt">${eur(t.total)}</div></div>`).join('')}</section>`;
   }
-  html += `<section class="card"><h2>6 derniers mois</h2>${histo6()}
-      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>`;
   const annee = dateDeCle(moisSel).getFullYear();
   if (depenses.some(r => r.date.getFullYear() === annee)) html += `
     <section class="card carte-retro" onclick="ouvrirRetro(${annee})"><div class="gros">🎁</div>
@@ -1488,15 +1587,19 @@ function libellePeriode(rec) {
   for (let m = rec.moisDepart; mois.length < 12 / f; m += f) mois.push(new Date(2026, (m - 1) % 12, 1).toLocaleDateString('fr-FR', { month: 'short' }));
   return `Tous les ${f} mois le ${j} (${mois.join(', ')})`;
 }
-function ajouterRecurrenteMaintenant(ligne) {
+// « + Ajouter » sur un prélèvement à venir : il est ajouté à SA date (ex. Dashlane le 12), pas aujourd'hui
+function ajouterRecurrenteMaintenant(ligne, temps) {
   const r = recurrentes.find(x => x.ligne === ligne);
   if (!r) return;
-  const maintenant = new Date();
-  ecrire('ajouterRecurrenteMaintenant', [ligne], () => {
-    r.dernierAjout = cleMois(maintenant);
-    depenses = depenses.concat({ id: 'tmp-' + Date.now(), d: versTexteDate(maintenant), date: maintenant, m: r.montant, c: r.categorie,
+  const date = temps ? new Date(temps) : new Date();
+  if (!memeJour(date, new Date())) date.setHours(12, 0, 0, 0);
+  else { const n = new Date(); date.setHours(n.getHours(), n.getMinutes(), 0, 0); }
+  haptique();
+  ecrire('ajouterRecurrenteMaintenant', [ligne, versTexteDate(date)], () => {
+    r.dernierAjout = cleMois(date);
+    depenses = depenses.concat({ id: 'tmp-' + Date.now(), d: versTexteDate(date), date, m: r.montant, c: r.categorie,
       n: r.libelle, s: 'Récurrente', g: groupeCat(r.categorie), e: emojiCat(r.categorie), t: '', qui: '', du: 0, remb: false });
-  }, `✅ ${r.libelle} ajouté`);
+  }, `✅ ${r.libelle} ajouté · ${memeJour(date, new Date()) ? "aujourd'hui" : 'pour le ' + date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
 }
 function vueRecurrentes() {
   const actives = recurrentes.filter(r => r.actif);
@@ -1835,15 +1938,6 @@ function ouvrirDepuisRecurrente(ligne, temps) {
   const d = new Date(temps); d.setHours(12, 0, 0, 0);
   ouvrirFeuille({ type: 'depense', id: null, montant: montantTexte(r.montant), categorie: r.categorie, note: r.libelle, date: d, nouvelle: true,
     revenu: groupeCat(r.categorie) === GROUPE_REVENUS, repeter: 0, etiquette: '', aRembourser: false, qui: '', du: '', remb: false, recurrente: r.ligne });
-}
-// « + Ajouter » sur une transaction prévue : elle passe à aujourd'hui et compte tout de suite
-function validerPrevue(id) {
-  const r = depenses.find(x => x.id === id);
-  if (!r) return;
-  const d = new Date();
-  haptique();
-  ecrire('enregistrerDepense', [{ id, date: versTexteDate(d), montant: r.m, categorie: r.c, note: r.n, etiquette: r.t || '', qui: r.qui || '', du: r.du || 0, rembourse: !!r.remb }],
-    () => { depenses = depenses.map(x => x.id === id ? { ...x, date: d, d: versTexteDate(d) } : x); }, `✅ ${r.n || r.c} ajouté · ${eur(r.m)} aujourd'hui`);
 }
 function feuilleDepense(f) {
   const titre = f.nouvelle ? 'Nouvelle transaction' : (f.revenu ? 'Modifier le revenu' : 'Modifier la dépense');
@@ -2400,9 +2494,9 @@ const DEMO = (function () {
       else recs.push({ ...x, ligne: Math.max(1, ...recs.map(r => r.ligne)) + 1, dernierAjout: x.dejaAjoute ? moisCourant : '' });
     },
     supprimerRecurrente: ligne => { recs = recs.filter(r => r.ligne !== ligne).map(r => r.ligne > ligne ? { ...r, ligne: r.ligne - 1 } : r); },
-    ajouterRecurrenteMaintenant: ligne => {
+    ajouterRecurrenteMaintenant: (ligne, date) => {
       const r = recs.find(x => x.ligne === ligne); r.dernierAjout = moisCourant;
-      deps.push({ id: nouvelId(), d: versTexteDate(new Date()), m: r.montant, c: r.categorie, n: r.libelle, s: 'Récurrente', g: grp(r.categorie), e: emo(r.categorie), t: '', qui: '', du: 0, remb: false });
+      deps.push({ id: nouvelId(), d: date || versTexteDate(new Date()), m: r.montant, c: r.categorie, n: r.libelle, s: 'Récurrente', g: grp(r.categorie), e: emo(r.categorie), t: '', qui: '', du: 0, remb: false });
     },
     enregistrerDette: x => {
       const v = { d: x.date, sens: x.sens, qui: x.qui, m: x.montant, n: x.note, regle: !!x.regle };
