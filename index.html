@@ -99,6 +99,27 @@
   .bilan3 { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--card2); border-radius: 16px; padding: 13px 6px; }
   .bilan3 b { display: block; font-size: 17px; font-weight: 600; margin-bottom: 2px; letter-spacing: -.02em; }
   .bilan3 span { font-size: 12px; color: var(--mut); font-weight: 500; }
+  .bilan4 { grid-template-columns: repeat(3, 1fr); padding: 13px 2px; }
+  .bilan4 > div { padding: 2px 2px; border-radius: 12px; }
+  .bilan4 b { font-size: 17px; white-space: nowrap; }
+  .bilan4 span { line-height: 1.25; display: block; font-size: 11.5px; }
+  .bilan4 em { font-style: normal; font-weight: 700; }
+  .bilan4 .clic:active { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .feuille.pop { left: 14px; right: 14px; top: 50%; bottom: auto; max-height: 72%; border-radius: 24px; padding: 14px 16px 12px;
+    transform: translateY(-50%) scale(.94); opacity: 0; transition: transform .2s, opacity .2s; }
+  #couche.visible .feuille.pop { transform: translateY(-50%); opacity: 1; }
+  .pop-tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .pop-tete b { font-size: 16px; text-transform: capitalize; }
+  .pop-tete button { border: 0; background: var(--card2); color: var(--mut); width: 30px; height: 30px; border-radius: 50%; padding: 6px; }
+  .pop-ligne { display: flex; align-items: baseline; gap: 8px; padding: 10px 0; background: var(--card); position: relative; touch-action: pan-y; transition: transform .2s; font-size: 14.5px; }
+  .swipe + .swipe > .pop-ligne { border-top: 1px solid var(--line); }
+  .pop-ligne .d { color: var(--mut); flex: none; width: 42px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pop-ligne .c { font-weight: 600; flex: none; max-width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pop-ligne .n { color: var(--mut); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pop-ligne b { flex: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pop-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--line); margin-top: 4px; padding-top: 10px; font-size: 17px; }
+  .pop-total span { color: var(--mut); font-weight: 600; }
+  .pop-total b { font-weight: 800; font-variant-numeric: tabular-nums; }
 
   /* Lignes de transaction (façon Buddy) */
   .tx { display: flex; align-items: center; gap: 13px; padding: 12px 0; background: var(--card); position: relative; }
@@ -211,6 +232,27 @@
   .histo2 .barres i { width: 40%; max-width: 14px; border-radius: 5px 5px 2px 2px; min-height: 3px; }
   .histo2 .m { font-size: 11px; color: var(--mut); margin-top: 6px; text-transform: capitalize; }
   .histo2 .col.sel .m { color: var(--txt); font-weight: 700; }
+  #histo6 { position: relative; touch-action: pan-y; user-select: none; -webkit-user-select: none; padding-top: 6px; }
+  #histo6 .col { transition: opacity .15s; }
+  #histo6:has(.survol) .col:not(.survol) { opacity: .45; }
+  .bulle-histo { position: absolute; bottom: calc(100% - 6px); z-index: 2; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 9px 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.14); display: grid; gap: 3px; font-size: 12.5px; min-width: 150px; pointer-events: none; }
+  .bulle-histo b { font-size: 13px; text-transform: capitalize; margin-bottom: 2px; }
+  .bulle-histo span { display: flex; align-items: center; gap: 6px; color: var(--mut); }
+  .bulle-histo span i { width: 8px; height: 8px; border-radius: 3px; }
+  .bulle-histo em { margin-left: auto; font-style: normal; font-weight: 700; color: var(--txt); font-variant-numeric: tabular-nums; }
+  .bulle-histo span.positif em { color: var(--down); }
+  .bulle-histo span.negatif em { color: var(--danger); }
+  .rev-ligne .chevron { color: var(--mut); font-size: 20px; transition: transform .2s; padding-left: 2px; }
+  .rev-ligne .chevron.ouvert { transform: rotate(90deg); }
+  .rev-detail span { color: var(--txt); }
+  .rev-detail .rev-date { display: inline-block; min-width: 54px; color: var(--mut); font-weight: 500; margin-right: 4px; }
+  .rev-detail i { font-style: normal; opacity: .7; }
+  .rev-ajout { color: var(--accent) !important; font-weight: 600; justify-content: flex-start !important; }
+  .rev-ligne + .synchro-dash { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 2px; }
+  .grille.libelles { margin: 8px 0 0 54px; }
+  .swipe > .ligne-pm { background: var(--card); position: relative; touch-action: pan-y; transition: transform .2s; }
+  .swipe + .swipe > .ligne-pm, .ligne + .swipe > .ligne-pm, .swipe + .ligne { border-top: 1px solid var(--line); }
 
   /* Choix de la couleur d'une catégorie */
   .couleurs { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 4px; }
@@ -431,8 +473,7 @@
   <button class="fab" id="fab" onclick="boutonPlus()" aria-label="Ajouter">+</button>
   <nav class="onglets">
     <button data-o="accueil" onclick="changerOnglet('accueil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/></svg>Accueil</button>
-    <button data-o="revenus" onclick="changerOnglet('revenus')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>Revenus</button>
-    <button data-o="dettes" onclick="changerOnglet('dettes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="3.5" x2="7" y2="11.5"/><line x1="3" y1="7.5" x2="11" y2="7.5"/><line x1="13" y1="16.5" x2="21" y2="16.5"/><line x1="19" y1="4" x2="5" y2="20"/></svg>+ / -</button>
+    <button data-o="dettes" onclick="changerOnglet('dettes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14"/><path d="M14 4l4 4-4 4"/><path d="M20 16H6"/><path d="M10 12l-4 4 4 4"/></svg>+ / -</button>
     <button data-o="outils" onclick="changerOnglet('outils')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/></svg>Outils</button>
   </nav>
   <div id="couche"><div class="voile" onclick="fermerFeuille()"></div><div class="feuille" id="feuille"></div></div>
@@ -440,12 +481,15 @@
 </div>
 
 <script>
-const VERSION = '7.2';
+const VERSION = '8.0';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
-// Lignes de revenus du Dashboard, dans le même ordre (une catégorie de revenu par ligne)
-const LIGNES_REVENUS = ['CA net', 'Aides sociales', 'Indemnités journalières', 'Famille / dons', "Ventes d'occasion", 'Exceptionnel', 'Divers'];
+// Revenus, dans l'ordre du Dashboard : CA net (ligne « CA NET »), puis les « Autres ressources » (onglet « Détail ressources »)
+const CAT_CA = 'CA net';
+const REVENUS = [CAT_CA, 'CAF', 'Ameli', 'Autres'];
+// Libellés proposés à la saisie (ils deviennent la note, et le libellé dans « Détail ressources »)
+const LIBELLES_REVENUS = { CAF: ['AAH', 'APL', "Prime d'activité"], Ameli: ['Indemnités journalières', 'Bon de transport'], Autres: ['Vente', 'Don'] };
 const MODE_DEMO = /[?&]demo\b/.test(location.search);
 const CLE_CACHE = MODE_DEMO ? 'depenses-demo-cache' : 'depenses-cache-v6';
 const CLE_CODE = 'depenses-code';
@@ -458,7 +502,7 @@ const EMOJI = {
   'Revolut : Dépenses pro': '💳', 'Assurance voiture': '🛡️', 'Courses': '🛒', 'Covoit': '🚗', 'Essence': '⛽', 'Forfait mobile': '📱',
   'Frais de voiture': '🔧', 'Impôts': '🏛️', 'Internet': '📶', 'Loyer': '🏠', 'Métro/train': '🚇', 'Parking': '🅿️', 'Santé': '❤️',
   'Énergie - électricité': '⚡', 'Salaire': '💶', 'Aides': '🤝', 'Autres revenus': '💰',
-  'CA net': '💼', 'Aides sociales': '🤝', 'Indemnités journalières': '🩺', 'Famille / dons': '👪', "Ventes d'occasion": '🏷️', 'Exceptionnel': '⭐', 'Divers': '💰'
+  'CA net': '💼', 'CAF': '🏛️', 'Ameli': '🩺', 'Autres': '💰', 'Aides sociales': '🤝', 'Indemnités journalières': '🩺', 'Famille / dons': '👪', "Ventes d'occasion": '🏷️', 'Exceptionnel': '⭐', 'Divers': '💰'
 };
 // Couleurs proposées pour le fond des icônes de catégorie ('' = couleur du groupe)
 const COULEURS_CHOIX = ['', '#a855f7', '#8b5cf6', '#6d5dfc', '#4f6bff', '#0ea5e9', '#06b6d4', '#10b981', '#16a34a', '#84cc16',
@@ -468,10 +512,6 @@ const EMOJIS_PROPOSES = ['🍔','🥐','🍕','☕','🍻','🛒','🏠','🛋�
 const PALETTE = ['#6d5dfc', '#f97316', '#10b981', '#ec4899', '#eab308', '#8b5cf6', '#06b6d4', '#a16207'];
 const COULEURS_GROUPES = { 'Dépenses plaisir': '#a855f7', 'Dépenses contraintes': '#4f6bff', 'Dépenses professionnelles': '#475569', 'Revenus': '#16a34a' };
 const PERIODES = [[1, 'Mois'], [3, 'Trim.'], [6, 'Sem.'], [12, 'An']];
-// Moyennes mensuelles 2025 de l'export Buddy (suggestions de budget)
-const MOYENNES_2025 = { 'Loyer': 510, 'Bouffe / Goûter / Café': 173, 'Courses': 157, 'Voyage': 152, 'Bars / Soirées': 142,
-  'Dépenses diverses': 140, 'Plaisir d’offrir / Cadeaux': 94, 'Essence': 86, 'Énergie - électricité': 76, 'Abonnements': 57,
-  'Vêtements': 48, 'Frais de voiture': 44, 'Assurance voiture': 27, 'Internet': 25, 'Santé': 23, 'Impôts': 12, 'Forfait mobile': 10, 'Métro/train': 4 };
 
 // Commerces reconnus dans la note : [motif, nom affiché, domaine du logo]
 const COMMERCES = [
@@ -583,7 +623,7 @@ function commerce(note) {
 
 /* ---------- État ---------- */
 let depenses = [], categories = [], recurrentes = [], dettes = [];
-let etatDashboard = null; // résultat de la dernière synchro avec le Dashboard (revenus)
+let etatDashboard = null; // résultat de la dernière synchro avec le Dashboard (ressources, CA, dépenses du mois)
 let onglet = 'accueil';
 const sousOnglets = { accueil: 'liste', outils: 'recurrentes' };
 let moisSel = cleMois(new Date());
@@ -883,7 +923,7 @@ function seDeconnecter() {
 
 /* ---------- Rendu ---------- */
 const SEGMENTS = {
-  accueil: [['liste', 'Liste'], ['apercu', 'Aperçu'], ['budget', 'Budget']],
+  accueil: [['liste', 'Liste'], ['apercu', 'Aperçu']],
   outils: [['recurrentes', 'Récurrentes'], ['categories', 'Catégories'], ['reglages', 'Réglages']],
 };
 
@@ -894,18 +934,17 @@ function render() {
   document.getElementById('segments').innerHTML = segs.map(([k, l]) =>
     `<button class="${sousOnglets[onglet] === k ? 'actif' : ''}" onclick="changerSousOnglet('${k}')">${l}</button>`).join('');
   document.getElementById('titre').innerHTML = rechercheActive ? '<b>Recherche</b>'
-    : onglet === 'dettes' ? '<b>+ / -</b>' : onglet === 'revenus' ? '<b>Revenus</b>' : onglet === 'outils' ? '<b>Outils</b>'
-    : `<b>${{ liste: 'Mes dépenses', apercu: 'Aperçu', budget: 'Budget' }[sousOnglets.accueil] || 'Mes dépenses'}</b>`;
+    : onglet === 'dettes' ? '<b>+ / -</b>' : onglet === 'outils' ? '<b>Outils</b>'
+    : `<b>${{ liste: 'Mes comptes', apercu: 'Aperçu' }[sousOnglets.accueil] || 'Mes comptes'}</b>`;
   if (rechercheActive) return renderRecherche();
   let html;
   if (onglet === 'dettes') html = vueDettes();
-  else if (onglet === 'revenus') html = vueRevenus();
   else if (onglet === 'outils') {
     const s = sousOnglets.outils;
     html = s === 'categories' ? vueCategories() : s === 'reglages' ? vueReglages() : vueRecurrentes();
   } else {
     const s = sousOnglets.accueil;
-    html = s === 'apercu' ? vueApercu() : s === 'budget' ? vueBudget() : vueListe();
+    html = s === 'apercu' ? vueApercu() : vueListe();
   }
   const nAttente = fileAttente.length;
   const etat = nAttente ? `⏳ ${nAttente} saisie${nAttente > 1 ? 's' : ''} en attente de réseau`
@@ -929,7 +968,6 @@ function changerSousOnglet(k) { sousOnglets[onglet] = k; animerEntree = true; re
 
 function boutonPlus() {
   if (onglet === 'dettes') return ouvrirDette(null);
-  if (onglet === 'revenus') return ouvrirDepense(null, true);
   if (onglet === 'outils' && sousOnglets.outils === 'recurrentes') return ouvrirRecurrente(null);
   if (onglet === 'outils' && sousOnglets.outils === 'categories') return ouvrirCategorie(null);
   ouvrirDepense(null);
@@ -958,16 +996,41 @@ function carteMois() {
 }
 
 // Montants avec data-v : ils « montent » jusqu'à leur valeur quand on change de mois
+// Comme le Dashboard : CA NET, Autres ressources, Dépenses, Delta (et le taux d'épargne)
+// Revenus · Dépenses · Delta ; toucher Revenus ou Dépenses ouvre le détail du mois (modifier, supprimer)
 function bilan3(tout, libelleDepenses) {
-  const total = somme(tout.filter(r => !estRevenu(r)));
-  const revenus = somme(tout.filter(estRevenu));
-  const solde = revenus - total;
-  return `<div class="bilan3">
-    <div><b data-v="${revenus}">${eur0(revenus)}</b><span>Revenus</span></div>
-    <div><b data-v="${total}">${eur0(total)}</b><span>${libelleDepenses || 'Dépenses'}</span></div>
-    <div><b data-v="${solde}" class="${solde >= 0 ? '' : 'negatif'}">${solde < 0 ? '-' : ''}${eur0(Math.abs(solde))}</b><span>Solde</span></div>
+  const dep = somme(tout.filter(r => !estRevenu(r)));
+  const ca = somme(tout.filter(r => estRevenu(r) && r.c === CAT_CA));
+  const autres = somme(tout.filter(r => estRevenu(r) && r.c !== CAT_CA));
+  const delta = ca + autres - dep;
+  const taux = ca + autres > 0 ? Math.round(delta / (ca + autres) * 100) : null;
+  const clic = !libelleDepenses; // mois à venir : montants prévus, rien à détailler
+  const tuile = (v, lib, quoi) => `<div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('${quoi}')"` : ''}>
+    <b data-v="${v}">${v < -0.5 ? '-' : ''}${eur0(Math.abs(v))}</b><span>${lib}</span></div>`;
+  return `<div class="bilan3 bilan4">
+    ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep, libelleDepenses || 'Dépenses', 'dep')}
+    <div><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
+      <span>Delta${taux === null ? '' : `<br><em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} % épargné</em>`}</span></div>
   </div>`;
 }
+
+/* ===== Détail d'un chiffre du mois (petite carte) ===== */
+function ouvrirDetailBilan(quoi) { haptique(); ouvrirFeuille({ type: 'detailBilan', quoi }); }
+// Petite carte au centre : une ligne par versement (date · catégorie · libellé · montant), puis = total
+function feuilleDetailBilan(f) {
+  const rev = f.quoi === 'rev';
+  const rs = duMois(moisSel).filter(r => estRevenu(r) === rev).sort((a, b) => a.date - b.date); // du 1er au dernier jour du mois
+  const jour = d => deux(d.getDate()) + '/' + deux(d.getMonth() + 1);
+  const ligne = r => `<div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
+    <div class="pop-ligne clic" onclick="if(!gesteEnCours)ouvrirDepuisDetail(${attr(r.id)})">
+      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b></div></div>`;
+  return `<div class="pop-tete"><b>${rev ? 'Revenus' : 'Dépenses'} · ${esc(nomMois(moisSel))}</b>
+      <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>
+    ${rs.length ? rs.map(ligne).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>'}
+    <div class="pop-total"><span>=</span><b class="${rev ? 'positif' : ''}">${eur(somme(rs))}</b></div>`;
+}
+// Depuis la carte : après l'enregistrement, on revient sur la carte
+function ouvrirDepuisDetail(id) { const quoi = feuilleEtat.quoi; ouvrirDepense(id); feuilleEtat.retourDetail = quoi; }
 function animerMontants() {
   const els = [...document.querySelectorAll('.bilan3 b[data-v]')];
   if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1004,36 +1067,6 @@ function listeParJour(liste) {
   }).join('');
 }
 
-// Catégories qui ont dépassé leur budget ce mois-ci
-function budgetsDepasses(k) {
-  const parCat = {};
-  depensesDuMois(k).forEach(r => { parCat[r.c] = (parCat[r.c] || 0) + r.m; });
-  return categoriesActives().filter(c => c.budget > 0 && c.groupe !== GROUPE_REVENUS && (parCat[c.nom] || 0) >= c.budget)
-    .map(c => ({ c, p: parCat[c.nom] / c.budget })).sort((a, b) => b.p - a.p);
-}
-
-// Fin de mois prévue = déjà dépensé + récurrentes encore à venir ; reste par jour sur les budgets
-function carteprevision(tout, aVenir, prevues) {
-  const depense = somme(tout.filter(r => !estRevenu(r)));
-  const prevu = aVenir.filter(x => groupeCat(x.r.categorie) !== GROUPE_REVENUS).reduce((s, x) => s + x.r.montant, 0)
-    + somme(prevues.filter(r => !estRevenu(r)));
-  const fin = depense + prevu;
-  const budgets = categoriesActives().filter(c => c.budget > 0 && c.groupe !== GROUPE_REVENUS);
-  let reste = '';
-  if (budgets.length) {
-    const noms = new Set(budgets.map(c => c.nom));
-    const total = budgets.reduce((s, c) => s + c.budget, 0);
-    const engage = somme(tout.filter(r => !estRevenu(r) && noms.has(r.c)))
-      + aVenir.filter(x => noms.has(x.r.categorie)).reduce((s, x) => s + x.r.montant, 0)
-      + somme(prevues.filter(r => noms.has(r.c)));
-    const auj = new Date();
-    const jours = dernierJour(auj.getFullYear(), auj.getMonth()) - auj.getDate() + 1;
-    const parJour = (total - engage) / jours;
-    reste = `<span class="${parJour < 0 ? 'negatif' : ''}">reste <b>${parJour < 0 ? '-' : ''}${eur0(Math.abs(parJour))}</b>/jour</span>`;
-  }
-  return `<div class="prevision clic" onclick="changerSousOnglet('budget')"><span>Fin de mois prévue : <b>${eur0(fin)}</b></span>${reste}</div>`;
-}
-
 /* ===== LISTE (écran d'ouverture, façon Buddy) ===== */
 function vueListe() {
   const tout = duMois(moisSel);
@@ -1047,14 +1080,10 @@ function vueListe() {
     .toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : catFiltre;
   // Mois à venir : le récap porte sur ce qui est prévu
   const prevus = aVenir.map(({ r }) => ({ m: r.montant, c: r.categorie, g: groupeCat(r.categorie) })).concat(prevues);
-  const depasses = estMoisActuel && !libFiltre ? budgetsDepasses(moisSel) : [];
   return `
     ${carteMois()}
-    ${depasses.length ? `<div class="bandeau" onclick="changerSousOnglet('budget')"><span style="font-size:20px">🚨</span>
-      <span>Budget dépassé : ${depasses.slice(0, 3).map(x => `<b>${esc(x.c.nom)}</b> (${Math.round(x.p * 100)} %)`).join(', ')}${depasses.length > 3 ? '…' : ''}</span></div>` : ''}
     <section class="card">
       ${futur ? bilan3(prevus, 'Prévu') : bilan3(tout)}
-      ${estMoisActuel && !libFiltre ? carteprevision(tout, aVenir, prevues) : ''}
       ${libFiltre ? `<div class="filtre-actif"><b style="text-transform:capitalize">${esc(libFiltre)}</b>
         <button class="puce" onclick="catFiltre=null;jourFiltre=null;render()">Tout voir</button></div>` : ''}
       ${aVenir.length || prevues.length ? `<div class="a-venir-titre">${futur ? 'Prévues ce mois-là' : 'À venir'}</div>` : ''}
@@ -1139,7 +1168,8 @@ function vueApercu() {
         </div>
       </div>
       ${bilan3(tout)}
-    </section>`;
+    </section>
+    ${carteRessources(tout)}`;
 
   if (total > 0) {
     html += `
@@ -1151,13 +1181,12 @@ function vueApercu() {
     <section class="card">
       <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
       ${cats.map(([c, v]) => {
-        const b = (categorie(c) || {}).budget;
         return `
         <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
           <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
           <div class="info"><div class="nom">${esc(c)}</div>
             <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
-            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois${b ? ' · ' + Math.round(v / b * 100) + ' % du budget' : ''}</div></div>
+            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois</div></div>
           <div class="mt">${eur(v)}${delta(c)}</div>
         </div>`;
       }).join('')}
@@ -1173,7 +1202,8 @@ function vueApercu() {
           <div class="info"><div class="nom">${esc(t.nom)}</div><div class="sous">${t.nb} fois</div></div>
           <div class="mt">${eur(t.total)}</div></div>`).join('')}</section>`;
   }
-  html += `<section class="card"><h2>6 derniers mois</h2>${histo()}</section>`;
+  html += `<section class="card"><h2>6 derniers mois</h2>${histo6()}
+      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>`;
   const annee = dateDeCle(moisSel).getFullYear();
   if (depenses.some(r => r.date.getFullYear() === annee)) html += `
     <section class="card carte-retro" onclick="ouvrirRetro(${annee})"><div class="gros">🎁</div>
@@ -1247,18 +1277,6 @@ function anneau(cats, couleurCat, total) {
   return `<svg viewBox="0 0 140 140">${arcs}</svg>`;
 }
 
-function histo() {
-  const mois = [];
-  for (let i = 5; i >= 0; i--) mois.push(decaler(moisSel, -i));
-  const max = Math.max(...mois.map(k => somme(depensesDuMois(k))), 1);
-  return `<div class="histo">${mois.map(k => {
-    const v = somme(depensesDuMois(k));
-    return `<div class="col ${k === moisSel ? 'sel' : ''}" onclick="allerMois('${k}')">
-      <div class="v">${v ? eur0(v) : ''}</div><div class="b" style="height:${v / max * 85}%"></div>
-      <div class="m">${nomMois(k, { month: 'short' }).replace('.', '')}</div></div>`;
-  }).join('')}</div>`;
-}
-
 function topCommerces(rs) {
   const g = {};
   rs.forEach(r => {
@@ -1295,97 +1313,93 @@ function carteCalendrier(rs) {
 }
 function choisirJourCal(j) { jourFiltre = j; catFiltre = null; sousOnglets.accueil = 'liste'; render(); document.getElementById('contenu').scrollTop = 0; }
 
-/* ===== REVENUS (même découpage que le Dashboard, synchronisé dans les 2 sens) ===== */
-function vueRevenus() {
-  const tout = duMois(moisSel);
+/* ===== RESSOURCES du mois (Aperçu) : CA net, CAF, Ameli, Autres, chaque ligne avec sa date ===== */
+const CLE_REPLIES = 'depenses-ressources-repliees';
+let replies = (() => { try { return new Set(JSON.parse(localStorage.getItem(CLE_REPLIES) || '[]')); } catch (e) { return new Set(); } })();
+function basculerRessource(nom) {
+  replies.has(nom) ? replies.delete(nom) : replies.add(nom);
+  try { localStorage.setItem(CLE_REPLIES, JSON.stringify([...replies])); } catch (e) {}
+  haptique(); render();
+}
+function carteRessources(tout) {
   const revs = tout.filter(estRevenu).sort((a, b) => b.date - a.date);
-  const total = somme(revs), dep = somme(tout.filter(r => !estRevenu(r)));
-  const epargne = total - dep;
   const parCat = {};
   revs.forEach(r => { (parCat[r.c] = parCat[r.c] || []).push(r); });
-  const noms = LIGNES_REVENUS.filter(n => categorie(n) || parCat[n])
-    .concat(Object.keys(parCat).filter(n => !LIGNES_REVENUS.includes(n)));
+  const noms = REVENUS.concat(Object.keys(parCat).filter(n => !REVENUS.includes(n)));
   const jour = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }).replace('.', '');
   const dash = etatDashboard;
   const etat = !dash ? '<span>🔗</span><span class="lbl">Synchro Dashboard pas encore activée</span>'
     : dash.erreur ? `<span>⚠️</span><span class="lbl">Dashboard : ${esc(dash.erreur)}</span>`
     : '<span>🔗</span><span class="lbl">Synchronisé avec ton Dashboard</span>';
-  return `${carteMois()}
-    <section class="card">
-      <div class="lbl">Revenus nets du mois</div>
-      <div class="rev-total" data-v="${total}">+${eur(total)}</div>
-      <div class="bilan3" style="grid-template-columns:repeat(3,1fr)">
-        <div><b>${eur0(dep)}</b><span>Dépenses</span></div>
-        <div><b class="${epargne >= 0 ? 'positif' : 'negatif'}">${epargne < 0 ? '-' : ''}${eur0(Math.abs(epargne))}</b><span>Épargne</span></div>
-        <div><b>${total > 0 ? Math.round(epargne / total * 100) + ' %' : '—'}</b><span>Taux</span></div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>Détail · comme ton Dashboard</h2>
-      ${noms.map(n => {
-        const rs = parCat[n] || [], v = somme(rs);
-        return `<div class="rev-ligne">
-          <div class="ligne clic" onclick="ouvrirDepense(null, true, ${attr(n)})">
-            <div class="ico" style="background:color-mix(in srgb, ${couleurCategorie(n, GROUPE_REVENUS)} 20%, var(--card))">${esc(emojiCat(n))}</div>
-            <div class="info"><div class="nom">${esc(n)}</div>${rs.length ? '' : '<div class="sous">Touche pour ajouter</div>'}</div>
-            <div class="mt ${v ? 'positif' : 'zero'}">${v ? '+' + eur(v) : '–'}</div></div>
-          ${rs.length ? `<div class="rev-detail">${rs.map(r => `<div onclick="ouvrirDepense(${attr(r.id)})">
-            <span>${jour(r.date)}${r.n ? ' · ' + esc(r.n) : ''}${fileAttente.length && idsEnAttente().has(r.id) ? ' ⏳' : ''}</span><b>${eur(r.m)}</b></div>`).join('')}</div>` : ''}
-        </div>`;
-      }).join('')}
-    </section>
-    <section class="card"><h2>6 derniers mois</h2>${histoRevenus()}
-      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>
-    <section class="card" style="padding:12px 16px"><a class="synchro-dash" href="${LIEN_DASHBOARD}" target="_blank" rel="noopener">${etat}<span>Ouvrir ↗</span></a></section>`;
+  return `<section class="card">
+    <h2>Ressources du mois</h2>
+    ${noms.map(n => {
+      const rs = parCat[n] || [], v = somme(rs), ouvert = rs.length && !replies.has(n);
+      return `<div class="rev-ligne">
+        <div class="ligne clic" onclick="${rs.length ? `basculerRessource(${attr(n)})` : `ouvrirDepense(null, true, ${attr(n)})`}">
+          <div class="ico" style="background:color-mix(in srgb, ${couleurCategorie(n, GROUPE_REVENUS)} 20%, var(--card))">${esc(emojiCat(n))}</div>
+          <div class="info"><div class="nom">${esc(n)}</div><div class="sous">${rs.length ? rs.length + ' versement' + (rs.length > 1 ? 's' : '') : 'Touche pour ajouter'}</div></div>
+          <div class="mt ${v ? 'positif' : 'zero'}">${v ? '+' + eur(v) : '–'}</div>
+          ${rs.length ? `<span class="chevron ${ouvert ? 'ouvert' : ''}">›</span>` : ''}</div>
+        ${ouvert ? `<div class="rev-detail">${rs.map(r => `<div onclick="ouvrirDepense(${attr(r.id)})">
+          <span><b class="rev-date">${jour(r.date)}</b>${r.n ? esc(r.n) : '<i>sans libellé</i>'}${fileAttente.length && idsEnAttente().has(r.id) ? ' ⏳' : ''}</span><b>${eur(r.m)}</b></div>`).join('')}
+          <div class="rev-ajout" onclick="ouvrirDepense(null, true, ${attr(n)})">＋ Ajouter ${esc(n)}</div></div>` : ''}
+      </div>`;
+    }).join('')}
+    <a class="synchro-dash" href="${LIEN_DASHBOARD}" target="_blank" rel="noopener">${etat}<span>Ouvrir ↗</span></a>
+  </section>`;
 }
-function histoRevenus() {
+
+/* ===== Graphique 6 derniers mois : revenus / dépenses ; glisser le doigt affiche les chiffres du mois ===== */
+function histo6() {
   const mois = [];
   for (let i = 5; i >= 0; i--) mois.push(decaler(moisSel, -i));
   const val = k => { const t = duMois(k); return [somme(t.filter(estRevenu)), somme(t.filter(r => !estRevenu(r)))]; };
   const max = Math.max(1, ...mois.map(k => Math.max(...val(k))));
-  return `<div class="histo2">${mois.map(k => { const [r, d] = val(k); return `<div class="col ${k === moisSel ? 'sel' : ''}" onclick="allerMois('${k}')">
+  return `<div class="histo2" id="histo6">${mois.map(k => { const [r, d] = val(k); return `<div class="col ${k === moisSel ? 'sel' : ''}" data-k="${k}" data-r="${r}" data-d="${d}">
     <div class="barres"><i style="height:${r / max * 100}%;background:var(--down)"></i><i style="height:${d / max * 100}%;background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i></div>
-    <div class="m">${nomMois(k, { month: 'short' }).replace('.', '')}</div></div>`; }).join('')}</div>`;
+    <div class="m">${nomMois(k, { month: 'short' }).replace('.', '')}</div></div>`; }).join('')}<div class="bulle-histo" hidden></div></div>`;
 }
-
-/* ===== BUDGET ===== */
-function vueBudget() {
-  const parCat = {};
-  depensesDuMois(moisSel).forEach(r => { parCat[r.c] = (parCat[r.c] || 0) + r.m; });
-  const estMoisActuel = moisSel === cleMois(new Date());
-  const avecBudget = categoriesActives().filter(c => c.budget > 0 && c.groupe !== GROUPE_REVENUS)
-    .map(c => ({ c, depense: parCat[c.nom] || 0 }))
-    .sort((a, b) => b.depense / b.c.budget - a.depense / a.c.budget);
-  const sansBudget = Object.keys(parCat).filter(n => !avecBudget.some(x => x.c.nom === n));
-  if (!avecBudget.length) return carteMois() + `<section class="card"><div class="vide">Aucun budget défini.<br>
-    <button class="puce" style="margin-top:12px" onclick="changerOnglet('outils','categories')">Définir mes budgets</button></div></section>`;
-  const totalBudget = avecBudget.reduce((s, x) => s + x.c.budget, 0);
-  const totalDepense = avecBudget.reduce((s, x) => s + x.depense, 0);
-  const reste = totalBudget - totalDepense;
-  const couleur = p => p > 1 ? 'var(--danger)' : p > .8 ? 'var(--orange)' : 'var(--down)';
-  const jourDuMois = new Date().getDate(), nbJours = dernierJour(new Date().getFullYear(), new Date().getMonth());
-  return `${carteMois()}
-    <section class="card">
-      <div class="entre"><span class="lbl">${reste >= 0 ? (estMoisActuel ? 'Reste à dépenser ce mois' : 'Restait sur tes budgets') : 'Budgets dépassés de'}</span>
-        <b class="${reste >= 0 ? 'positif' : 'negatif'}">${eur0(Math.abs(reste))}</b></div>
-      <div class="jauge" style="height:12px"><span style="width:${Math.min(totalDepense / totalBudget, 1) * 100}%;background:${couleur(totalDepense / totalBudget)}"></span></div>
-      <div class="entre" style="margin:8px 0 0"><span class="lbl">${eur0(totalDepense)} dépensés sur ${eur0(totalBudget)}</span>
-        ${estMoisActuel && reste > 0 ? `<span class="lbl">soit ${eur0(reste / Math.max(nbJours - jourDuMois + 1, 1))} / jour</span>` : ''}</div>
-    </section>
-    <section class="card">
-      ${avecBudget.map(({ c, depense }) => {
-        const p = depense / c.budget;
-        return `<div class="ligne clic" onclick="ouvrirCategorie(${attr(c.nom)})">
-          <div class="ico" style="background:color-mix(in srgb, ${couleurCategorie(c.nom, c.groupe)} 20%, var(--card))">${esc(c.emoji || '•')}</div>
-          <div class="info"><div class="nom">${esc(c.nom)}</div>
-            <div class="jauge" style="height:8px"><span style="width:${Math.min(p, 1) * 100}%;background:${couleur(p)}"></span></div></div>
-          <div class="mt">${eur0(depense)}<small>/ ${eur0(c.budget)}</small></div></div>`;
-      }).join('')}
-    </section>
-    ${sansBudget.length ? `<section class="card"><h2>Sans budget ce mois</h2>${sansBudget.map(n => `
-      <div class="ligne clic" onclick="ouvrirCategorie(${attr(n)})"><div class="ico">${esc(emojiCat(n))}</div>
-        <div class="info"><div class="nom">${esc(n)}</div></div><div class="mt">${eur0(parCat[n])}<small>Définir ›</small></div></div>`).join('')}</section>` : ''}`;
-}
+// Doigt posé ou glissé sur le graphique : bulle avec revenus, dépenses et delta du mois survolé ; simple toucher = aller au mois
+(function () {
+  let actif = null, bouge = false, dernier = null, x0 = 0;
+  const colonneSous = (g, x) => [...g.querySelectorAll('.col')].find(c => { const b = c.getBoundingClientRect(); return x >= b.left - 5 && x <= b.right + 5; });
+  const montrer = (g, col) => {
+    if (!col) return;
+    if (col !== dernier) { dernier = col; haptique(); }
+    g.querySelectorAll('.col').forEach(c => c.classList.toggle('survol', c === col));
+    const r = Number(col.dataset.r), d = Number(col.dataset.d), delta = r - d;
+    const bulle = g.querySelector('.bulle-histo');
+    bulle.innerHTML = `<b>${majuscule(nomMois(col.dataset.k))}</b>
+      <span><i style="background:var(--down)"></i>Revenus <em>${eur0(r)}</em></span>
+      <span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses <em>${eur0(d)}</em></span>
+      <span class="${delta >= 0 ? 'positif' : 'negatif'}">Delta <em>${delta < 0 ? '-' : '+'}${eur0(Math.abs(delta))}</em></span>`;
+    bulle.hidden = false;
+    const gb = g.getBoundingClientRect(), cb = col.getBoundingClientRect();
+    const l = Math.min(Math.max(cb.left + cb.width / 2 - gb.left - bulle.offsetWidth / 2, 0), gb.width - bulle.offsetWidth);
+    bulle.style.left = l + 'px';
+  };
+  const cacher = g => { g.querySelector('.bulle-histo').hidden = true; g.querySelectorAll('.col').forEach(c => c.classList.remove('survol')); };
+  document.addEventListener('pointerdown', e => {
+    const g = e.target.closest('#histo6');
+    if (!g) return;
+    actif = g; bouge = false; dernier = null; x0 = e.clientX;
+    montrer(g, colonneSous(g, e.clientX));
+  });
+  document.addEventListener('pointermove', e => {
+    if (!actif) return;
+    if (Math.abs(e.clientX - x0) > 6) bouge = true;
+    montrer(actif, colonneSous(actif, e.clientX));
+  });
+  const fin = e => {
+    if (!actif) return;
+    const g = actif; actif = null;
+    if (!bouge && e.type === 'pointerup') { const col = colonneSous(g, e.clientX); if (col) return allerMois(col.dataset.k); }
+    setTimeout(() => cacher(g), bouge ? 1400 : 0);
+  };
+  document.addEventListener('pointerup', fin);
+  document.addEventListener('pointercancel', fin);
+})();
 
 /* ===== + / - : ce que tu dois recevoir (+) ou payer (-) ===== */
 // « On me doit » (+) = remboursements attendus, avances ; « Je dois » (-) = à payer
@@ -1393,21 +1407,25 @@ function elementsDettes() {
   const avances = depenses.filter(r => r.qui && r.du > 0).map(r => ({
     type: 'avance', id: r.id, sens: 'On me doit', qui: r.qui, m: r.du, n: r.n || r.c, date: r.date, regle: !!r.remb, total: r.m }));
   const manuelles = dettes.map(d => ({ type: 'dette', id: d.id, sens: d.sens, qui: d.qui, m: d.m, n: d.n, date: d.date, regle: !!d.regle }));
-  return avances.concat(manuelles).sort((a, b) => b.date - a.date);
+  return avances.concat(manuelles).sort((a, b) => b.m - a.m);
 }
 function vueDettes() {
   const tous = elementsDettes();
   const ouverts = tous.filter(x => !x.regle), regles = tous.filter(x => x.regle);
   const onMeDoit = ouverts.filter(x => x.sens === 'On me doit'), jeDois = ouverts.filter(x => x.sens === 'Je dois');
-  const ligne = x => `
-    <div class="ligne">
+  // Les mémos (dettes) se suppriment en glissant vers la gauche ; une avance vient d'une dépense, elle se modifie depuis celle-ci
+  const ligne = x => {
+    const sous = [x.n || '', x.type === 'avance' ? 'sur ' + eur(x.total) : ''].filter(Boolean).join(' · ');
+    const corps = `<div class="ligne ligne-pm">
       <div class="avatar ${x.sens === 'On me doit' ? 'plus' : 'moins'}">${x.sens === 'On me doit' ? '+' : '−'}</div>
-      <div class="info clic" onclick="${x.type === 'avance' ? `ouvrirDepense(${attr(x.id)})` : `ouvrirDette(${attr(x.id)})`}">
+      <div class="info clic" onclick="if(!gesteEnCours)${x.type === 'avance' ? `ouvrirDepense(${attr(x.id)})` : `ouvrirDette(${attr(x.id)})`}">
         <div class="nom">${esc(x.qui)} · ${eur(x.m)}</div>
-        <div class="sous" style="white-space:normal">${esc(x.n || '')}${x.n ? ' · ' : ''}${x.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}${x.type === 'avance' ? ' · sur ' + eur(x.total) : ''}</div></div>
+        ${sous ? `<div class="sous" style="white-space:normal">${esc(sous)}</div>` : ''}</div>
       ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">Annuler</button>`
         : `<button class="ok-btn" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, true)">✓ ${x.sens === 'On me doit' ? 'Reçu' : 'Payé'}</button>`}
     </div>`;
+    return x.type === 'dette' ? `<div class="swipe" data-id="${esc(x.id)}" data-type="dette"><div class="swipe-fond">Supprimer</div>${corps}</div>` : corps;
+  };
   const totalPlus = onMeDoit.reduce((s, x) => s + x.m, 0), totalMoins = jeDois.reduce((s, x) => s + x.m, 0);
   return `
     <section class="card"><div class="duo">
@@ -1423,7 +1441,7 @@ function vueDettes() {
     ${regles.length ? `<section class="card" style="padding-top:6px;padding-bottom:6px">
       <div class="action-ligne" onclick="voirReglees=!voirReglees;render()"><span>Terminés (${regles.length})</span><span>${voirReglees ? '⌄' : '›'}</span></div>
       ${voirReglees ? regles.map(ligne).join('') : ''}</section>` : ''}
-    <div class="maj" style="margin-bottom:6px">Touche + pour noter un remboursement attendu ou un paiement à faire</div>`;
+    <div class="maj" style="margin-bottom:6px">Touche + pour ajouter · touche une ligne pour la modifier · glisse-la vers la gauche pour la supprimer</div>`;
 }
 function reglerElement(type, id, oui) {
   if (type === 'avance') {
@@ -1536,8 +1554,7 @@ function vueCategories() {
           <div class="ligne">
             <button class="moins" onclick="demanderSuppressionCategorie(${attr(c.nom)})" aria-label="Supprimer">−</button>
             <div class="ico clic" style="background:color-mix(in srgb, ${couleurCategorie(c.nom, g)} 20%, var(--card))" onclick="ouvrirCategorie(${attr(c.nom)})">${esc(c.emoji || '•')}</div>
-            <div class="info clic" onclick="ouvrirCategorie(${attr(c.nom)})"><div class="nom" style="font-weight:500;font-size:16px">${esc(c.nom)}</div>
-              ${c.budget ? `<div class="sous">Budget ${eur0(c.budget)} / mois</div>` : ''}</div>
+            <div class="info clic" onclick="ouvrirCategorie(${attr(c.nom)})"><div class="nom" style="font-weight:500;font-size:16px">${esc(c.nom)}</div></div>
             <span class="lbl clic" style="font-size:20px;padding:0 4px" onclick="ouvrirCategorie(${attr(c.nom)})">›</span>
           </div>`).join('')}
       </section>`).join('')}
@@ -1665,7 +1682,7 @@ let gesteEnCours = false;
   let el = null, x0 = 0, y0 = 0, dx = 0, sens = null;
   document.addEventListener('pointerdown', e => {
     const s = e.target.closest('.swipe');
-    if (!s || !e.isPrimary || el || feuilleOuverte()) return;
+    if (!s || !e.isPrimary || el || (feuilleOuverte() && !s.closest('#feuille'))) return;
     el = s; x0 = e.clientX; y0 = e.clientY; dx = 0; sens = null;
   });
   document.addEventListener('pointermove', e => {
@@ -1675,18 +1692,18 @@ let gesteEnCours = false;
     if (sens !== 'h') return;
     gesteEnCours = true;
     dx = Math.min(0, ddx);
-    const ligne = el.querySelector('.tx');
+    const ligne = el.querySelector('.swipe-fond').nextElementSibling;
     ligne.style.transition = 'none';
     ligne.style.transform = `translateX(${dx}px)`;
     el.querySelector('.swipe-fond').style.opacity = Math.min(1, -dx / 80);
   });
   const fin = () => {
     if (!el) return;
-    const s = el, ligne = s.querySelector('.tx');
+    const s = el, ligne = s.querySelector('.swipe-fond').nextElementSibling;
     ligne.style.transition = '';
     if (sens === 'h' && -dx > s.offsetWidth * 0.4) {
       ligne.style.transform = 'translateX(-110%)';
-      setTimeout(() => supprimerAvecAnnuler(s.dataset.id), 180);
+      setTimeout(() => s.dataset.type === 'dette' ? supprimerDetteAvecAnnuler(s.dataset.id) : supprimerAvecAnnuler(s.dataset.id), 180);
     } else {
       ligne.style.transform = '';
       s.querySelector('.swipe-fond').style.opacity = 0;
@@ -1703,7 +1720,7 @@ function supprimerAvecAnnuler(id) {
   if (!r || enAttenteSuppression[id]) return;
   haptique();
   depenses = depenses.filter(x => x.id !== id);
-  render();
+  render(); redessinerDetail();
   // Le jeton garantit qu'une suppression annulée n'est jamais envoyée
   const jeton = {};
   jeton.minuteur = setTimeout(() => {
@@ -1715,7 +1732,28 @@ function supprimerAvecAnnuler(id) {
   toast(`🗑 ${r.n || r.c} · ${eur(r.m)} supprimé`, { texte: 'Annuler', fn: () => {
     if (enAttenteSuppression[id] !== jeton) return;
     clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
-    depenses = depenses.concat(r); render(); toast('↩︎ Restauré');
+    depenses = depenses.concat(r); render(); redessinerDetail(); toast('↩︎ Restauré');
+  } }, 5000);
+}
+
+function redessinerDetail() { if (feuilleEtat && feuilleEtat.type === 'detailBilan') dessinerFeuille(); }
+function supprimerDetteAvecAnnuler(id) {
+  const d = dettes.find(x => x.id === id);
+  if (!d || enAttenteSuppression[id]) return;
+  haptique();
+  dettes = dettes.filter(x => x.id !== id);
+  render();
+  const jeton = {};
+  jeton.minuteur = setTimeout(() => {
+    if (enAttenteSuppression[id] !== jeton) return;
+    delete enAttenteSuppression[id];
+    ecrire('supprimerDette', [id]);
+  }, 5000);
+  enAttenteSuppression[id] = jeton;
+  toast(`🗑 ${d.qui} · ${eur(d.m)} supprimé`, { texte: 'Annuler', fn: () => {
+    if (enAttenteSuppression[id] !== jeton) return;
+    clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
+    dettes = dettes.concat(d); render(); toast('↩︎ Restauré');
   } }, 5000);
 }
 
@@ -1739,9 +1777,10 @@ function fermerFeuille() {
 function dessinerFeuille() {
   const f = feuilleEtat;
   const vues = { depense: feuilleDepense, recurrente: feuilleRecurrente, categorie: feuilleCategorie, groupe: feuilleGroupe,
-    dette: feuilleDette, confirmer: feuilleConfirmer, choixCat: feuilleChoixCat, retro: feuilleRetro };
+    dette: feuilleDette, confirmer: feuilleConfirmer, choixCat: feuilleChoixCat, retro: feuilleRetro, detailBilan: feuilleDetailBilan };
   const el = document.getElementById('feuille');
   el.classList.toggle('pleine', f.type === 'choixCat' || f.type === 'depense' || f.type === 'retro');
+  el.classList.toggle('pop', f.type === 'detailBilan');
   el.innerHTML = vues[f.type](f);
   if (f.type === 'depense') ajusterLargeurMontant();
 }
@@ -1821,8 +1860,10 @@ function feuilleDepense(f) {
     </div>
     ${rangeeCategorie(f)}
     <div class="rangee"><div class="ic-trait">${IC.note}</div>
-      <input type="text" data-champ="note" placeholder="Remarque (Subway, Leclerc…)" value="${esc(f.note)}" enterkeyhint="done"
+      <input type="text" data-champ="note" placeholder="${f.revenu ? 'Libellé (AAH, Vente 207…)' : 'Remarque (Subway, Leclerc…)'}" value="${esc(f.note)}" enterkeyhint="done"
         oninput="suggererCategorie(this.value)"></div>
+    ${f.revenu && LIBELLES_REVENUS[cat] ? `<div class="grille libelles">${LIBELLES_REVENUS[cat].map(l =>
+      `<button class="${sansAccents(f.note).startsWith(sansAccents(l)) ? 'sel' : ''}" onclick="majFeuille({note:${attr(l)}})">${esc(l)}</button>`).join('')}</div>` : ''}
     <div class="rangee"><div class="ic-trait">${IC.cal}</div>
       <label class="texte" style="position:relative;color:var(--txt)">${esc(libelleJour(f.date))}
         <input type="date" value="${dateIso}" onchange="choisirJour(this.value)" style="position:absolute;inset:0;opacity:0;width:100%"></label>
@@ -1972,7 +2013,6 @@ function validerDepense() {
   if (rec) envoi.recurrente = rec.ligne;
   const ancienne = depenses.find(x => x.id === f.id) || {};
   const changeCat = !f.nouvelle && ancienne.c !== f.categorie;
-  const avantBudget = f.revenu ? 0 : depensesDuMois(cleMois(d)).filter(x => x.c === f.categorie && x.id !== f.id).reduce((s, x) => s + x.m, 0);
   const locale = { id: f.id || envoi.idClient, d: envoi.date, date: d, m, c: f.categorie, n: envoi.note,
     s: f.nouvelle ? 'Appli' : ancienne.s,
     g: f.nouvelle || changeCat ? groupeCat(f.categorie) : ancienne.g,   // historique figé
@@ -1981,21 +2021,13 @@ function validerDepense() {
   const nouvelle = f.nouvelle;
   const repeter = nouvelle && !f.revenu ? Number(f.repeter) || 0 : 0;
   moisSel = cleMois(d);
-  if (nouvelle && onglet !== 'revenus') { onglet = 'accueil'; sousOnglets.accueil = 'liste'; }
+  if (nouvelle && !f.retourDetail) { onglet = 'accueil'; sousOnglets.accueil = 'liste'; }
+  if (f.retourDetail) setTimeout(() => { if (!feuilleOuverte()) ouvrirFeuille({ type: 'detailBilan', quoi: f.retourDetail }); }, 320);
   if (moisSel > moisMax()) moisSel = moisMax();
   feuilleEtat = null; fermerFeuille();
   haptique();
-  // Alerte quand la catégorie franchit 80 % ou 100 % de son budget du mois
-  const cat = categorie(f.categorie);
-  let message = prevue ? `🗓️ Prévu le ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} · ${eur(m)} dans « À venir »`
-    : nouvelle ? (f.revenu ? `✅ Revenu ajouté · +${eur(m)}${LIGNES_REVENUS.includes(f.categorie) ? ', aussi dans ton Dashboard' : ''}` : `✅ Dépense ajoutée · ${eur(m)} · ${f.categorie}`) : '✅ Modifié';
-  if (cat && cat.budget > 0 && !f.revenu && !prevue && cleMois(d) === cleMois(new Date())) {
-    const avant = avantBudget / cat.budget, apres = (avantBudget + m) / cat.budget;
-    if ((avant < 1 && apres >= 1) || (avant < .8 && apres >= .8)) {
-      message = `${apres >= 1 ? '🚨' : '⚠️'} ${f.categorie} : ${Math.round(apres * 100)} % du budget · ${eur0(avantBudget + m)} sur ${eur0(cat.budget)} ce mois`;
-      setTimeout(haptique, 250);
-    }
-  }
+  const message = prevue ? `🗓️ Prévu le ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} · ${eur(m)} dans « À venir »`
+    : nouvelle ? (f.revenu ? `✅ Revenu ajouté · +${eur(m)}${REVENUS.includes(f.categorie) ? ', aussi dans ton Dashboard' : ''}` : `✅ Dépense ajoutée · ${eur(m)} · ${f.categorie}`) : '✅ Modifié';
   ecrire('enregistrerDepense', [envoi], () => {
     depenses = nouvelle ? depenses.concat(locale) : depenses.map(x => x.id === f.id ? locale : x);
     if (rec) rec.dernierAjout = cleMois(d);
@@ -2123,7 +2155,7 @@ function ouvrirCategorie(nom) {
   const c = nom ? categorie(nom) : null;
   const gs = groupes().filter(g => g !== GROUPE_REVENUS);
   ouvrirFeuille({ type: 'categorie', ancienNom: c ? c.nom : null, nom: c ? c.nom : (nom || ''), emoji: c ? c.emoji : '🛒', couleur: c ? c.couleur || '' : '',
-    groupe: c ? c.groupe : (gs[0] || 'Dépenses plaisir'), nouveauGroupe: false, nouvelle: !c, budget: c && c.budget ? String(c.budget) : '' });
+    groupe: c ? c.groupe : (gs[0] || 'Dépenses plaisir'), nouveauGroupe: false, nouvelle: !c });
 }
 function feuilleCategorie(f) {
   return `${tete(f.nouvelle ? 'Nouvelle catégorie' : 'Modifier la catégorie')}
@@ -2143,11 +2175,6 @@ function feuilleCategorie(f) {
     <div class="grille">${groupes().map(g => `<button class="${!f.nouveauGroupe && f.groupe === g ? 'sel' : ''}" onclick="majFeuille({groupe:${attr(g)},nouveauGroupe:false})">${esc(g)}</button>`).join('')}
       <button class="${f.nouveauGroupe ? 'sel' : ''}" onclick="majFeuille({nouveauGroupe:true,groupe:''})">＋ Nouveau groupe</button></div>
     ${f.nouveauGroupe ? `<div class="champ" style="margin-top:10px"><span class="ic">🆕</span><input type="text" data-champ="groupe" placeholder="Nom du groupe" value="${esc(f.groupe)}"></div>` : ''}
-    ${f.groupe === GROUPE_REVENUS ? '' : `
-    <div class="champ" style="margin-top:14px"><span class="ic">🎯</span><span class="etiq">Budget par mois</span>
-      <input type="text" data-champ="budget" inputmode="numeric" placeholder="aucun" value="${esc(f.budget)}" style="flex:0 0 80px;text-align:right"><span>€</span></div>
-    ${MOYENNES_2025[f.ancienNom || f.nom] ? `<div class="aide">Ta moyenne Buddy 2025 : ${eur0(MOYENNES_2025[f.ancienNom || f.nom])} par mois.
-      <a href="#" onclick="event.preventDefault();majFeuille({budget:'${MOYENNES_2025[f.ancienNom || f.nom]}'})" style="color:var(--accent)">Utiliser</a></div>` : ''}`}
     ${f.nouvelle ? '' : '<div class="aide" style="margin-left:0;margin-top:12px">Tes dépenses passées gardent leur nom et leur groupe d\'origine.</div>'}
     <button class="btn principal" onclick="validerCategorie()">ENREGISTRER</button>
     ${f.nouvelle ? '' : `<button class="btn danger" onclick="fermerFeuille();demanderSuppressionCategorie(${attr(f.ancienNom)})">Supprimer</button>`}`;
@@ -2156,14 +2183,14 @@ function validerCategorie() {
   lireChamps();
   const f = feuilleEtat;
   const envoi = { ancienNom: f.ancienNom, nom: String(f.nom || '').trim(), groupe: String(f.groupe || '').trim(),
-    emoji: String(f.emoji || '').trim() || '•', budget: Math.round(lireMontant(f.budget)) || '', couleur: f.couleur || '' };
+    emoji: String(f.emoji || '').trim() || '•', couleur: f.couleur || '' };
   if (!envoi.nom) return toast('⚠️ Donne-lui un nom');
   if (!envoi.groupe) return toast('⚠️ Choisis un groupe');
   if (envoi.nom !== envoi.ancienNom && categorie(envoi.nom)) return toast('⚠️ Ce nom existe déjà');
   const nouvelle = f.nouvelle;
   feuilleEtat = null; fermerFeuille();
   ecrire('enregistrerCategorie', [envoi], () => {
-    const valeurs = { nom: envoi.nom, groupe: envoi.groupe, emoji: envoi.emoji, budget: Number(envoi.budget) || 0, couleur: envoi.couleur };
+    const valeurs = { nom: envoi.nom, groupe: envoi.groupe, emoji: envoi.emoji, couleur: envoi.couleur };
     if (nouvelle) categories = categories.concat({ ...valeurs, active: true });
     else {
       categories = categories.map(c => c.nom === envoi.ancienNom ? { ...c, ...valeurs } : c);
@@ -2313,10 +2340,10 @@ const DEMO = (function () {
     ['Dépenses plaisir', ['Abonnements', 'Appartement Déco', 'Bars / Soirées', 'Bien être et compléments santé', 'Bouffe / Goûter / Café', 'Dépenses diverses', 'Plaisir d’offrir / Cadeaux', 'Voyage', 'Vêtements']],
     ['Dépenses professionnelles', ['Revolut : Dépenses pro']],
     ['Dépenses contraintes', ['Assurance voiture', 'Courses', 'Covoit', 'Essence', 'Forfait mobile', 'Frais de voiture', 'Impôts', 'Internet', 'Loyer', 'Métro/train', 'Parking', 'Santé', 'Énergie - électricité']],
-    ['Revenus', LIGNES_REVENUS],
+    ['Revenus', REVENUS],
   ];
   let cats = [];
-  def.forEach(([g, noms]) => noms.forEach(nom => cats.push({ nom, groupe: g, emoji: EMOJI[nom] || '•', active: true, budget: Math.round((MOYENNES_2025[nom] || 0) / 5) * 5 })));
+  def.forEach(([g, noms]) => noms.forEach(nom => cats.push({ nom, groupe: g, emoji: EMOJI[nom] || '•', active: true })));
   const depensables = cats.filter(c => c.groupe !== 'Revenus').map(c => c.nom);
   const notes = ['Mc do', 'BK', 'Courses Leclerc', '', 'Boulangerie', 'Café avec Maël', 'Subway', '', 'EDF', 'Zara', 'Uber', 'Loto', 'Bière Le QG'];
   let deps = [], n = 0, seed = 7;
@@ -2331,8 +2358,8 @@ const DEMO = (function () {
       n: notes[Math.floor(rnd() * notes.length)], s: 'iPhone', g: grp(c), e: emo(c), t: '', qui: '', du: 0, remb: false });
   }
   const rev = (k, j, m, c, note) => deps.push({ id: 'd' + (n++), d: versTexteDate(new Date(now.getFullYear(), now.getMonth() - k, j, 12)), m, c, n: note, s: 'Dashboard', g: 'Revenus', e: EMOJI[c], t: '', qui: '', du: 0, remb: false });
-  for (let k = 0; k < 6; k++) { rev(k, 1, 818.67, 'Aides sociales', 'AAH'); if (k) rev(k, 10, 272.3, 'Indemnités journalières', 'IJ'); }
-  rev(1, 18, 2700, 'Exceptionnel', 'Vente voiture'); rev(2, 7, 150, 'Famille / dons', 'Mamie'); rev(3, 12, 45, "Ventes d'occasion", 'Vinted');
+  for (let k = 0; k < 6; k++) { rev(k, 5, 818.67, 'CAF', 'AAH'); if (k) rev(k, 10, 272.3, 'Ameli', 'Indemnités journalières'); if (k > 2) rev(k, 3, 1800, 'CA net', ''); }
+  rev(0, 8, 171, 'CAF', 'APL'); rev(1, 15, 2700, 'Autres', 'Vente 207'); rev(2, 7, 150, 'Autres', 'Don Mami'); rev(3, 31, 855.81, 'Ameli', 'Bon de transport');
   deps.push({ id: 'd' + (n++), d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), Math.min(now.getDate() + 3, 28), 12)), m: 9.99, c: 'Forfait mobile', n: 'Sosh', s: 'Appli', g: 'Dépenses contraintes', e: '📱', t: '', qui: '', du: 0, remb: false });
   let dets = [{ id: 'x1', d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), 2, 20)), sens: 'On me doit', qui: 'Allianz', m: 19.56, n: 'Remboursement assurance auto', regle: false },
     { id: 'x2', d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), 3, 20)), sens: 'Je dois', qui: 'Allianz', m: 8, n: 'Assurance auto', regle: false }];
@@ -2361,9 +2388,9 @@ const DEMO = (function () {
     marquerRembourse: (id, oui) => { deps.find(r => r.id === id).remb = oui; },
     enregistrerCategorie: x => {
       if (x.ancienNom) {
-        Object.assign(cats.find(c => c.nom === x.ancienNom), { nom: x.nom, groupe: x.groupe, emoji: x.emoji, budget: Number(x.budget) || 0, couleur: x.couleur || '' });
+        Object.assign(cats.find(c => c.nom === x.ancienNom), { nom: x.nom, groupe: x.groupe, emoji: x.emoji, couleur: x.couleur || '' });
         recs.forEach(r => { if (r.categorie === x.ancienNom) r.categorie = x.nom; }); // les dépenses passées ne changent pas
-      } else cats.push({ nom: x.nom, groupe: x.groupe, emoji: x.emoji, active: true, budget: Number(x.budget) || 0, couleur: x.couleur || '' });
+      } else cats.push({ nom: x.nom, groupe: x.groupe, emoji: x.emoji, active: true, couleur: x.couleur || '' });
     },
     supprimerCategorie: nom => { cats.find(c => c.nom === nom).active = false; },
     restaurerCategorie: nom => { cats.find(c => c.nom === nom).active = true; },

@@ -1,6 +1,6 @@
 // Service worker : l'appli s'ouvre tout de suite (et même hors ligne) depuis le cache,
 // puis se met à jour en arrière-plan pour la prochaine ouverture.
-const CACHE = 'depenses-v7.2';
+const CACHE = 'depenses-v8.0';
 const CACHE_LOGOS = 'depenses-logos'; // logos des commerces : gardés d'une version à l'autre
 const FICHIERS = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
