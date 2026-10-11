@@ -65,8 +65,12 @@
   .onglets button svg { width: 23px; height: 23px; }
   .onglets button.actif { background: var(--card2); color: var(--txt); }
   .onglets button.actif svg { color: var(--accent); }
-  .fab { position: absolute; right: 16px; bottom: calc(var(--bas-barre) + 74px); width: 58px; height: 58px; border-radius: 50%; border: 0;
-    background: var(--fab); color: var(--fab-txt); font-size: 34px; font-weight: 300; line-height: 1; box-shadow: var(--ombre); z-index: 6; }
+  .fab { position: absolute; right: 18px; bottom: calc(var(--bas-barre) + 74px); width: 60px; height: 60px; min-width: 60px; aspect-ratio: 1; flex: none;
+    padding: 0; border-radius: 50%; border: 0; display: grid; place-items: center; z-index: 6; color: #fff;
+    background: radial-gradient(120% 120% at 30% 20%, #b48cff 0%, #8b5cf6 45%, #6d28d9 100%);
+    box-shadow: 0 10px 24px -6px rgba(109, 40, 217, .55), 0 2px 6px rgba(0, 0, 0, .12), inset 0 1px 0 rgba(255, 255, 255, .35); }
+  .fab svg { width: 26px; height: 26px; transition: transform .3s cubic-bezier(.2, .9, .3, 1.3); }
+  .fab:active svg { transform: rotate(90deg); }
   .fab { transition: transform .25s cubic-bezier(.2, .9, .3, 1.2), opacity .2s; }
   .fab:active { transform: scale(.94); }
   .fab.cache { transform: translateY(24px) scale(.6); opacity: 0; pointer-events: none; }
@@ -103,7 +107,7 @@
   .bilan4 > div { padding: 2px 2px; border-radius: 12px; }
   .bilan4 b { font-size: 17px; white-space: nowrap; }
   .bilan4 span { line-height: 1.25; display: block; font-size: 11.5px; }
-  .bilan4 em { font-style: normal; font-weight: 700; }
+  .bilan4 em { font-style: normal; font-weight: 700; font-size: 11px; }
   .bilan4 .clic:active { background: color-mix(in srgb, var(--accent) 10%, transparent); }
   .feuille.pop { left: 14px; right: 14px; top: 50%; bottom: auto; max-height: 72%; border-radius: 24px; padding: 14px 16px 12px;
     transform: translateY(-50%) scale(.94); opacity: 0; transition: transform .2s, opacity .2s; }
@@ -157,6 +161,29 @@
   .ajoutee { font-size: 11px; font-weight: 700; color: var(--down); letter-spacing: .02em; }
   @keyframes deplie { from { opacity: 0; transform: translateY(-14px) scale(.97); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .pile-carte, .pop-deplie { animation: none; } }
+  .total-mois { grid-column: 1 / -1; margin: 12px 8px 0; text-align: left; }
+  .jauge-mois { display: flex; height: 6px; border-radius: 99px; overflow: hidden; background: transparent; gap: 2px; }
+  .jauge-mois span { background: var(--txt); border-radius: 99px; opacity: .85; }
+  .jauge-mois i { flex: 1; border-radius: 99px; background: repeating-linear-gradient(-45deg, var(--accent) 0 3px, color-mix(in srgb, var(--accent) 35%, transparent) 3px 6px); }
+  .total-mois-txt span { white-space: nowrap; }
+  .total-mois-txt { display: flex; justify-content: space-between; margin-top: 7px; font-size: 12px; color: var(--mut); font-weight: 500; }
+  .total-mois-txt span:first-child { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+  .total-mois-txt span:first-child i { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+  .bilan4 .total-mois-txt span { display: inline-flex; align-items: center; font-size: 12px; line-height: 1.2; }
+  .bilan4 .total-mois-txt b { display: inline; color: var(--txt); font-weight: 700; font-size: 13px; margin-left: 4px; }
+  .tx.a-venir .titre { color: var(--txt); }
+  .tx .ajout { font-size: 10.5px; letter-spacing: .08em; white-space: nowrap; padding-top: 3px; }
+  .pop-avenir .c, .pop-avenir .d { opacity: .75; }
+  .pop-avenir b { color: var(--accent); font-weight: 500; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .pop-avenir em { font-style: normal; font-size: 8.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent); padding: 2px 5px; border-radius: 5px; flex: none; align-self: center; order: 3; }
+  .pop-avenir b { order: 4; }
+  .pop-sous-total { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--mut); padding-top: 8px; }
+  .pop-sous-total b { font-weight: 600; color: var(--txt); font-variant-numeric: tabular-nums; }
+  .pop-sous-total.avenir b { color: var(--accent); }
+  .puce-etat { flex: none; border: 0; border-radius: 99px; padding: 8px 12px; margin-right: 6px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--card2); color: var(--txt); transition: background .2s, color .2s; }
+  .puce-etat.ajoutee { background: color-mix(in srgb, var(--down) 16%, var(--card)); color: var(--down); }
   .pop-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--line); margin-top: 4px; padding-top: 10px; font-size: 17px; }
   .pop-total span { color: var(--mut); font-weight: 600; }
   .pop-total b { font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -510,7 +537,7 @@
     <div class="segments-tete" id="segments"></div>
   </header>
   <div id="contenu"><div class="tirer" id="tirer"><span>↻</span></div><main><div class="squelette" aria-label="Chargement"><div style="border-radius:99px;padding:14px 60px"><i style="height:20px;margin:0 auto;width:60%"></i></div><div><i style="height:62px;border-radius:16px"></i><i style="height:14px;width:40%;margin:22px 0 14px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px;margin-bottom:12px"></i><i style="height:44px"></i></div></div></main></div>
-  <button class="fab" id="fab" onclick="boutonPlus()" aria-label="Ajouter">+</button>
+  <button class="fab" id="fab" onclick="boutonPlus()" aria-label="Ajouter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
   <nav class="onglets">
     <button data-o="accueil" onclick="changerOnglet('accueil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/></svg>Accueil</button>
     <button data-o="dettes" onclick="changerOnglet('dettes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14"/><path d="M14 4l4 4-4 4"/><path d="M20 16H6"/><path d="M10 12l-4 4 4 4"/></svg>+ / -</button>
@@ -521,7 +548,7 @@
 </div>
 
 <script>
-const VERSION = '8.1';
+const VERSION = '8.2';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1014,7 +1041,8 @@ function boutonPlus() {
 }
 
 // Une transaction datée plus tard (ex. Sosh le 27) est « prévue » : elle attend dans « À venir » et ne compte pas encore
-const estPrevue = r => r.date > new Date();
+// Datée plus tard : « programmée » (pas encore comptée), sauf si elle a été « ajoutée maintenant » (comptée tout de suite, à sa date)
+const estPrevue = r => r.date > new Date() && !r.compte;
 function duMois(k) { return depenses.filter(r => cleMois(r.date) === k && !estPrevue(r)); } // dépenses + revenus
 function prevuesDuMois(k) { return depenses.filter(r => cleMois(r.date) === k && estPrevue(r)).sort((a, b) => a.date - b.date); }
 function depensesDuMois(k) { return duMois(k).filter(r => !estRevenu(r)); }          // dépenses seules
@@ -1038,7 +1066,7 @@ function carteMois() {
 // Montants avec data-v : ils « montent » jusqu'à leur valeur quand on change de mois
 // Comme le Dashboard : CA NET, Autres ressources, Dépenses, Delta (et le taux d'épargne)
 // Revenus · Dépenses · Delta ; toucher Revenus ou Dépenses ouvre le détail du mois (modifier, supprimer)
-function bilan3(tout, libelleDepenses) {
+function bilan3(tout, libelleDepenses, aPayer) {
   const dep = somme(tout.filter(r => !estRevenu(r)));
   const ca = somme(tout.filter(r => estRevenu(r) && r.c === CAT_CA));
   const autres = somme(tout.filter(r => estRevenu(r) && r.c !== CAT_CA));
@@ -1050,7 +1078,10 @@ function bilan3(tout, libelleDepenses) {
   return `<div class="bilan3 bilan4">
     ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep, libelleDepenses || 'Dépenses', 'dep')}
     <div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('delta')"` : ''}><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
-      <span>Delta${taux === null ? '' : `<br><em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} % épargné</em>`}</span></div>
+      <span>Delta${taux === null ? '' : ` <em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} %</em>`}</span></div>
+    ${aPayer > 0 ? `<div class="total-mois clic" onclick="ouvrirDetailBilan('dep')">
+      <div class="jauge-mois"><span style="width:${dep / (dep + aPayer) * 100}%"></span><i></i></div>
+      <div class="total-mois-txt"><span><i></i>${eur0(aPayer)} à venir</span><span>Fin de mois <b>${eur0(dep + aPayer)}</b></span></div></div>` : ''}
   </div>`;
 }
 
@@ -1106,11 +1137,26 @@ function feuilleDetailBilan(f) {
         ${groupes.map(g => ligneGroupe(g, false)).join('')}`;
     }).join('');
   } else {
-    corps = rs.length ? rs.slice().sort((a, b) => b.m - a.m).map(r => ligneDatee(r)).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
+    // Payées + à venir (prélèvements récurrents et dépenses programmées), de la plus grosse à la plus petite
+    const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) !== GROUPE_REVENUS) : [];
+    const prog = prevuesDuMois(k).filter(r => !estRevenu(r));
+    const toutes = rs.map(r => ({ m: r.m, html: ligneDatee(r) }))
+      .concat(prog.map(r => ({ m: r.m, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
+        <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` })))
+      .concat(aVenir.map(({ r, d }) => ({ m: r.montant, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
+        <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
+      .sort((a, b) => b.m - a.m);
+    const aPayer = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
+    corps = toutes.length ? toutes.map(x => x.html).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
+    return `${tete('Dépenses')}
+      <div class="pop-corps">${corps}</div>
+      ${aPayer > 0 ? `<div class="pop-sous-total"><span>Payé</span><b>${eur(somme(rs))}</b></div>
+        <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(aPayer)}</b></div>` : ''}
+      <div class="pop-total"><span>=</span><b>${eur(somme(rs) + aPayer)}</b></div>`;
   }
-  return `${tete(rev ? 'Revenus' : 'Dépenses')}
+  return `${tete('Revenus')}
     <div class="pop-corps">${corps}</div>
-    <div class="pop-total"><span>=</span><b class="${rev ? 'positif' : ''}">${eur(somme(rs))}</b></div>`;
+    <div class="pop-total"><span>=</span><b class="positif">${eur(somme(rs))}</b></div>`;
 }
 function basculerGroupePop(cle) { feuilleEtat.ouverts[cle] = !feuilleEtat.ouverts[cle]; haptique(); dessinerFeuille(); }
 // Depuis la carte : après l'enregistrement, on revient sur la carte
@@ -1167,41 +1213,45 @@ function vueListe() {
   return `
     ${carteMois()}
     <section class="card">
-      ${futur ? bilan3(prevus, 'Prévu') : bilan3(tout)}
+      ${futur ? bilan3(prevus, 'Prévu') : bilan3(tout, null, estMoisActuel ? aPayerDuMois(moisSel) : 0)}
       ${libFiltre ? `<div class="filtre-actif"><b style="text-transform:capitalize">${esc(libFiltre)}</b>
         <button class="puce" onclick="catFiltre=null;jourFiltre=null;render()">Tout voir</button></div>` : ''}
-      ${pileAVenir(aVenir, prevues, futur)}
+      ${lignesAVenir(aVenir, prevues, futur)}
       ${liste.length ? listeParJour(liste) : (aVenir.length || prevues.length ? '' : `<div class="vide">${futur ? 'Rien de prévu ce mois-là.' : 'Aucune transaction ce mois-ci.<br>Touche + pour en ajouter une.'}</div>`)}
     </section>
     ${liste.length > 2 ? '<div class="maj" style="margin-bottom:8px">Glisse une ligne vers la gauche pour la supprimer</div>' : ''}`;
 }
 
-/* « À venir » : une pile de cartes ; un toucher la déplie (cartes qui glissent une à une), un autre la replie */
-let pileOuverte = false, pileAnimee = false; // l'animation ne se joue qu'à l'ouverture, pas à chaque rafraîchissement
-function basculerPile() { pileOuverte = !pileOuverte; pileAnimee = pileOuverte; haptique(); render(); }
-function pileAVenir(aVenir, prevues, futur) {
-  const items = aVenir.map(({ r, d }) => ({ d, m: r.montant, titre: r.libelle, emoji: emojiCat(r.categorie), html: `
-    <div class="tx clic" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
+/* « À venir » (comme Buddy) : montant barré, « + Ajouter maintenant » l'ajoute à SA date et le compte tout de suite */
+function lignesAVenir(aVenir, prevues, futur) {
+  const items = aVenir.map(({ r, d }) => ({ d, html: `
+    <div class="tx clic a-venir" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
       ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
       <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
-        ${futur ? '' : `<button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})">+ Ajouter</button>`}</div>
-    </div>` })).concat(prevues.map(r => ({ d: r.date, m: r.m, titre: r.n || r.c, emoji: emojiDe(r), html: `
-    <div class="tx clic" onclick="ouvrirDepense(${attr(r.id)})">
+        ${futur ? '' : `<button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})" aria-label="Ajouter maintenant">+ Ajouter</button>`}</div>
+    </div>` })).concat(prevues.map(r => ({ d: r.date, html: `
+    <div class="tx clic a-venir" onclick="ouvrirDepense(${attr(r.id)})">
       ${pastille(r.n, emojiDe(r), couleurDe(r))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div><div class="titre">${esc(r.n || r.c)}</div><div class="sous">${esc(r.c)}</div></div>
-      <div class="droite"><div class="mt barre-txt">${estRevenu(r) ? '+' : ''}${eur(r.m)}</div><span class="ajoutee">✓ ajoutée</span></div>
-    </div>` }))).sort((x, y) => x.d - y.d);
-  if (!items.length) return '';
-  const total = items.reduce((t, x) => t + x.m, 0);
-  const ouverte = pileOuverte || futur;
-  const tete = `<div class="pile-tete clic" onclick="basculerPile()">
-      <div class="pile-icones">${items.slice(0, 3).map(x => `<i>${esc(x.emoji)}</i>`).join('')}</div>
-      <div class="info"><b>${futur ? 'Prévues ce mois-là' : 'À venir'}</b><span>${items.length} prélèvement${items.length > 1 ? 's' : ''} · ${eur(total)}</span></div>
-      <span class="chevron ${ouverte ? 'ouvert' : ''}">›</span></div>`;
-  const anime = pileAnimee; pileAnimee = false;
-  return `<div class="pile ${ouverte ? 'ouverte' : ''}">${tete}
-    ${ouverte ? items.map((x, i) => `<div class="pile-carte ${anime ? 'anime' : ''}" style="animation-delay:${i * 45}ms">${x.html}</div>`).join('') : ''}</div>`;
+      <div class="droite"><div class="mt barre-txt">${estRevenu(r) ? '+' : ''}${eur(r.m)}</div>
+        <button class="ajout" onclick="event.stopPropagation();ajouterPrevueMaintenant(${attr(r.id)})" aria-label="Ajouter maintenant">+ Ajouter</button></div>
+    </div>` }))).sort((x, y) => y.d - x.d);
+  return items.map(x => x.html).join('');
+}
+// Une transaction programmée → « ajoutée maintenant » : elle garde sa date et compte tout de suite
+function ajouterPrevueMaintenant(id) {
+  const r = depenses.find(x => x.id === id);
+  if (!r) return;
+  haptique();
+  ecrire('enregistrerDepense', [{ id, date: versTexteDate(r.date), montant: r.m, categorie: r.c, note: r.n, etiquette: r.t || '', qui: r.qui || '', du: r.du || 0, rembourse: !!r.remb, compte: true }],
+    () => { depenses = depenses.map(x => x.id === id ? { ...x, compte: true } : x); },
+    `✅ ${r.n || r.c} ajouté · pour le ${r.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
+}
+// Montant encore à payer ce mois-ci (prélèvements à venir + dépenses programmées)
+function aPayerDuMois(k) {
+  return aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) !== GROUPE_REVENUS).reduce((t, x) => t + x.r.montant, 0)
+    + somme(prevuesDuMois(k).filter(r => !estRevenu(r)));
 }
 
 // Une transaction (avec le geste « glisser pour supprimer ») ; sansDate : la date est déjà dans l'en-tête du jour
@@ -1598,7 +1648,7 @@ function ajouterRecurrenteMaintenant(ligne, temps) {
   ecrire('ajouterRecurrenteMaintenant', [ligne, versTexteDate(date)], () => {
     r.dernierAjout = cleMois(date);
     depenses = depenses.concat({ id: 'tmp-' + Date.now(), d: versTexteDate(date), date, m: r.montant, c: r.categorie,
-      n: r.libelle, s: 'Récurrente', g: groupeCat(r.categorie), e: emojiCat(r.categorie), t: '', qui: '', du: 0, remb: false });
+      n: r.libelle, s: 'Récurrente', g: groupeCat(r.categorie), e: emojiCat(r.categorie), t: '', qui: '', du: 0, remb: false, compte: date > new Date() });
   }, `✅ ${r.libelle} ajouté · ${memeJour(date, new Date()) ? "aujourd'hui" : 'pour le ' + date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
 }
 function vueRecurrentes() {
@@ -1926,7 +1976,7 @@ function grilleCategories(sel, actionJs, filtre) {
 function ouvrirDepense(id, revenu, cat) {
   const r = id ? depenses.find(x => x.id === id) : null;
   ouvrirFeuille({ type: 'depense', id: r ? r.id : null, montant: r ? montantTexte(r.m) : '', categorie: r ? r.c : cat || null,
-    note: r ? r.n : '', date: r ? new Date(r.date) : new Date(), nouvelle: !r, revenu: r ? estRevenu(r) : !!revenu, repeter: 0,
+    note: r ? r.n : '', date: r ? new Date(r.date) : new Date(), nouvelle: !r, revenu: r ? estRevenu(r) : !!revenu, repeter: 0, compte: r ? !!r.compte : false,
     etiquette: r ? r.t || '' : '', aRembourser: !!(r && r.qui), qui: r ? r.qui || '' : '', du: r && r.du ? montantTexte(r.du) : '', remb: r ? !!r.remb : false });
   // Le clavier chiffré s'ouvre tout de suite : sur iPhone, le focus doit partir du toucher lui-même (pas d'un délai)
   if (!r) { const i = document.querySelector('#feuille .saisie-montant input'); if (i) i.focus({ preventScroll: true }); }
@@ -1961,18 +2011,18 @@ function feuilleDepense(f) {
     <div class="rangee"><div class="ic-trait">${IC.cal}</div>
       <label class="texte" style="position:relative;color:var(--txt)">${esc(libelleJour(f.date))}
         <input type="date" value="${dateIso}" onchange="choisirJour(this.value)" style="position:absolute;inset:0;opacity:0;width:100%"></label>
+      ${prevue ? `<button class="puce-etat ${f.compte ? 'ajoutee' : ''}" onclick="majFeuille({compte:${!f.compte}})">${f.compte ? 'Ajoutée maintenant' : 'Programmée'}</button>` : ''}
       <div class="fleches"><button onclick="decalerJour(-1)" aria-label="Jour précédent">‹</button>
         <button onclick="decalerJour(1)" aria-label="Jour suivant">›</button></div></div>
-    ${prevue ? '<div class="aide" style="margin:8px 0 0 54px">🗓️ Date à venir : elle ira dans « À venir », avec un bouton + Ajouter.</div>' : ''}
+    ${prevue ? `<div class="aide" style="margin:8px 0 0 54px">${f.compte ? '✓ Comptée dès maintenant dans le mois, à la date du ' + f.date.getDate() + '.' : '🗓️ Programmée : elle reste dans « À venir » jusqu\'à sa date. Touche le bouton pour l\'ajouter maintenant.'}</div>` : ''}
     ${f.recurrente ? `<div class="aide" style="margin:8px 0 0 54px">↻ Prélèvement récurrent · <a href="#" style="color:var(--accent)" onclick="event.preventDefault();ouvrirRecurrente(${f.recurrente})">modifier la récurrence</a></div>` : ''}
     ${f.nouvelle && !f.revenu && !f.recurrente ? `
     <div class="rangee"><div class="ic-trait">${IC.repeter}</div>
       <div class="texte" style="color:var(--txt)">${esc(REPETITIONS.find(x => x[0] === Number(f.repeter))[1])}${Number(f.repeter) ? ` · le ${f.date.getDate()}` : ''}</div>
       <select class="cache" onchange="majFeuille({repeter:Number(this.value)})" aria-label="Répéter">
         ${REPETITIONS.map(([n, l]) => `<option value="${n}" ${Number(f.repeter) === n ? 'selected' : ''}>${l}</option>`).join('')}</select></div>` : ''}
-    <button class="btn principal" style="margin-top:26px" onclick="validerDepense()">${f.nouvelle ? (prevue ? 'PRÉVOIR' : 'AJOUTER') : 'ENREGISTRER'}</button>
-    ${f.nouvelle ? '' : `<button class="btn danger" style="color:var(--accent)" onclick="refaireDepense()">↻ Refaire aujourd'hui</button>
-      <button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}
+    <button class="btn principal" style="margin-top:26px" onclick="validerDepense()">${f.nouvelle ? (prevue && !f.compte ? 'PROGRAMMER' : 'AJOUTER') : 'ENREGISTRER'}</button>
+    ${f.nouvelle ? '' : `<button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}
   </div>`;
 }
 function rangeeCategorie(f) {
@@ -2011,15 +2061,6 @@ function suggererCategorie(note) {
   if (el) el.outerHTML = rangeeCategorie(f);
 }
 // Recrée la même dépense à la date du jour (le café ou le Subway habituel en un geste)
-function refaireDepense() {
-  lireChamps();
-  const f = feuilleEtat;
-  feuilleEtat = { type: 'depense', id: null, montant: f.montant, categorie: f.categorie, note: f.note, date: new Date(), nouvelle: true,
-    revenu: f.revenu, repeter: 0, etiquette: '', aRembourser: false, qui: '', du: '', remb: false };
-  dessinerFeuille();
-  document.querySelector('#feuille > div').scrollTop = 0;
-  toast('↻ Copie prête · vérifie puis enregistre');
-}
 
 // Le champ du montant prend la largeur du nombre, pour que « € » reste collé (comme Buddy)
 function ajusterLargeurMontant() {
@@ -2097,9 +2138,10 @@ function validerDepense() {
   if (qui && !du) return toast('Indique le montant dû');
   const d = new Date(f.date);
   if ((f.nouvelle || d > new Date()) && !memeJour(d, new Date())) d.setHours(12, 0, 0, 0);
-  const prevue = d > new Date();
+  const compte = d > new Date() && !!f.compte;
+  const prevue = d > new Date() && !compte;
   const envoi = { id: f.id, date: versTexteDate(d), montant: m, categorie: f.categorie, note: (f.note || '').trim(),
-    etiquette: String(f.etiquette || '').trim(), qui, du, rembourse: qui ? !!f.remb : false };
+    etiquette: String(f.etiquette || '').trim(), qui, du, rembourse: qui ? !!f.remb : false, compte };
   // Nouvelle saisie : l'identifiant est choisi ici, pour qu'un renvoi (hors ligne, réseau coupé) ne crée jamais de doublon
   if (f.nouvelle) envoi.idClient = nouvelIdClient();
   // Saisie d'une récurrente du mois : le serveur ne l'ajoutera pas une 2e fois
@@ -2111,7 +2153,7 @@ function validerDepense() {
     s: f.nouvelle ? 'Appli' : ancienne.s,
     g: f.nouvelle || changeCat ? groupeCat(f.categorie) : ancienne.g,   // historique figé
     e: f.nouvelle || changeCat ? emojiCat(f.categorie) : ancienne.e,
-    t: envoi.etiquette, qui, du, remb: envoi.rembourse };
+    t: envoi.etiquette, qui, du, remb: envoi.rembourse, compte };
   const nouvelle = f.nouvelle;
   const repeter = nouvelle && !f.revenu ? Number(f.repeter) || 0 : 0;
   moisSel = cleMois(d);
@@ -2120,7 +2162,7 @@ function validerDepense() {
   if (moisSel > moisMax()) moisSel = moisMax();
   feuilleEtat = null; fermerFeuille();
   haptique();
-  const message = prevue ? `🗓️ Prévu le ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} · ${eur(m)} dans « À venir »`
+  const message = prevue ? `🗓️ Programmée le ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} · ${eur(m)} dans « À venir »`
     : nouvelle ? (f.revenu ? `✅ Revenu ajouté · +${eur(m)}${REVENUS.includes(f.categorie) ? ', aussi dans ton Dashboard' : ''}` : `✅ Dépense ajoutée · ${eur(m)} · ${f.categorie}`) : '✅ Modifié';
   ecrire('enregistrerDepense', [envoi], () => {
     depenses = nouvelle ? depenses.concat(locale) : depenses.map(x => x.id === f.id ? locale : x);
@@ -2467,7 +2509,7 @@ const DEMO = (function () {
   return {
     getTout: () => JSON.parse(JSON.stringify({ depenses: deps, categories: cats, recurrentes: recs, dettes: dets, dashboard: { ok: true } })),
     enregistrerDepense: x => {
-      const extra = { t: x.etiquette || '', qui: x.qui || '', du: x.du || 0, remb: !!x.rembourse };
+      const extra = { t: x.etiquette || '', qui: x.qui || '', du: x.du || 0, remb: !!x.rembourse, compte: !!x.compte && new Date(x.date) > new Date() };
       if (x.recurrente) { const rc = recs.find(r => r.ligne === x.recurrente); if (rc) rc.dernierAjout = moisCourant; }
       if (x.id) {
         const r = deps.find(r => r.id === x.id);
@@ -2496,7 +2538,7 @@ const DEMO = (function () {
     supprimerRecurrente: ligne => { recs = recs.filter(r => r.ligne !== ligne).map(r => r.ligne > ligne ? { ...r, ligne: r.ligne - 1 } : r); },
     ajouterRecurrenteMaintenant: (ligne, date) => {
       const r = recs.find(x => x.ligne === ligne); r.dernierAjout = moisCourant;
-      deps.push({ id: nouvelId(), d: date || versTexteDate(new Date()), m: r.montant, c: r.categorie, n: r.libelle, s: 'Récurrente', g: grp(r.categorie), e: emo(r.categorie), t: '', qui: '', du: 0, remb: false });
+      deps.push({ id: nouvelId(), compte: !!date && new Date(date) > new Date(), d: date || versTexteDate(new Date()), m: r.montant, c: r.categorie, n: r.libelle, s: 'Récurrente', g: grp(r.categorie), e: emo(r.categorie), t: '', qui: '', du: 0, remb: false });
     },
     enregistrerDette: x => {
       const v = { d: x.date, sens: x.sens, qui: x.qui, m: x.montant, n: x.note, regle: !!x.regle };
