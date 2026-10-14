@@ -548,7 +548,7 @@
 </div>
 
 <script>
-const VERSION = '8.3';
+const VERSION = '8.4';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1053,12 +1053,12 @@ const estFutur = k => k > cleMois(new Date());
 
 function carteMois() {
   const futur = estFutur(moisSel);
-  const nb = futur ? aVenirDuMois(moisSel).length + prevuesDuMois(moisSel).length : duMois(moisSel).length;
+  const nb = duMois(moisSel).length + (futur ? aVenirDuMois(moisSel).length + prevuesDuMois(moisSel).length : 0);
   const premier = depenses.length ? cleMois(new Date(Math.min(...depenses.map(r => r.date)))) : moisSel;
   return `
     <div class="carte-mois">
       <button onclick="changerMois(-1)" ${moisSel <= premier ? 'disabled' : ''} aria-label="Mois précédent">‹</button>
-      <div class="centre"><b>${nomMois(moisSel)}</b><span>${nb} ${futur ? 'prévue' : 'transaction'}${nb > 1 ? 's' : ''}</span></div>
+      <div class="centre"><b>${nomMois(moisSel)}</b><span>${nb} transaction${nb > 1 ? 's' : ''}</span></div>
       <button onclick="changerMois(1)" ${moisSel >= moisMax() ? 'disabled' : ''} aria-label="Mois suivant">›</button>
     </div>`;
 }
@@ -1066,10 +1066,10 @@ function carteMois() {
 // Montants avec data-v : ils « montent » jusqu'à leur valeur quand on change de mois
 // Comme le Dashboard : CA NET, Autres ressources, Dépenses, Delta (et le taux d'épargne)
 // Revenus · Dépenses · Delta ; toucher Revenus ou Dépenses ouvre le détail du mois (modifier, supprimer)
-function bilan3(tout, libelleDepenses, aPayer) {
+function bilan3(tout, libelleDepenses, aPayer, revAttendus) {
   const dep = somme(tout.filter(r => !estRevenu(r)));
   const ca = somme(tout.filter(r => estRevenu(r) && r.c === CAT_CA));
-  const autres = somme(tout.filter(r => estRevenu(r) && r.c !== CAT_CA));
+  const autres = somme(tout.filter(r => estRevenu(r) && r.c !== CAT_CA)) + (revAttendus || 0);
   const delta = ca + autres - dep - (aPayer || 0); // les dépenses à venir du mois comptent déjà
   const taux = ca + autres > 0 ? Math.round(delta / (ca + autres) * 100) : null;
   const clic = !libelleDepenses; // mois à venir : montants prévus, rien à détailler
@@ -1096,8 +1096,8 @@ function feuilleDetailBilan(f) {
   const tete = titre => `<div class="pop-tete"><b>${titre} · ${esc(nomMois(moisSel))}</b>
       <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>`;
   if (f.quoi === 'delta') {
-    const aPayer = moisSel === cleMois(new Date()) ? aPayerDuMois(moisSel) : 0;
-    const rev = somme(tout.filter(estRevenu)), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep - aPayer;
+    const aPayer = moisSel >= cleMois(new Date()) ? aPayerDuMois(moisSel) : 0;
+    const rev = somme(tout.filter(estRevenu)) + (estFutur(moisSel) ? revenusAttendus(moisSel) : 0), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep - aPayer;
     return `${tete('Delta')}
       <div class="pop-ligne"><span class="c">Revenus</span><span class="n"></span><b class="positif">+${eur(rev)}</b></div>
       <div class="pop-ligne ${aPayer > 0 ? '' : 'sep'}"><span class="c">Dépenses</span><span class="n"></span><b>-${eur(dep)}</b></div>
@@ -1210,12 +1210,10 @@ function vueListe() {
   const prevues = !catFiltre && !jourFiltre ? prevuesDuMois(moisSel) : [];
   const libFiltre = jourFiltre ? new Date(dateDeCle(moisSel).getFullYear(), dateDeCle(moisSel).getMonth(), jourFiltre)
     .toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : catFiltre;
-  // Mois à venir : le récap porte sur ce qui est prévu
-  const prevus = aVenir.map(({ r }) => ({ m: r.montant, c: r.categorie, g: groupeCat(r.categorie) })).concat(prevues);
   return `
     ${carteMois()}
     <section class="card">
-      ${futur ? bilan3(prevus, 'Prévu') : bilan3(tout, null, estMoisActuel ? aPayerDuMois(moisSel) : 0)}
+      ${bilan3(tout, null, estMoisActuel || futur ? aPayerDuMois(moisSel) : 0, futur ? revenusAttendus(moisSel) : 0)}
       ${libFiltre ? `<div class="filtre-actif"><b style="text-transform:capitalize">${esc(libFiltre)}</b>
         <button class="puce" onclick="catFiltre=null;jourFiltre=null;render()">Tout voir</button></div>` : ''}
       ${lignesAVenir(aVenir, prevues, futur)}
@@ -1231,7 +1229,7 @@ function lignesAVenir(aVenir, prevues, futur) {
       ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
       <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
-        ${futur ? '' : `<button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})" aria-label="Ajouter maintenant">+ Ajouter</button>`}</div>
+        <button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})" aria-label="Ajouter maintenant">+ Ajouter</button></div>
     </div>` })).concat(prevues.map(r => ({ d: r.date, html: `
     <div class="tx clic a-venir" onclick="ouvrirDepense(${attr(r.id)})">
       ${pastille(r.n, emojiDe(r), couleurDe(r))}
@@ -1249,6 +1247,11 @@ function ajouterPrevueMaintenant(id) {
   ecrire('enregistrerDepense', [{ id, date: versTexteDate(r.date), montant: r.m, categorie: r.c, note: r.n, etiquette: r.t || '', qui: r.qui || '', du: r.du || 0, rembourse: !!r.remb, compte: true }],
     () => { depenses = depenses.map(x => x.id === id ? { ...x, compte: true } : x); },
     `✅ ${r.n || r.c} ajouté · pour le ${r.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
+}
+// Mois futurs : revenus récurrents et programmés attendus
+function revenusAttendus(k) {
+  return aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) === GROUPE_REVENUS).reduce((t, x) => t + x.r.montant, 0)
+    + somme(prevuesDuMois(k).filter(estRevenu));
 }
 // Montant encore à payer ce mois-ci (prélèvements à venir + dépenses programmées)
 function aPayerDuMois(k) {
@@ -1606,6 +1609,9 @@ function reglerElement(type, id, oui) {
 }
 
 /* ===== OUTILS : Récurrentes ===== */
+// dernierAjout = les mois déjà ajoutés (« 2026-10 2026-11 ») : un mois ajouté ou programmé ne réapparaît pas dans « À venir »
+const dejaAjoutee = (rec, k) => String(rec.dernierAjout || '').split(/[\s,;]+/).includes(k);
+function marquerAjoutee(rec, k) { if (!dejaAjoutee(rec, k)) rec.dernierAjout = (String(rec.dernierAjout || '') + ' ' + k).trim(); }
 const estDue = (rec, mois1) => { const n = rec.frequence || 1; return ((mois1 - (rec.moisDepart || 1)) % n + n) % n === 0; };
 function prochaineDate(rec) {
   if (!rec.actif) return null;
@@ -1613,7 +1619,7 @@ function prochaineDate(rec) {
   for (let i = 0; i < 25; i++) {
     const d = new Date(auj.getFullYear(), auj.getMonth() + i, 1);
     if (!estDue(rec, d.getMonth() + 1)) continue;
-    if (i === 0 && rec.dernierAjout === cleMois(d)) continue;
+    if (dejaAjoutee(rec, cleMois(d))) continue;
     d.setDate(Math.min(rec.jour, dernierJour(d.getFullYear(), d.getMonth())));
     if (i === 0 && d < auj) return auj;
     return d;
@@ -1626,7 +1632,7 @@ function aVenirDuMois(k) {
   if (k < kAuj) return [];
   if (k === kAuj) return recurrentes.map(r => ({ r, d: prochaineDate(r) })).filter(x => x.d && cleMois(x.d) === k).sort((a, b) => b.d - a.d);
   const d0 = dateDeCle(k), an = d0.getFullYear(), m0 = d0.getMonth();
-  return recurrentes.filter(r => r.actif && estDue(r, m0 + 1))
+  return recurrentes.filter(r => r.actif && estDue(r, m0 + 1) && !dejaAjoutee(r, k))
     .map(r => ({ r, d: new Date(an, m0, Math.min(r.jour, dernierJour(an, m0))) }))
     .sort((a, b) => b.d - a.d);
 }
@@ -1648,7 +1654,7 @@ function ajouterRecurrenteMaintenant(ligne, temps) {
   else { const n = new Date(); date.setHours(n.getHours(), n.getMinutes(), 0, 0); }
   haptique();
   ecrire('ajouterRecurrenteMaintenant', [ligne, versTexteDate(date)], () => {
-    r.dernierAjout = cleMois(date);
+    marquerAjoutee(r, cleMois(date));
     depenses = depenses.concat({ id: 'tmp-' + Date.now(), d: versTexteDate(date), date, m: r.montant, c: r.categorie,
       n: r.libelle, s: 'Récurrente', g: groupeCat(r.categorie), e: emojiCat(r.categorie), t: '', qui: '', du: 0, remb: false, compte: date > new Date() });
   }, `✅ ${r.libelle} ajouté · ${memeJour(date, new Date()) ? "aujourd'hui" : 'pour le ' + date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
@@ -1990,7 +1996,7 @@ function ouvrirDepuisRecurrente(ligne, temps) {
   if (!r) return;
   const d = new Date(temps); d.setHours(12, 0, 0, 0);
   ouvrirFeuille({ type: 'depense', id: null, montant: montantTexte(r.montant), categorie: r.categorie, note: r.libelle, date: d, nouvelle: true,
-    revenu: groupeCat(r.categorie) === GROUPE_REVENUS, repeter: 0, etiquette: '', aRembourser: false, qui: '', du: '', remb: false, recurrente: r.ligne });
+    revenu: groupeCat(r.categorie) === GROUPE_REVENUS, repeter: 0, etiquette: '', aRembourser: false, qui: '', du: '', remb: false, recurrente: r.ligne, moisRec: cleMois(d) });
 }
 function feuilleDepense(f) {
   const titre = f.nouvelle ? 'Nouvelle transaction' : (f.revenu ? 'Modifier le revenu' : 'Modifier la dépense');
@@ -2147,9 +2153,9 @@ function validerDepense() {
     etiquette: String(f.etiquette || '').trim(), qui, du, rembourse: qui ? !!f.remb : false, compte };
   // Nouvelle saisie : l'identifiant est choisi ici, pour qu'un renvoi (hors ligne, réseau coupé) ne crée jamais de doublon
   if (f.nouvelle) envoi.idClient = nouvelIdClient();
-  // Saisie d'une récurrente du mois : le serveur ne l'ajoutera pas une 2e fois
-  const rec = f.recurrente && cleMois(d) === cleMois(new Date()) ? recurrentes.find(x => x.ligne === f.recurrente) : null;
-  if (rec) envoi.recurrente = rec.ligne;
+  // Saisie d'un prélèvement récurrent (date libre) : son mois ne sera pas ajouté une 2e fois
+  const rec = f.recurrente && f.nouvelle ? recurrentes.find(x => x.ligne === f.recurrente) : null;
+  if (rec) { envoi.recurrente = rec.ligne; envoi.moisRecurrente = f.moisRec || cleMois(d); }
   const ancienne = depenses.find(x => x.id === f.id) || {};
   const changeCat = !f.nouvelle && ancienne.c !== f.categorie;
   const locale = { id: f.id || envoi.idClient, d: envoi.date, date: d, m, c: f.categorie, n: envoi.note,
@@ -2169,7 +2175,7 @@ function validerDepense() {
     : nouvelle ? (f.revenu ? `✅ Revenu ajouté · +${eur(m)}${REVENUS.includes(f.categorie) ? ', aussi dans ton Dashboard' : ''}` : `✅ Dépense ajoutée · ${eur(m)} · ${f.categorie}`) : '✅ Modifié';
   ecrire('enregistrerDepense', [envoi], () => {
     depenses = nouvelle ? depenses.concat(locale) : depenses.map(x => x.id === f.id ? locale : x);
-    if (rec) rec.dernierAjout = cleMois(d);
+    if (rec) marquerAjoutee(rec, f.moisRec || cleMois(d));
   }, message);
   if (repeter) {
     const rec = { libelle: envoi.note || envoi.categorie, montant: m, categorie: envoi.categorie, jour: d.getDate(),
@@ -2514,7 +2520,7 @@ const DEMO = (function () {
     getTout: () => JSON.parse(JSON.stringify({ depenses: deps, categories: cats, recurrentes: recs, dettes: dets, dashboard: { ok: true } })),
     enregistrerDepense: x => {
       const extra = { t: x.etiquette || '', qui: x.qui || '', du: x.du || 0, remb: !!x.rembourse, compte: !!x.compte && new Date(x.date) > new Date() };
-      if (x.recurrente) { const rc = recs.find(r => r.ligne === x.recurrente); if (rc) rc.dernierAjout = moisCourant; }
+      if (x.recurrente) { const rc = recs.find(r => r.ligne === x.recurrente); if (rc) marquerAjoutee(rc, x.moisRecurrente || moisCourant); }
       if (x.id) {
         const r = deps.find(r => r.id === x.id);
         if (r.c !== x.categorie) Object.assign(r, { g: grp(x.categorie), e: emo(x.categorie) });
@@ -2541,7 +2547,7 @@ const DEMO = (function () {
     },
     supprimerRecurrente: ligne => { recs = recs.filter(r => r.ligne !== ligne).map(r => r.ligne > ligne ? { ...r, ligne: r.ligne - 1 } : r); },
     ajouterRecurrenteMaintenant: (ligne, date) => {
-      const r = recs.find(x => x.ligne === ligne); r.dernierAjout = moisCourant;
+      const r = recs.find(x => x.ligne === ligne); marquerAjoutee(r, date ? date.slice(0, 7) : moisCourant);
       deps.push({ id: nouvelId(), compte: !!date && new Date(date) > new Date(), d: date || versTexteDate(new Date()), m: r.montant, c: r.categorie, n: r.libelle, s: 'Récurrente', g: grp(r.categorie), e: emo(r.categorie), t: '', qui: '', du: 0, remb: false });
     },
     enregistrerDette: x => {
