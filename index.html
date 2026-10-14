@@ -548,7 +548,7 @@
 </div>
 
 <script>
-const VERSION = '8.2';
+const VERSION = '8.3';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1070,7 +1070,7 @@ function bilan3(tout, libelleDepenses, aPayer) {
   const dep = somme(tout.filter(r => !estRevenu(r)));
   const ca = somme(tout.filter(r => estRevenu(r) && r.c === CAT_CA));
   const autres = somme(tout.filter(r => estRevenu(r) && r.c !== CAT_CA));
-  const delta = ca + autres - dep;
+  const delta = ca + autres - dep - (aPayer || 0); // les dépenses à venir du mois comptent déjà
   const taux = ca + autres > 0 ? Math.round(delta / (ca + autres) * 100) : null;
   const clic = !libelleDepenses; // mois à venir : montants prévus, rien à détailler
   const tuile = (v, lib, quoi) => `<div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('${quoi}')"` : ''}>
@@ -1096,10 +1096,12 @@ function feuilleDetailBilan(f) {
   const tete = titre => `<div class="pop-tete"><b>${titre} · ${esc(nomMois(moisSel))}</b>
       <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>`;
   if (f.quoi === 'delta') {
-    const rev = somme(tout.filter(estRevenu)), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep;
+    const aPayer = moisSel === cleMois(new Date()) ? aPayerDuMois(moisSel) : 0;
+    const rev = somme(tout.filter(estRevenu)), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep - aPayer;
     return `${tete('Delta')}
       <div class="pop-ligne"><span class="c">Revenus</span><span class="n"></span><b class="positif">+${eur(rev)}</b></div>
-      <div class="pop-ligne sep"><span class="c">Dépenses</span><span class="n"></span><b>-${eur(dep)}</b></div>
+      <div class="pop-ligne ${aPayer > 0 ? '' : 'sep'}"><span class="c">Dépenses</span><span class="n"></span><b>-${eur(dep)}</b></div>
+      ${aPayer > 0 ? `<div class="pop-ligne sep pop-avenir"><span class="c">À venir</span><span class="n"></span><b>-${eur(aPayer)}</b></div>` : ''}
       <div class="pop-total"><span>= ${rev > 0 ? Math.round(delta / rev * 100) + ' % épargné' : ''}</span><b class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < 0 ? '-' : '+'}${eur(Math.abs(delta))}</b></div>
       <div class="pop-graphe">${histo6()}
         <div class="legende"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div>
@@ -1672,6 +1674,7 @@ function vueRecurrentes() {
           <div class="clic" style="flex:1;min-width:0;display:flex;align-items:center;gap:12px" onclick="ouvrirRecurrente(${r.ligne})">
             ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie), 'ico')}
             <div class="info"><div class="nom" style="white-space:normal">${esc(r.libelle)}</div>
+              ${r.description ? `<div class="sous" style="white-space:normal">${esc(r.description)}</div>` : ''}
               <div class="sous" style="white-space:normal">${esc(libellePeriode(r))}</div>
               <div class="sous">${d ? 'Prochaine : ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : 'En pause'}</div></div>
             <div class="mt">${eur(r.montant)}</div></div>
@@ -2234,7 +2237,7 @@ function supprimerDetteUI() {
 /* ===== Feuille : récurrente ===== */
 function ouvrirRecurrente(ligne) {
   const r = ligne ? recurrentes.find(x => x.ligne === ligne) : null;
-  ouvrirFeuille({ type: 'recurrente', ligne: r ? r.ligne : null, libelle: r ? r.libelle : '', montant: r ? montantTexte(r.montant) : '',
+  ouvrirFeuille({ type: 'recurrente', ligne: r ? r.ligne : null, libelle: r ? r.libelle : '', montant: r ? montantTexte(r.montant) : '', description: r ? r.description || '' : '',
     categorie: r ? r.categorie : (categorie('Abonnements') ? 'Abonnements' : null), jour: r ? r.jour : new Date().getDate(),
     frequence: r ? r.frequence : 1, moisDepart: r ? r.moisDepart : new Date().getMonth() + 1, actif: r ? r.actif : true, nouvelle: !r });
 }
@@ -2243,6 +2246,7 @@ function feuilleRecurrente(f) {
     <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"><span>€</span></div>
     ${f.nouvelle ? '' : '<div class="aide" style="margin:-8px 0 8px;text-align:center">Le nouveau prix s\'applique aux prochains prélèvements seulement.</div>'}
     <div class="champ"><span class="ic">✏️</span><input type="text" data-champ="libelle" placeholder="Nom (ex. Netflix, Loyer…)" value="${esc(f.libelle)}"></div>
+    <div class="champ"><span class="ic">📝</span><input type="text" data-champ="description" placeholder="Description (ex. partagé avec papa)" value="${esc(f.description)}"></div>
     <div class="champ"><span class="ic">🔁</span>
       <div class="segments">${PERIODES.map(([n, l]) => `<button class="${Number(f.frequence) === n ? 'sel' : ''}" onclick="majFeuille({frequence:${n}})">${l}</button>`).join('')}</div></div>
     <div class="champ"><span class="ic">🗓️</span><span class="etiq">Jour du mois</span>
@@ -2269,7 +2273,7 @@ function validerRecurrente() {
   if (!String(f.libelle || '').trim()) return toast('⚠️ Donne-lui un nom');
   if (!f.categorie) return toast('⚠️ Choisis une catégorie');
   const jour = Math.min(Math.max(parseInt(f.jour, 10) || 1, 1), 31);
-  const envoi = { ligne: f.ligne, libelle: f.libelle.trim(), montant: m, categorie: f.categorie, jour,
+  const envoi = { ligne: f.ligne, libelle: f.libelle.trim(), description: String(f.description || '').trim(), montant: m, categorie: f.categorie, jour,
     frequence: Number(f.frequence), moisDepart: Number(f.moisDepart) || 1, actif: !!f.actif };
   const nouvelle = f.nouvelle;
   feuilleEtat = null; fermerFeuille();
