@@ -199,6 +199,7 @@
   .tx .sous { font-size: 13px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tx .mt { font-size: 15.5px; font-weight: 600; text-align: right; white-space: nowrap; }
   .tx .mt.barre-txt { text-decoration: line-through; color: var(--mut); font-weight: 500; }
+  .tx.a-venir.rev .mt.barre-txt, .tx.a-venir.rev .ajout { color: var(--down); }
   .tx .ajout { display: block; border: 0; background: none; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .08em;
     padding: 4px 0 0; text-transform: uppercase; margin-left: auto; }
   .tx .droite { flex: none; text-align: right; }
@@ -548,7 +549,7 @@
 </div>
 
 <script>
-const VERSION = '8.5';
+const VERSION = '8.6';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1231,19 +1232,19 @@ function vueListe() {
       ${lignesAVenir(aVenir, prevues, futur)}
       ${liste.length ? listeParJour(liste) : (aVenir.length || prevues.length ? '' : `<div class="vide">${futur ? 'Rien de prévu ce mois-là.' : 'Aucune transaction ce mois-ci.<br>Touche + pour en ajouter une.'}</div>`)}
     </section>
-    ${liste.length > 2 ? '<div class="maj" style="margin-bottom:8px">Glisse une ligne vers la gauche pour la supprimer</div>' : ''}`;
+    ${liste.length > 2 ? '<div class="maj" style="margin-bottom:8px">Glisse une ligne sur le côté pour la supprimer</div>' : ''}`;
 }
 
 /* « À venir » (comme Buddy) : montant barré, « + Ajouter maintenant » l'ajoute à SA date et le compte tout de suite */
 function lignesAVenir(aVenir, prevues, futur) {
   const items = aVenir.map(({ r, d }) => ({ d, html: `
-    <div class="tx clic a-venir" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
+    <div class="tx clic a-venir ${groupeCat(r.categorie) === GROUPE_REVENUS ? 'rev' : ''}" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
       ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
       <div class="droite"><div class="mt barre-txt">${groupeCat(r.categorie) === GROUPE_REVENUS ? '+' : ''}${eur(r.montant)}</div>
         <button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})" aria-label="Ajouter maintenant">+ Ajouter</button></div>
     </div>` })).concat(prevues.map(r => ({ d: r.date, html: `
-    <div class="tx clic a-venir" onclick="ouvrirDepense(${attr(r.id)})">
+    <div class="tx clic a-venir ${estRevenu(r) ? 'rev' : ''}" onclick="ouvrirDepense(${attr(r.id)})">
       ${pastille(r.n, emojiDe(r), couleurDe(r))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div><div class="titre">${esc(r.n || r.c)}</div><div class="sous">${esc(r.c)}</div></div>
       <div class="droite"><div class="mt barre-txt">${estRevenu(r) ? '+' : ''}${eur(r.m)}</div>
@@ -1860,43 +1861,54 @@ function majResultats() {
       </section>`).join('')}`;
 }
 
-/* ===== Glisser pour supprimer (Annuler pendant 5 s) ===== */
+/* ===== Glisser pour supprimer (Annuler pendant 5 s), vers la gauche ou la droite ===== */
+// iPhone : événements tactiles (Safari annule souvent les « pointer » dès que le doigt bouge) ; ordinateur : souris
 let gesteEnCours = false;
 (function () {
   let el = null, x0 = 0, y0 = 0, dx = 0, sens = null;
-  document.addEventListener('pointerdown', e => {
-    const s = e.target.closest('.swipe');
-    if (!s || !e.isPrimary || el || (feuilleOuverte() && !s.closest('#feuille'))) return;
-    el = s; x0 = e.clientX; y0 = e.clientY; dx = 0; sens = null;
-  });
-  document.addEventListener('pointermove', e => {
-    if (!el) return;
-    const ddx = e.clientX - x0, ddy = e.clientY - y0;
+  const debut = (cible, x, y) => {
+    const s = cible.closest && cible.closest('.swipe');
+    if (!s || el || (feuilleOuverte() && !s.closest('#feuille'))) return;
+    el = s; x0 = x; y0 = y; dx = 0; sens = null;
+  };
+  // renvoie vrai quand le geste est horizontal (la page ne doit alors pas défiler)
+  const bouger = (x, y) => {
+    if (!el) return false;
+    const ddx = x - x0, ddy = y - y0;
     if (!sens && (Math.abs(ddx) > 8 || Math.abs(ddy) > 8)) sens = Math.abs(ddx) > Math.abs(ddy) ? 'h' : 'v';
-    if (sens !== 'h') return;
+    if (sens === 'v') { el = null; return false; }
+    if (sens !== 'h') return false;
     gesteEnCours = true;
-    dx = Math.min(0, ddx);
-    const ligne = el.querySelector('.swipe-fond').nextElementSibling;
+    dx = ddx;
+    const fond = el.querySelector('.swipe-fond'), ligne = fond.nextElementSibling;
+    fond.style.justifyContent = dx > 0 ? 'flex-start' : '';
+    fond.style.paddingLeft = dx > 0 ? '18px' : '';
     ligne.style.transition = 'none';
     ligne.style.transform = `translateX(${dx}px)`;
-    el.querySelector('.swipe-fond').style.opacity = Math.min(1, -dx / 80);
-  });
+    fond.style.opacity = Math.min(1, Math.abs(dx) / 80);
+    return true;
+  };
   const fin = () => {
     if (!el) return;
-    const s = el, ligne = s.querySelector('.swipe-fond').nextElementSibling;
+    const s = el, fond = s.querySelector('.swipe-fond'), ligne = fond.nextElementSibling;
     ligne.style.transition = '';
-    if (sens === 'h' && -dx > s.offsetWidth * 0.4) {
-      ligne.style.transform = 'translateX(-110%)';
+    if (sens === 'h' && Math.abs(dx) > s.offsetWidth * 0.35) {
+      ligne.style.transform = `translateX(${dx > 0 ? 110 : -110}%)`;
       setTimeout(() => s.dataset.type === 'dette' ? supprimerDetteAvecAnnuler(s.dataset.id) : supprimerAvecAnnuler(s.dataset.id), 180);
     } else {
       ligne.style.transform = '';
-      s.querySelector('.swipe-fond').style.opacity = 0;
+      fond.style.opacity = 0;
     }
     el = null;
     setTimeout(() => { gesteEnCours = false; }, 50);
   };
-  document.addEventListener('pointerup', fin);
-  document.addEventListener('pointercancel', fin);
+  document.addEventListener('touchstart', e => { if (e.touches.length === 1) debut(e.target, e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+  document.addEventListener('touchmove', e => { if (el && bouger(e.touches[0].clientX, e.touches[0].clientY) && e.cancelable) e.preventDefault(); }, { passive: false });
+  document.addEventListener('touchend', fin);
+  document.addEventListener('touchcancel', fin);
+  document.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && e.isPrimary) debut(e.target, e.clientX, e.clientY); });
+  document.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') bouger(e.clientX, e.clientY); });
+  document.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') fin(); });
 })();
 
 function supprimerAvecAnnuler(id) {
