@@ -548,7 +548,7 @@
 </div>
 
 <script>
-const VERSION = '8.4';
+const VERSION = '8.5';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1097,9 +1097,11 @@ function feuilleDetailBilan(f) {
       <button onclick="fermerFeuille()" aria-label="Fermer">${IC.croix}</button></div>`;
   if (f.quoi === 'delta') {
     const aPayer = moisSel >= cleMois(new Date()) ? aPayerDuMois(moisSel) : 0;
-    const rev = somme(tout.filter(estRevenu)) + (estFutur(moisSel) ? revenusAttendus(moisSel) : 0), dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep - aPayer;
+    const recu = somme(tout.filter(estRevenu)), attendu = moisSel >= cleMois(new Date()) ? revenusAttendus(moisSel) : 0;
+    const rev = recu + attendu, dep = somme(tout.filter(r => !estRevenu(r))), delta = rev - dep - aPayer;
     return `${tete('Delta')}
-      <div class="pop-ligne"><span class="c">Revenus</span><span class="n"></span><b class="positif">+${eur(rev)}</b></div>
+      <div class="pop-ligne"><span class="c">Revenus</span><span class="n"></span><b class="positif">+${eur(recu)}</b></div>
+      ${attendu > 0 ? `<div class="pop-ligne pop-avenir"><span class="c">Revenus à venir</span><span class="n"></span><b>+${eur(attendu)}</b></div>` : ''}
       <div class="pop-ligne ${aPayer > 0 ? '' : 'sep'}"><span class="c">Dépenses</span><span class="n"></span><b>-${eur(dep)}</b></div>
       ${aPayer > 0 ? `<div class="pop-ligne sep pop-avenir"><span class="c">À venir</span><span class="n"></span><b>-${eur(aPayer)}</b></div>` : ''}
       <div class="pop-total"><span>= ${rev > 0 ? Math.round(delta / rev * 100) + ' % épargné' : ''}</span><b class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < 0 ? '-' : '+'}${eur(Math.abs(delta))}</b></div>
@@ -1156,9 +1158,19 @@ function feuilleDetailBilan(f) {
         <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(aPayer)}</b></div>` : ''}
       <div class="pop-total"><span>=</span><b>${eur(somme(rs) + aPayer)}</b></div>`;
   }
+  const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) === GROUPE_REVENUS) : [];
+  const prog = k >= cleMois(new Date()) ? prevuesDuMois(k).filter(estRevenu) : [];
+  const attendu = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
+  const lignesAttendues = prog.map(r => ({ d: r.date, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
+      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` }))
+    .concat(aVenir.map(({ r, d }) => ({ d, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
+      <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
+    .sort((a, b) => a.d - b.d).map(x => x.html).join('');
   return `${tete('Revenus')}
-    <div class="pop-corps">${corps}</div>
-    <div class="pop-total"><span>=</span><b class="positif">${eur(somme(rs))}</b></div>`;
+    <div class="pop-corps">${corps}${lignesAttendues}</div>
+    ${attendu > 0 ? `<div class="pop-sous-total"><span>Reçu</span><b>${eur(somme(rs))}</b></div>
+      <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(attendu)}</b></div>` : ''}
+    <div class="pop-total"><span>=</span><b class="positif">${eur(somme(rs) + attendu)}</b></div>`;
 }
 function basculerGroupePop(cle) { feuilleEtat.ouverts[cle] = !feuilleEtat.ouverts[cle]; haptique(); dessinerFeuille(); }
 // Depuis la carte : après l'enregistrement, on revient sur la carte
@@ -1213,7 +1225,7 @@ function vueListe() {
   return `
     ${carteMois()}
     <section class="card">
-      ${bilan3(tout, null, estMoisActuel || futur ? aPayerDuMois(moisSel) : 0, futur ? revenusAttendus(moisSel) : 0)}
+      ${bilan3(tout, null, estMoisActuel || futur ? aPayerDuMois(moisSel) : 0, estMoisActuel || futur ? revenusAttendus(moisSel) : 0)}
       ${libFiltre ? `<div class="filtre-actif"><b style="text-transform:capitalize">${esc(libFiltre)}</b>
         <button class="puce" onclick="catFiltre=null;jourFiltre=null;render()">Tout voir</button></div>` : ''}
       ${lignesAVenir(aVenir, prevues, futur)}
@@ -1228,7 +1240,7 @@ function lignesAVenir(aVenir, prevues, futur) {
     <div class="tx clic a-venir" onclick="ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()})">
       ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie))}
       <div class="info"><div class="date">${ICONE_CAL}${dateCourte(d)}</div><div class="titre">${esc(r.libelle)}</div><div class="sous">${esc(r.categorie)}</div></div>
-      <div class="droite"><div class="mt barre-txt">${eur(r.montant)}</div>
+      <div class="droite"><div class="mt barre-txt">${groupeCat(r.categorie) === GROUPE_REVENUS ? '+' : ''}${eur(r.montant)}</div>
         <button class="ajout" onclick="event.stopPropagation();ajouterRecurrenteMaintenant(${r.ligne}, ${d.getTime()})" aria-label="Ajouter maintenant">+ Ajouter</button></div>
     </div>` })).concat(prevues.map(r => ({ d: r.date, html: `
     <div class="tx clic a-venir" onclick="ouvrirDepense(${attr(r.id)})">
@@ -1248,7 +1260,7 @@ function ajouterPrevueMaintenant(id) {
     () => { depenses = depenses.map(x => x.id === id ? { ...x, compte: true } : x); },
     `✅ ${r.n || r.c} ajouté · pour le ${r.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
 }
-// Mois futurs : revenus récurrents et programmés attendus
+// Mois en cours et futurs : revenus récurrents et programmés attendus
 function revenusAttendus(k) {
   return aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) === GROUPE_REVENUS).reduce((t, x) => t + x.r.montant, 0)
     + somme(prevuesDuMois(k).filter(estRevenu));
@@ -1660,35 +1672,45 @@ function ajouterRecurrenteMaintenant(ligne, temps) {
   }, `✅ ${r.libelle} ajouté · ${memeJour(date, new Date()) ? "aujourd'hui" : 'pour le ' + date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`);
 }
 function vueRecurrentes() {
-  const actives = recurrentes.filter(r => r.actif);
-  const parMois = actives.reduce((s, r) => s + r.montant / (r.frequence || 1), 0);
+  const estRev = r => groupeCat(r.categorie) === GROUPE_REVENUS;
+  const parMois = rs => rs.filter(r => r.actif).reduce((t, r) => t + r.montant / (r.frequence || 1), 0);
   const tri = recurrentes.slice().sort((a, b) => {
     const da = prochaineDate(a), db = prochaineDate(b);
     if (!da || !db) return da ? -1 : db ? 1 : 0;
     return da - db;
   });
+  const deps = tri.filter(r => !estRev(r)), revs = tri.filter(estRev);
+  const ligne = r => {
+    const d = prochaineDate(r), rev = estRev(r);
+    return `<div class="ligne" style="${r.actif ? '' : 'opacity:.5'}">
+      <div class="clic" style="flex:1;min-width:0;display:flex;align-items:center;gap:12px" onclick="ouvrirRecurrente(${r.ligne})">
+        ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie), 'ico')}
+        <div class="info"><div class="nom" style="white-space:normal">${esc(r.libelle)}</div>
+          ${r.description ? `<div class="sous" style="white-space:normal">${esc(r.description)}</div>` : ''}
+          <div class="sous" style="white-space:normal">${esc(libellePeriode(r))}</div>
+          <div class="sous">${d ? 'Prochain : ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : 'En pause'}</div></div>
+        <div class="mt ${rev ? 'positif' : ''}">${rev ? '+' : ''}${eur(r.montant)}</div></div>
+      <label class="switch"><input type="checkbox" ${r.actif ? 'checked' : ''} onchange="basculerRecurrente(${r.ligne}, this.checked)"><i></i></label>
+    </div>`;
+  };
+  const dep = parMois(deps), rev = parMois(revs);
   return `
     <section class="card">
-      <div class="lbl">Coût moyen par mois</div>
-      <div style="font-size:30px;font-weight:800;letter-spacing:-.02em">${eur(parMois)}</div>
-      <div class="lbl">${actives.length} active${actives.length > 1 ? 's' : ''} · ${eur0(parMois * 12)} par an</div>
+      <div class="bilan3">
+        <div><b class="positif">${eur0(rev)}</b><span>Revenus / mois</span></div>
+        <div><b>${eur0(dep)}</b><span>Dépenses / mois</span></div>
+        <div><b class="${rev - dep >= 0 ? 'positif' : 'negatif'}">${rev - dep < -0.5 ? '-' : ''}${eur0(Math.abs(rev - dep))}</b><span>Reste</span></div>
+      </div>
     </section>
     <section class="card">
-      ${tri.length ? tri.map(r => {
-        const d = prochaineDate(r);
-        return `<div class="ligne" style="${r.actif ? '' : 'opacity:.5'}">
-          <div class="clic" style="flex:1;min-width:0;display:flex;align-items:center;gap:12px" onclick="ouvrirRecurrente(${r.ligne})">
-            ${pastille(r.libelle, emojiCat(r.categorie), couleurCategorie(r.categorie), 'ico')}
-            <div class="info"><div class="nom" style="white-space:normal">${esc(r.libelle)}</div>
-              ${r.description ? `<div class="sous" style="white-space:normal">${esc(r.description)}</div>` : ''}
-              <div class="sous" style="white-space:normal">${esc(libellePeriode(r))}</div>
-              <div class="sous">${d ? 'Prochaine : ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : 'En pause'}</div></div>
-            <div class="mt">${eur(r.montant)}</div></div>
-          <label class="switch"><input type="checkbox" ${r.actif ? 'checked' : ''} onchange="basculerRecurrente(${r.ligne}, this.checked)"><i></i></label>
-        </div>`;
-      }).join('') : '<div class="vide">Aucune dépense récurrente.<br>Touche + pour en ajouter une.</div>'}
+      <div class="lbl" style="margin-bottom:4px">Dépenses récurrentes</div>
+      ${deps.length ? deps.map(ligne).join('') : '<div class="vide">Aucune dépense récurrente.<br>Touche + pour en ajouter une.</div>'}
     </section>
-    <div class="maj" style="margin-bottom:6px">Changer un prix ne modifie pas les mois déjà passés.</div>`;
+    <section class="card">
+      <div class="lbl" style="margin-bottom:4px">Revenus récurrents</div>
+      ${revs.length ? revs.map(ligne).join('') : '<div class="vide">Aucun revenu récurrent (IJ, AAH, APL…).<br>Touche + puis « Revenus ».</div>'}
+    </section>
+    <div class="maj" style="margin-bottom:6px">Changer un montant ne modifie pas les mois déjà passés.</div>`;
 }
 function basculerRecurrente(ligne, actif) {
   const r = recurrentes.find(x => x.ligne === ligne);
@@ -2245,13 +2267,20 @@ function ouvrirRecurrente(ligne) {
   const r = ligne ? recurrentes.find(x => x.ligne === ligne) : null;
   ouvrirFeuille({ type: 'recurrente', ligne: r ? r.ligne : null, libelle: r ? r.libelle : '', montant: r ? montantTexte(r.montant) : '', description: r ? r.description || '' : '',
     categorie: r ? r.categorie : (categorie('Abonnements') ? 'Abonnements' : null), jour: r ? r.jour : new Date().getDate(),
+    revenu: r ? groupeCat(r.categorie) === GROUPE_REVENUS : false,
     frequence: r ? r.frequence : 1, moisDepart: r ? r.moisDepart : new Date().getMonth() + 1, actif: r ? r.actif : true, nouvelle: !r });
 }
 function feuilleRecurrente(f) {
   return `${tete(f.nouvelle ? 'Nouvelle récurrente' : 'Modifier la récurrente')}
-    <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"><span>€</span></div>
-    ${f.nouvelle ? '' : '<div class="aide" style="margin:-8px 0 8px;text-align:center">Le nouveau prix s\'applique aux prochains prélèvements seulement.</div>'}
-    <div class="champ"><span class="ic">✏️</span><input type="text" data-champ="libelle" placeholder="Nom (ex. Netflix, Loyer…)" value="${esc(f.libelle)}"></div>
+    <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}" style="${f.revenu ? 'color:var(--down)' : ''}"><span>€</span></div>
+    ${f.nouvelle ? '' : `<div class="aide" style="margin:-8px 0 8px;text-align:center">Le nouveau montant s'applique aux prochains ${f.revenu ? 'versements' : 'prélèvements'} seulement.</div>`}
+    <div class="types" style="margin-bottom:12px">
+      <button class="${f.revenu ? '' : 'sel'}" onclick="majFeuille({revenu:false${f.revenu ? ',categorie:null' : ''}})">DÉPENSE</button>
+      <button class="${f.revenu ? 'sel' : ''}" onclick="majFeuille({revenu:true${f.revenu ? '' : ',categorie:null'}})">REVENUS</button>
+    </div>
+    <div class="champ"><span class="ic">✏️</span><input type="text" data-champ="libelle" placeholder="${f.revenu ? 'Nom (ex. Indemnités journalières, AAH…)' : 'Nom (ex. Netflix, Loyer…)'}" value="${esc(f.libelle)}"></div>
+    ${f.revenu && LIBELLES_REVENUS[f.categorie] ? `<div class="grille libelles" style="margin:0 0 8px">${LIBELLES_REVENUS[f.categorie].map(l =>
+      `<button class="${sansAccents(f.libelle).startsWith(sansAccents(l)) ? 'sel' : ''}" onclick="majFeuille({libelle:${attr(l)}})">${esc(l)}</button>`).join('')}</div>` : ''}
     <div class="champ"><span class="ic">📝</span><input type="text" data-champ="description" placeholder="Description (ex. partagé avec papa)" value="${esc(f.description)}"></div>
     <div class="champ"><span class="ic">🔁</span>
       <div class="segments">${PERIODES.map(([n, l]) => `<button class="${Number(f.frequence) === n ? 'sel' : ''}" onclick="majFeuille({frequence:${n}})">${l}</button>`).join('')}</div></div>
@@ -2278,6 +2307,7 @@ function validerRecurrente() {
   if (!m) return toast('⚠️ Indique un montant');
   if (!String(f.libelle || '').trim()) return toast('⚠️ Donne-lui un nom');
   if (!f.categorie) return toast('⚠️ Choisis une catégorie');
+  if ((groupeCat(f.categorie) === GROUPE_REVENUS) !== !!f.revenu) return toast('⚠️ Choisis une catégorie ' + (f.revenu ? 'de revenus' : 'de dépenses'));
   const jour = Math.min(Math.max(parseInt(f.jour, 10) || 1, 1), 31);
   const envoi = { ligne: f.ligne, libelle: f.libelle.trim(), description: String(f.description || '').trim(), montant: m, categorie: f.categorie, jour,
     frequence: Number(f.frequence), moisDepart: Number(f.moisDepart) || 1, actif: !!f.actif };
@@ -2514,6 +2544,7 @@ const DEMO = (function () {
     ['Sosh (forfait mobile)', 9.99, 'Abonnements', 27, true, '', 1, 10], ['Dashlane (split)', 1.75, 'Abonnements', 12, true, '', 1, 10],
     ['Apple iCloud 50 Go', 0.99, 'Abonnements', 28, true, '', 1, 10], ['Claude', 21.6, 'Abonnements', 9, true, moisCourant, 1, 10],
     ['YouTube Premium (split)', 6.24, 'Abonnements', 28, true, '', 1, 10], ['Assurance voiture', 320, 'Assurance voiture', 5, true, '', 12, 3],
+    ['Indemnités journalières', 1150, 'Ameli', 30, true, '', 1, 10], ['AAH', 1033, 'CAF', 5, true, moisCourant, 1, 10],
   ].map((l, i) => ({ ligne: i + 2, libelle: l[0], montant: l[1], categorie: l[2], jour: l[3], actif: l[4], dernierAjout: l[5], frequence: l[6], moisDepart: l[7] }));
   const nouvelId = () => 'd' + (n++);
   return {
