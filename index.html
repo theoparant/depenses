@@ -905,11 +905,12 @@ function ecrire(action, args, appliquerLocal, messageOk) {
 }
 
 function recevoir(t, depuisCache) {
+  const supprEnFile = idsSuppressionEnFile();
   depenses = (t.depenses || []).map(r => ({ ...r, date: new Date(r.d) }))
-    .filter(r => !isNaN(r.date) && r.m > 0 && !enAttenteSuppression[r.id]);
+    .filter(r => !isNaN(r.date) && r.m > 0 && !enAttenteSuppression[r.id] && !supprEnFile.has(r.id));
   categories = t.categories || [];
   recurrentes = t.recurrentes || [];
-  dettes = (t.dettes || []).map(d => ({ ...d, date: new Date(d.d) }));
+  dettes = (t.dettes || []).map(d => ({ ...d, date: new Date(d.d) })).filter(d => !enAttenteSuppression[d.id] && !supprEnFile.has(d.id));
   if (t.dashboard !== undefined) etatDashboard = t.dashboard;
   if (depuisCache) majA = new Date(t.majA || Date.now());
   else { majA = new Date(); synchro = false; sauverCache(); finirTirer(); }
@@ -1911,24 +1912,54 @@ let gesteEnCours = false;
   document.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') fin(); });
 })();
 
+/* Suppressions « glisser » : gardées sur le téléphone pendant les 5 s d'annulation.
+   Avant ce correctif, si l'appli passait en arrière-plan ou était fermée pendant ces 5 s, iOS gelait le minuteur :
+   la suppression n'était jamais envoyée au Google Sheet et la ligne revenait à l'ouverture suivante. */
+const CLE_SUPPR = MODE_DEMO ? 'depenses-demo-suppr' : 'depenses-suppr';
+function lireSuppr() { try { return JSON.parse(localStorage.getItem(CLE_SUPPR) || '[]'); } catch (e) { return []; } }
+function ecrireSuppr(l) { try { localStorage.setItem(CLE_SUPPR, JSON.stringify(l)); } catch (e) {} }
+function noterSuppr(action, id) { ecrireSuppr(lireSuppr().filter(x => x.id !== id).concat({ action, id })); }
+function oublierSuppr(id) { ecrireSuppr(lireSuppr().filter(x => x.id !== id)); }
+function idsSuppressionEnFile() {
+  const ids = new Set();
+  fileAttente.forEach(x => { if (/^supprimer(Depense|Dette)$/.test(x.action)) ids.add(x.args[0]); });
+  lireSuppr().forEach(x => ids.add(x.id));
+  return ids;
+}
+// Envoie tout de suite les suppressions encore annulables (appli quittée, ou restes d'une fermeture brutale)
+function viderSuppressions() {
+  const l = lireSuppr();
+  if (!l.length) return;
+  l.forEach(x => {
+    const j = enAttenteSuppression[x.id];
+    if (j) { clearTimeout(j.minuteur); delete enAttenteSuppression[x.id]; }
+    if (!fileAttente.some(f => f.action === x.action && f.args[0] === x.id)) fileAttente.push({ action: x.action, args: [x.id], ts: Date.now() });
+  });
+  sauverFile(); ecrireSuppr([]);
+  envoyerFile();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') viderSuppressions(); });
+window.addEventListener('pagehide', viderSuppressions);
+
 function supprimerAvecAnnuler(id) {
   const r = depenses.find(x => x.id === id);
   if (!r || enAttenteSuppression[id]) return;
   haptique();
   depenses = depenses.filter(x => x.id !== id);
+  noterSuppr('supprimerDepense', id); sauverCache();
   render(); redessinerDetail();
   // Le jeton garantit qu'une suppression annulée n'est jamais envoyée
   const jeton = {};
   jeton.minuteur = setTimeout(() => {
     if (enAttenteSuppression[id] !== jeton) return;
-    delete enAttenteSuppression[id];
+    delete enAttenteSuppression[id]; oublierSuppr(id);
     ecrire('supprimerDepense', [id]);
   }, 5000);
   enAttenteSuppression[id] = jeton;
   toast(`🗑 ${r.n || r.c} · ${eur(r.m)} supprimé`, { texte: 'Annuler', fn: () => {
     if (enAttenteSuppression[id] !== jeton) return;
     clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
-    depenses = depenses.concat(r); render(); redessinerDetail(); toast('↩︎ Restauré');
+    oublierSuppr(id); depenses = depenses.concat(r); sauverCache(); render(); redessinerDetail(); toast('↩︎ Restauré');
   } }, 5000);
 }
 
@@ -1938,18 +1969,19 @@ function supprimerDetteAvecAnnuler(id) {
   if (!d || enAttenteSuppression[id]) return;
   haptique();
   dettes = dettes.filter(x => x.id !== id);
+  noterSuppr('supprimerDette', id); sauverCache();
   render();
   const jeton = {};
   jeton.minuteur = setTimeout(() => {
     if (enAttenteSuppression[id] !== jeton) return;
-    delete enAttenteSuppression[id];
+    delete enAttenteSuppression[id]; oublierSuppr(id);
     ecrire('supprimerDette', [id]);
   }, 5000);
   enAttenteSuppression[id] = jeton;
   toast(`🗑 ${d.qui} · ${eur(d.m)} supprimé`, { texte: 'Annuler', fn: () => {
     if (enAttenteSuppression[id] !== jeton) return;
     clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
-    dettes = dettes.concat(d); render(); toast('↩︎ Restauré');
+    oublierSuppr(id); dettes = dettes.concat(d); sauverCache(); render(); toast('↩︎ Restauré');
   } }, 5000);
 }
 
@@ -2617,7 +2649,7 @@ addEventListener('orientationchange', () => setTimeout(ajusterHauteur, 300));
 if ('serviceWorker' in navigator && !MODE_DEMO && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
-else { chargerCache(); envoyerFile(); charger(); }
+else { chargerCache(); viderSuppressions(); envoyerFile(); charger(); }
 setTimeout(memoriserLogos, 4000);
 </script>
 </body>
