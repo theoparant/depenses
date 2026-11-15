@@ -697,7 +697,7 @@ const sousOnglets = { accueil: 'liste', outils: 'recurrentes' };
 let moisSel = cleMois(new Date());
 let catFiltre = null, jourFiltre = null;
 let rechercheActive = false, rechercheTexte = '';
-let voirSupprimees = false, voirReglees = false;
+let voirSupprimees = false, voirReglees = false, ongletPM = 'cours';
 let majA = null, synchro = true, charge = false;
 const enAttenteSuppression = {}; // id → jeton { minuteur } (glisser pour supprimer, annulable 5 s)
 
@@ -1579,23 +1579,29 @@ function elementsDettes() {
 }
 function vueDettes() {
   const tous = elementsDettes();
-  const ouverts = tous.filter(x => !x.regle), regles = tous.filter(x => x.regle);
+  const ouverts = tous.filter(x => !x.regle), regles = tous.filter(x => x.regle).sort((a, b) => b.date - a.date);
   const onMeDoit = ouverts.filter(x => x.sens === 'On me doit'), jeDois = ouverts.filter(x => x.sens === 'Je dois');
-  // Les mémos (dettes) se suppriment en glissant vers la gauche ; une avance vient d'une dépense, elle se modifie depuis celle-ci
+  // Glisser une ligne en cours = la passer dans « Terminés » ; glisser dans « Terminés » = la supprimer pour de bon
   const ligne = x => {
-    const sous = [x.n || '', x.type === 'avance' ? 'sur ' + eur(x.total) : ''].filter(Boolean).join(' · ');
+    const sous = [x.qui !== x.n ? x.n || '' : '', x.type === 'avance' ? 'sur ' + eur(x.total) : ''].filter(Boolean).join(' · ');
     const corps = `<div class="ligne ligne-pm">
       <div class="avatar ${x.sens === 'On me doit' ? 'plus' : 'moins'}">${x.sens === 'On me doit' ? '+' : '−'}</div>
       <div class="info clic" onclick="if(!gesteEnCours)${x.type === 'avance' ? `ouvrirDepense(${attr(x.id)})` : `ouvrirDette(${attr(x.id)})`}">
         <div class="nom">${eur(x.m)} · ${esc(x.qui)}</div>
         ${sous ? `<div class="sous" style="white-space:normal">${esc(sous)}</div>` : ''}</div>
-      ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">Annuler</button>`
-        : `<button class="ok-btn" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, true)">✓ ${x.sens === 'On me doit' ? 'Reçu' : 'Payé'}</button>`}
+      ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">↩︎ Remettre</button>` : ''}
     </div>`;
-    return x.type === 'dette' ? `<div class="swipe" data-id="${esc(x.id)}" data-type="dette"><div class="swipe-fond">Supprimer</div>${corps}</div>` : corps;
+    if (x.regle && x.type === 'avance') return corps; // une avance vient d'une dépense : on ne la supprime pas d'ici
+    return `<div class="swipe" data-id="${esc(x.id)}" data-type="${x.type}" data-regle="${x.regle ? 1 : 0}"><div class="swipe-fond">${x.regle ? 'Supprimer' : 'Terminé'}</div>${corps}</div>`;
   };
   const totalPlus = onMeDoit.reduce((s, x) => s + x.m, 0), totalMoins = jeDois.reduce((s, x) => s + x.m, 0);
-  return `
+  const onglets = `<div class="segments" style="margin:0 0 12px">
+      <button class="${ongletPM === 'cours' ? 'sel' : ''}" onclick="ongletPM='cours';render()">En cours</button>
+      <button class="${ongletPM === 'termines' ? 'sel' : ''}" onclick="ongletPM='termines';render()">Terminés${regles.length ? ' (' + regles.length + ')' : ''}</button></div>`;
+  if (ongletPM === 'termines') return `${onglets}
+    <section class="card">${regles.length ? regles.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien de terminé pour l’instant</div>'}</section>
+    <div class="maj" style="margin-bottom:6px">Touche ↩︎ Remettre pour la renvoyer dans « En cours » · glisse-la sur le côté pour la supprimer</div>`;
+  return `${onglets}
     <section class="card"><div class="duo">
       <div><span class="lbl">+ À recevoir</span><b class="positif">${eur(totalPlus)}</b></div>
       <div><span class="lbl">− À payer</span><b class="${jeDois.length ? 'negatif' : ''}">${eur(totalMoins)}</b></div>
@@ -1606,10 +1612,18 @@ function vueDettes() {
       ${onMeDoit.length ? onMeDoit.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien en attente 🎉</div>'}</section>
     <section class="card"><h2>− À payer</h2>
       ${jeDois.length ? jeDois.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien à payer</div>'}</section>
-    ${regles.length ? `<section class="card" style="padding-top:6px;padding-bottom:6px">
-      <div class="action-ligne" onclick="voirReglees=!voirReglees;render()"><span>Terminés (${regles.length})</span><span>${voirReglees ? '⌄' : '›'}</span></div>
-      ${voirReglees ? regles.map(ligne).join('') : ''}</section>` : ''}
-    <div class="maj" style="margin-bottom:6px">Touche + pour ajouter · touche une ligne pour la modifier · glisse-la vers la gauche pour la supprimer</div>`;
+    <div class="maj" style="margin-bottom:6px">Touche + pour ajouter · glisse une ligne sur le côté quand c’est réglé : elle part dans « Terminés »</div>`;
+}
+// Glisser dans le +/- : en cours → Terminés (annulable) ; dans Terminés → suppression (annulable 5 s)
+function glisserPM(s) {
+  const type = s.dataset.type, id = s.dataset.id;
+  if (s.dataset.regle === '1') return supprimerDetteAvecAnnuler(id);
+  haptique();
+  const x = type === 'avance' ? depenses.find(r => r.id === id) : dettes.find(d => d.id === id);
+  if (!x) return;
+  if (type === 'avance') ecrire('marquerRembourse', [id, true], () => { x.remb = true; });
+  else ecrire('reglerDette', [id, true], () => { x.regle = true; });
+  toast(`✅ Terminé · ${eur(type === 'avance' ? x.du : x.m)} · ${x.qui}`, { texte: 'Annuler', fn: () => reglerElement(type, id, false) }, 5000);
 }
 function reglerElement(type, id, oui) {
   if (type === 'avance') {
@@ -1895,7 +1909,7 @@ let gesteEnCours = false;
     ligne.style.transition = '';
     if (sens === 'h' && Math.abs(dx) > s.offsetWidth * 0.35) {
       ligne.style.transform = `translateX(${dx > 0 ? 110 : -110}%)`;
-      setTimeout(() => s.dataset.type === 'dette' ? supprimerDetteAvecAnnuler(s.dataset.id) : supprimerAvecAnnuler(s.dataset.id), 180);
+      setTimeout(() => (s.dataset.type === 'dette' || s.dataset.type === 'avance') ? glisserPM(s) : supprimerAvecAnnuler(s.dataset.id), 180);
     } else {
       ligne.style.transform = '';
       fond.style.opacity = 0;
@@ -2266,22 +2280,15 @@ function ouvrirDette(id) {
     note: d ? d.n : '', date: d ? new Date(d.date) : new Date(), regle: d ? !!d.regle : false, nouvelle: !d });
 }
 function feuilleDette(f) {
-  const personnes = [...new Set(elementsDettes().map(x => x.qui))].slice(0, 8);
   return `${tete(f.nouvelle ? 'Nouveau + / -' : 'Modifier')}
     <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"
       style="color:${f.sens === 'Je dois' ? 'var(--up)' : 'var(--down)'}"><span>€</span></div>
     <div class="segments" style="margin:0 0 6px">
       <button class="${f.sens === 'On me doit' ? 'sel' : ''}" onclick="majFeuille({sens:'On me doit'})">+ À recevoir</button>
       <button class="${f.sens === 'Je dois' ? 'sel' : ''}" onclick="majFeuille({sens:'Je dois'})">− À payer</button></div>
-    <div class="champ" style="margin-top:10px"><span class="ic">${f.sens === 'Je dois' ? '📤' : '📥'}</span><input type="text" data-champ="qui" placeholder="${f.sens === 'Je dois' ? 'À qui ? (Allianz, Mimil…)' : 'De qui ? (Allianz, CAF, Axel…)'}" value="${esc(f.qui)}"></div>
-    ${personnes.length ? `<div class="grille" style="margin:0 0 6px 42px">${personnes.map(q =>
-      `<button class="${q === f.qui ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
-    <div class="champ"><span class="ic">📝</span><input type="text" data-champ="note" placeholder="Pour quoi ? (ex. remboursement assurance)" value="${esc(f.note)}"></div>
+    <div class="champ" style="margin-top:10px"><span class="ic">📝</span><input type="text" data-champ="qui" placeholder="Petite note (ex. Zalando chaussures retour)" value="${esc(f.qui)}"></div>
     ${navDate(f)}
-    ${f.nouvelle ? '' : `<div class="champ"><span class="ic">✅</span><span class="etiq">${f.sens === 'Je dois' ? 'Payé' : 'Reçu'}</span>
-      <label class="switch"><input type="checkbox" ${f.regle ? 'checked' : ''} onchange="majFeuille({regle:this.checked})"><i></i></label></div>`}
-    <button class="btn principal" onclick="validerDette()">ENREGISTRER</button>
-    ${f.nouvelle ? '' : '<button class="btn danger" onclick="supprimerDetteUI()">Supprimer</button>'}`;
+    <button class="btn principal" onclick="validerDette()">ENREGISTRER</button>`;
 }
 function validerDette() {
   lireChamps();
@@ -2289,7 +2296,7 @@ function validerDette() {
   const m = lireMontant(f.montant);
   const qui = String(f.qui || '').trim();
   if (!m) return toast('⚠️ Indique un montant');
-  if (!qui) return toast('⚠️ Indique de qui ou à qui');
+  if (!qui) return toast('⚠️ Écris une petite note');
   const envoi = { id: f.id, date: versTexteDate(f.date), sens: f.sens, qui, montant: m, note: String(f.note || '').trim(), regle: !!f.regle };
   const locale = { id: f.id || 'tmp-' + Date.now(), d: envoi.date, date: new Date(f.date), sens: f.sens, qui, m, n: envoi.note, regle: envoi.regle };
   const nouvelle = f.nouvelle;
