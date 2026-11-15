@@ -1587,7 +1587,7 @@ function vueDettes() {
     const corps = `<div class="ligne ligne-pm">
       <div class="avatar ${x.sens === 'On me doit' ? 'plus' : 'moins'}">${x.sens === 'On me doit' ? '+' : '−'}</div>
       <div class="info clic" onclick="if(!gesteEnCours)${x.type === 'avance' ? `ouvrirDepense(${attr(x.id)})` : `ouvrirDette(${attr(x.id)})`}">
-        <div class="nom">${esc(x.qui)} · ${eur(x.m)}</div>
+        <div class="nom">${eur(x.m)} · ${esc(x.qui)}</div>
         ${sous ? `<div class="sous" style="white-space:normal">${esc(sous)}</div>` : ''}</div>
       ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">Annuler</button>`
         : `<button class="ok-btn" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, true)">✓ ${x.sens === 'On me doit' ? 'Reçu' : 'Payé'}</button>`}
