@@ -2647,6 +2647,15 @@ ajusterHauteur();
 addEventListener('resize', ajusterHauteur);
 addEventListener('orientationchange', () => setTimeout(ajusterHauteur, 300));
 if ('serviceWorker' in navigator && !MODE_DEMO && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+// Nouvelle version en ligne : l'appli se recharge toute seule une fois (plus besoin de la fermer deux fois)
+if ('serviceWorker' in navigator && !MODE_DEMO) {
+  let dejaRecharge = false;
+  const avaitControleur = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!avaitControleur || dejaRecharge || fileAttente.length || lireSuppr().length) return;
+    dejaRecharge = true; location.reload();
+  });
+}
 if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
 else { chargerCache(); viderSuppressions(); envoyerFile(); charger(); }
