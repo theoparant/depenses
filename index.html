@@ -549,7 +549,7 @@
 </div>
 
 <script>
-const VERSION = '9.0';
+const VERSION = '9.1';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -675,6 +675,8 @@ const IC = {
   plus: trait('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
   loupe: trait('<circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),
   croix: trait('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+  etiquette: trait('<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'),
+  rembourse: trait('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>'),
 };
 const REPETITIONS = [[0, 'Ne jamais répéter'], [1, 'Chaque mois'], [3, 'Tous les 3 mois'], [6, 'Tous les 6 mois'], [12, 'Chaque année']];
 const parNom = (a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
@@ -2105,6 +2107,7 @@ function feuilleDepense(f) {
       <div class="fleches"><button onclick="decalerJour(-1)" aria-label="Jour précédent">‹</button>
         <button onclick="decalerJour(1)" aria-label="Jour suivant">›</button></div></div>
     ${prevue ? `<div class="aide" style="margin:8px 0 0 54px">${f.compte ? '✓ Comptée dès maintenant dans le mois, à la date du ' + f.date.getDate() + '.' : '🗓️ Programmée : elle reste dans « À venir » jusqu\'à sa date. Touche le bouton pour l\'ajouter maintenant.'}</div>` : ''}
+    ${rangeesEtiquette(f)}
     ${f.recurrente ? `<div class="aide" style="margin:8px 0 0 54px">↻ Prélèvement récurrent · <a href="#" style="color:var(--accent)" onclick="event.preventDefault();ouvrirRecurrente(${f.recurrente})">modifier la récurrence</a></div>` : ''}
     ${f.nouvelle && !f.revenu && !f.recurrente ? `
     <div class="rangee"><div class="ic-trait">${IC.repeter}</div>
@@ -2114,6 +2117,46 @@ function feuilleDepense(f) {
     <button class="btn principal" style="margin-top:26px" onclick="validerDepense()">${f.nouvelle ? (prevue && !f.compte ? 'PROGRAMMER' : 'AJOUTER') : 'ENREGISTRER'}</button>
     ${f.nouvelle ? '' : `<button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}
   </div>`;
+}
+// Étiquettes déjà utilisées, les plus fréquentes d'abord (ex. « Aménagement chambre »)
+function etiquettesConnues() {
+  const n = {};
+  depenses.forEach(r => { if (r.t) n[r.t] = (n[r.t] || 0) + 1; });
+  return Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 8);
+}
+// Étiquette + « Quelqu'un me rembourse » (ex. papa paie les Fire Stick)
+function rangeesEtiquette(f) {
+  const connues = etiquettesConnues();
+  const actuelle = String(f.etiquette || '').trim();
+  return `<div class="rangee"><div class="ic-trait">${IC.etiquette}</div>
+      <input type="text" data-champ="etiquette" placeholder="Étiquette (ex. Aménagement chambre)" value="${esc(f.etiquette)}" enterkeyhint="done"></div>
+    ${connues.length ? `<div class="grille libelles">${connues.map(t =>
+      `<button class="${t === actuelle ? 'sel' : ''}" onclick="majFeuille({etiquette:${attr(t === actuelle ? '' : t)}})">🏷️ ${esc(t)}</button>`).join('')}</div>` : ''}
+    ${f.revenu ? '' : `
+    <div class="rangee"><div class="ic-trait">${IC.rembourse}</div>
+      <div class="texte" style="color:var(--txt)">Quelqu'un me rembourse</div>
+      <label class="switch"><input type="checkbox" ${f.aRembourser ? 'checked' : ''} onchange="basculerRemboursement(this.checked)"><i></i></label></div>
+    ${f.aRembourser ? `
+    <div class="rangee"><div class="ic-trait"></div>
+      <input type="text" data-champ="qui" placeholder="Qui ? (ex. Papa)" value="${esc(f.qui)}" enterkeyhint="done">
+      <input type="text" data-champ="du" inputmode="decimal" placeholder="Montant dû" value="${esc(f.du)}" style="flex:0 0 96px;text-align:right"><span class="lbl">€</span></div>
+    ${connuesQui().length ? `<div class="grille libelles">${connuesQui().map(q =>
+      `<button class="${q === String(f.qui || '').trim() ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
+    <div class="rangee"><div class="ic-trait"></div>
+      <div class="texte" style="color:var(--txt)">Déjà remboursé</div>
+      <label class="switch"><input type="checkbox" ${f.remb ? 'checked' : ''} onchange="majFeuille({remb:this.checked})"><i></i></label></div>` : ''}`}`;
+}
+function connuesQui() {
+  const n = {};
+  depenses.forEach(r => { if (r.qui) n[r.qui] = (n[r.qui] || 0) + 1; });
+  return Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 6);
+}
+function basculerRemboursement(oui) {
+  lireChamps();
+  const f = feuilleEtat;
+  f.aRembourser = oui;
+  if (oui && !String(f.du || '').trim()) f.du = f.montant;   // par défaut : tout le montant
+  dessinerFeuille();
 }
 function rangeeCategorie(f) {
   const cat = f.categorie;
