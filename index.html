@@ -167,10 +167,14 @@
   .jauge-mois i { flex: 1; border-radius: 99px; background: repeating-linear-gradient(-45deg, var(--accent) 0 3px, color-mix(in srgb, var(--accent) 35%, transparent) 3px 6px); }
   .total-mois-txt span { white-space: nowrap; }
   .total-mois-txt { display: flex; justify-content: space-between; margin-top: 7px; font-size: 12px; color: var(--mut); font-weight: 500; }
-  .total-mois-txt span:first-child { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 5px; }
-  .total-mois-txt span:first-child i { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+  .total-mois-txt span { gap: 5px; }
+  .total-mois-txt i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+  .total-mois-txt .paye i { background: var(--txt); opacity: .85; }
+  .total-mois-txt .venir { color: var(--accent); font-weight: 600; }
+  .total-mois-txt .venir i { background: var(--accent); }
   .bilan4 .total-mois-txt span { display: inline-flex; align-items: center; font-size: 12px; line-height: 1.2; }
-  .bilan4 .total-mois-txt b { display: inline; color: var(--txt); font-weight: 700; font-size: 13px; margin-left: 4px; }
+  .bilan4 .total-mois-txt b { display: inline; color: var(--txt); font-weight: 700; font-size: 13px; margin-left: 2px; }
+  .bilan4 .total-mois-txt .venir b { color: var(--accent); }
   .tx.a-venir .titre { color: var(--txt); }
   .tx .ajout { font-size: 10.5px; letter-spacing: .08em; white-space: nowrap; padding-top: 3px; }
   .pop-avenir .c, .pop-avenir .d { opacity: .75; }
@@ -547,7 +551,7 @@
 </div>
 
 <script>
-const VERSION = '9.2';
+const VERSION = '9.3';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1066,12 +1070,12 @@ function bilan3(tout, libelleDepenses, aPayer, revAttendus) {
   const tuile = (v, lib, quoi) => `<div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('${quoi}')"` : ''}>
     <b data-v="${v}">${v < -0.5 ? '-' : ''}${eur0(Math.abs(v))}</b><span>${lib}</span></div>`;
   return `<div class="bilan3 bilan4">
-    ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep, libelleDepenses || 'Dépenses', 'dep')}
+    ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep + (aPayer || 0), libelleDepenses || (aPayer > 0 ? (dep > 0 ? 'Fin de mois' : 'Prévues') : 'Dépenses'), 'dep')}
     <div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('delta')"` : ''}><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
       <span>Delta${taux === null ? '' : ` <em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} %</em>`}</span></div>
     ${aPayer > 0 ? `<div class="total-mois clic" onclick="ouvrirDetailBilan('dep')">
       <div class="jauge-mois"><span style="width:${dep / (dep + aPayer) * 100}%"></span><i></i></div>
-      <div class="total-mois-txt"><span><i></i>${eur0(aPayer)} à venir</span><span>Fin de mois <b>${eur0(dep + aPayer)}</b></span></div></div>` : ''}
+      <div class="total-mois-txt"><span class="paye"><i></i>Déjà payé <b>${eur0(dep)}</b></span><span class="venir"><i></i>À venir <b>${eur0(aPayer)}</b></span></div></div>` : ''}
   </div>`;
 }
 
