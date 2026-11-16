@@ -192,7 +192,6 @@
   .tx { display: flex; align-items: center; gap: 13px; padding: 12px 0; background: var(--card); position: relative; }
   .pastille { width: 44px; height: 44px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 22px; }
   .pastille img { width: 27px; height: 27px; border-radius: 8px; object-fit: contain; }
-  .pastille.logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .tx .info { flex: 1; min-width: 0; }
   .tx .date { font-size: 10px; font-weight: 700; letter-spacing: .13em; color: var(--mut); text-transform: uppercase; margin-bottom: 2px; }
   .tx .titre { font-size: 15.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -226,7 +225,6 @@
   .ligne .mt small { display: block; font-weight: 500; color: var(--mut); font-size: 12px; }
   .ico { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 19px; flex: none; background: var(--card2); }
   .ico img { width: 26px; height: 26px; border-radius: 7px; object-fit: contain; }
-  .ico.logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .jauge { height: 6px; border-radius: 99px; background: var(--card2); margin-top: 6px; overflow: hidden; }
   .jauge span { display: block; height: 100%; border-radius: 99px; }
   .cat.actif .nom { color: var(--accent); }
@@ -549,7 +547,7 @@
 </div>
 
 <script>
-const VERSION = '9.1';
+const VERSION = '9.2';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -582,7 +580,7 @@ const PALETTE = ['#6d5dfc', '#f97316', '#10b981', '#ec4899', '#eab308', '#8b5cf6
 const COULEURS_GROUPES = { 'Dépenses plaisir': '#a855f7', 'Dépenses contraintes': '#4f6bff', 'Dépenses professionnelles': '#475569', 'Revenus': '#16a34a' };
 const PERIODES = [[1, 'Mois'], [3, 'Trim.'], [6, 'Sem.'], [12, 'An']];
 
-// Commerces reconnus dans la note : [motif, nom affiché, domaine du logo]
+// Commerces reconnus dans la note (pour regrouper et deviner la catégorie) : [motif, nom affiché, domaine]
 const COMMERCES = [
   [/\bmc ?do|mcdonald|mc ?flurry/, 'McDonald\'s', 'mcdonalds.fr'],
   [/\bbk\b|burger ?king/, 'Burger King', 'burgerking.fr'],
@@ -727,23 +725,10 @@ function couleurGroupe(g) {
   return PALETTE[(1 + Math.max(autres.indexOf(g), 0)) % PALETTE.length];
 }
 
-// Pastille ronde : logo du commerce si reconnu, sinon émoji sur fond de la couleur de la catégorie
+// Pastille ronde : émoji sur fond de la couleur de la catégorie (plus de logos de commerces)
 function pastille(note, emoji, couleur, classe) {
-  const co = commerce(note);
   const k = classe || 'pastille';
-  if (co) {
-    return `<div class="${k} logo"><img src="${urlLogo(co.domaine)}" alt=""
-      onerror="this.parentNode.classList.remove('logo');this.parentNode.style.background='color-mix(in srgb, ${couleur} 20%, var(--card))';this.parentNode.textContent=${attr(emoji)}"></div>`;
-  }
   return `<div class="${k}" style="background:color-mix(in srgb, ${couleur} 20%, var(--card))">${esc(emoji)}</div>`;
-}
-const urlLogo = domaine => `https://www.google.com/s2/favicons?domain=${domaine}&sz=128`;
-// Hors connexion : les logos sont gardés dans le cache (le service worker les sert ensuite sans réseau)
-function memoriserLogos() {
-  if (!('caches' in window) || !navigator.onLine) return;
-  caches.open('depenses-logos').then(cache => COMMERCES.reduce((p, [, , dom]) => p.then(() =>
-    cache.match(urlLogo(dom)).then(deja => deja || fetch(urlLogo(dom), { mode: 'no-cors' }).then(rep => cache.put(urlLogo(dom), rep)).catch(() => {}))),
-    Promise.resolve())).catch(() => {});
 }
 
 /* ---------- Échanges avec le serveur ---------- */
@@ -879,7 +864,7 @@ function envoyerFile() {
     if (charge && !feuilleOuverte()) render();
   });
 }
-window.addEventListener('online', () => { envoyerFile(); memoriserLogos(); });
+window.addEventListener('online', () => { envoyerFile(); });
 
 function ecrire(action, args, appliquerLocal, messageOk) {
   if (appliquerLocal) appliquerLocal();
@@ -2710,7 +2695,6 @@ if ('serviceWorker' in navigator && !MODE_DEMO) {
 if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
 else { chargerCache(); viderSuppressions(); envoyerFile(); charger(); }
-setTimeout(memoriserLogos, 4000);
 </script>
 </body>
 </html>
