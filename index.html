@@ -551,7 +551,7 @@
 </div>
 
 <script>
-const VERSION = '9.3';
+const VERSION = '9.4';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1314,7 +1314,23 @@ function vueApercu() {
   const jours = estMoisActuel ? new Date().getDate() : dernierJour(dateDeCle(moisSel).getFullYear(), dateDeCle(moisSel).getMonth());
   const evol = totalPrec > 0 ? (total - totalPrec) / totalPrec : null;
 
+  // Par catégorie : en premier (juste après la carte Noël)
+  const carteCats = total > 0 ? `
+    <section class="card">
+      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
+      ${cats.map(([c, v]) => `
+        <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
+          <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
+          <div class="info"><div class="nom">${esc(c)}</div>
+            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
+            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois</div></div>
+          <div class="mt">${eur(v)}${delta(c)}</div>
+        </div>`).join('')}
+    </section>` : '';
+
   let html = `${carteMois()}
+    ${carteNoel()}
+    ${carteCats}
     <section class="card">
       <div class="resume">
         <div class="anneau">${anneau(cats, couleurCat, total)}
@@ -1330,8 +1346,7 @@ function vueApercu() {
       ${bilan3(tout)}
     </section>
     <section class="card"><h2>6 derniers mois</h2>${histo6()}
-      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>
-    ${carteRessources(tout)}`;
+      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>`;
 
   if (total > 0) {
     html += `
@@ -1339,22 +1354,8 @@ function vueApercu() {
       <h2>Par groupe</h2>
       <div class="barre">${ordreGroupes.map(g => `<span style="width:${parGroupe[g] / total * 100}%;background:${couleurGroupe(g)}"></span>`).join('')}</div>
       <div class="legende">${ordreGroupes.map(g => `<span><i style="background:${couleurGroupe(g)}"></i>${esc(g)}<b>${eur0(parGroupe[g])}</b></span>`).join('')}</div>
-    </section>
-    <section class="card">
-      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
-      ${cats.map(([c, v]) => {
-        return `
-        <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
-          <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
-          <div class="info"><div class="nom">${esc(c)}</div>
-            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
-            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois</div></div>
-          <div class="mt">${eur(v)}${delta(c)}</div>
-        </div>`;
-      }).join('')}
     </section>`;
   }
-  html += carteCalendrier(rs);
   const tops = topCommerces(rs);
   if (tops.length) {
     html += `<section class="card"><h2>Top commerces</h2>
@@ -1369,6 +1370,30 @@ function vueApercu() {
     <section class="card carte-retro" onclick="ouvrirRetro(${annee})"><div class="gros">🎁</div>
       <div><b>Ta rétrospective ${annee}</b><span>Tes chiffres marquants de l'année, en quelques diapos</span></div></section>`;
   return html;
+}
+
+/* ===== NOËL (Aperçu) : toutes les dépenses étiquetées « Noël » de la saison (nov. → janv.), tous mois confondus ===== */
+let noelOuvert = false;
+function basculerNoel() { noelOuvert = !noelOuvert; haptique(); render(); }
+function carteNoel() {
+  const d = dateDeCle(moisSel);
+  // Saison : Noël de l'année du mois affiché (janvier = Noël de l'année d'avant)
+  const an = d.getMonth() === 0 ? d.getFullYear() - 1 : d.getFullYear();
+  const debut = new Date(an, 0, 1), fin = new Date(an + 1, 1, 1);
+  const rs = depenses.filter(r => !estRevenu(r) && /\bnoel\b/.test(sansAccents(r.t)) && r.date >= debut && r.date < fin)
+    .sort((a, b) => b.m - a.m);
+  if (!rs.length) return '';
+  const total = somme(rs);
+  return `<section class="card">
+    <div class="rev-ligne"><div class="ligne clic" onclick="basculerNoel()">
+      <div class="ico" style="background:color-mix(in srgb, #dc2626 20%, var(--card))">🎄</div>
+      <div class="info"><div class="nom">Noël ${an}</div><div class="sous">${rs.length} achat${rs.length > 1 ? 's' : ''} · étiquette « Noël »</div></div>
+      <div class="mt">${eur(total)}</div>
+      <span class="chevron ${noelOuvert ? 'ouvert' : ''}">›</span></div>
+    ${noelOuvert ? `<div class="rev-detail">${rs.map(r => `<div onclick="ouvrirDepense(${attr(r.id)})">
+      <span>${esc(emojiDe(r))} ${r.n ? esc(r.n) : esc(r.c)}</span><b>${eur(r.m)}</b></div>`).join('')}</div>` : ''}
+    </div>
+  </section>`;
 }
 
 /* ===== Rétrospective annuelle ===== */
