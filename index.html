@@ -551,7 +551,7 @@
 </div>
 
 <script>
-const VERSION = '9.4';
+const VERSION = '9.6';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -1108,63 +1108,23 @@ function feuilleDetailBilan(f) {
   const ligneDatee = (r, sansCat) => `<div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
     <div class="pop-ligne clic" onclick="if(!gesteEnCours)ouvrirDepuisDetail(${attr(r.id)})">
       <span class="d">${jour(r.date)}</span>${sansCat ? '' : `<span class="c">${esc(r.c)}</span>`}<span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b></div></div>`;
-  let corps;
-  if (rev) {
-    f.ouverts = f.ouverts || {};
-    const cats = REVENUS.concat([...new Set(rs.map(r => r.c))].filter(c => !REVENUS.includes(c)));
-    corps = cats.map(c => {
-      const lc = rs.filter(r => r.c === c).sort((a, b) => a.date - b.date);
-      if (!lc.length) return `<div class="pop-groupe vide-g"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(0)}</b></div>`;
-      // un groupe par libellé (« IJ » et « ij » ensemble)
-      const groupes = [];
-      lc.forEach(r => {
-        const k = sansAccents(r.n) || '—';
-        let g = groupes.find(x => x.k === k);
-        if (!g) groupes.push(g = { k, nom: r.n || 'Sans libellé', rs: [] });
-        g.rs.push(r);
-      });
-      const ligneGroupe = (g, seul) => {
-        const cle = c + '|' + g.k, ouvert = !!f.ouverts[cle];
-        return `<div class="pop-groupe clic ${seul ? '' : 'sous'}" onclick="basculerGroupePop(${attr(cle)})">
-            ${seul ? `<span class="c">${esc(c)}</span>` : ''}<span class="n">${esc(g.nom)}${g.rs.length > 1 ? ` <em>×${g.rs.length}</em>` : ''}</span>
-            <b>${eur(somme(g.rs))}</b><span class="chevron ${ouvert ? 'ouvert' : ''}">›</span></div>
-          ${ouvert ? `<div class="pop-deplie">${g.rs.map(r => ligneDatee(r, true)).join('')}</div>` : ''}`;
-      };
-      if (groupes.length === 1) return ligneGroupe(groupes[0], true);
-      return `<div class="pop-groupe"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(somme(lc))}</b><span class="chevron" style="visibility:hidden">›</span></div>
-        ${groupes.map(g => ligneGroupe(g, false)).join('')}`;
-    }).join('');
-  } else {
-    // Payées + à venir (prélèvements récurrents et dépenses programmées), de la plus grosse à la plus petite
-    const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) !== GROUPE_REVENUS) : [];
-    const prog = prevuesDuMois(k).filter(r => !estRevenu(r));
-    const toutes = rs.map(r => ({ m: r.m, html: ligneDatee(r) }))
-      .concat(prog.map(r => ({ m: r.m, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
-        <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` })))
-      .concat(aVenir.map(({ r, d }) => ({ m: r.montant, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
-        <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
-      .sort((a, b) => b.m - a.m);
-    const aPayer = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
-    corps = toutes.length ? toutes.map(x => x.html).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
-    return `${tete('Dépenses')}
-      <div class="pop-corps">${corps}</div>
-      ${aPayer > 0 ? `<div class="pop-sous-total"><span>Payé</span><b>${eur(somme(rs))}</b></div>
-        <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(aPayer)}</b></div>` : ''}
-      <div class="pop-total"><span>=</span><b>${eur(somme(rs) + aPayer)}</b></div>`;
-  }
-  const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) === GROUPE_REVENUS) : [];
-  const prog = k >= cleMois(new Date()) ? prevuesDuMois(k).filter(estRevenu) : [];
-  const attendu = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
-  const lignesAttendues = prog.map(r => ({ d: r.date, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
-      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` }))
-    .concat(aVenir.map(({ r, d }) => ({ d, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
+  // Revenus et dépenses : même liste plate (date · catégorie · libellé · montant), à venir compris, de la plus grosse à la plus petite
+  const k = moisSel;
+  const aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => (groupeCat(x.r.categorie) === GROUPE_REVENUS) === rev) : [];
+  const prog = (rev && k < cleMois(new Date())) ? [] : prevuesDuMois(k).filter(r => estRevenu(r) === rev);
+  const toutes = rs.map(r => ({ m: r.m, html: ligneDatee(r) }))
+    .concat(prog.map(r => ({ m: r.m, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
+      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` })))
+    .concat(aVenir.map(({ r, d }) => ({ m: r.montant, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
       <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
-    .sort((a, b) => a.d - b.d).map(x => x.html).join('');
-  return `${tete('Revenus')}
-    <div class="pop-corps">${corps}${lignesAttendues}</div>
-    ${attendu > 0 ? `<div class="pop-sous-total"><span>Reçu</span><b>${eur(somme(rs))}</b></div>
+    .sort((a, b) => b.m - a.m);
+  const attendu = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
+  const corps = toutes.length ? toutes.map(x => x.html).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
+  return `${tete(rev ? 'Revenus' : 'Dépenses')}
+    <div class="pop-corps">${corps}</div>
+    ${attendu > 0 ? `<div class="pop-sous-total"><span>${rev ? 'Reçu' : 'Payé'}</span><b>${eur(somme(rs))}</b></div>
       <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(attendu)}</b></div>` : ''}
-    <div class="pop-total"><span>=</span><b class="positif">${eur(somme(rs) + attendu)}</b></div>`;
+    <div class="pop-total"><span>=</span><b${rev ? ' class="positif"' : ''}>${eur(somme(rs) + attendu)}</b></div>`;
 }
 function basculerGroupePop(cle) { feuilleEtat.ouverts[cle] = !feuilleEtat.ouverts[cle]; haptique(); dessinerFeuille(); }
 // Depuis la carte : après l'enregistrement, on revient sur la carte
