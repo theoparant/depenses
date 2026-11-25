@@ -167,14 +167,10 @@
   .jauge-mois i { flex: 1; border-radius: 99px; background: repeating-linear-gradient(-45deg, var(--accent) 0 3px, color-mix(in srgb, var(--accent) 35%, transparent) 3px 6px); }
   .total-mois-txt span { white-space: nowrap; }
   .total-mois-txt { display: flex; justify-content: space-between; margin-top: 7px; font-size: 12px; color: var(--mut); font-weight: 500; }
-  .total-mois-txt span { gap: 5px; }
-  .total-mois-txt i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
-  .total-mois-txt .paye i { background: var(--txt); opacity: .85; }
-  .total-mois-txt .venir { color: var(--accent); font-weight: 600; }
-  .total-mois-txt .venir i { background: var(--accent); }
+  .total-mois-txt span:first-child { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+  .total-mois-txt span:first-child i { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
   .bilan4 .total-mois-txt span { display: inline-flex; align-items: center; font-size: 12px; line-height: 1.2; }
-  .bilan4 .total-mois-txt b { display: inline; color: var(--txt); font-weight: 700; font-size: 13px; margin-left: 2px; }
-  .bilan4 .total-mois-txt .venir b { color: var(--accent); }
+  .bilan4 .total-mois-txt b { display: inline; color: var(--txt); font-weight: 700; font-size: 13px; margin-left: 4px; }
   .tx.a-venir .titre { color: var(--txt); }
   .tx .ajout { font-size: 10.5px; letter-spacing: .08em; white-space: nowrap; padding-top: 3px; }
   .pop-avenir .c, .pop-avenir .d { opacity: .75; }
@@ -196,6 +192,7 @@
   .tx { display: flex; align-items: center; gap: 13px; padding: 12px 0; background: var(--card); position: relative; }
   .pastille { width: 44px; height: 44px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 22px; }
   .pastille img { width: 27px; height: 27px; border-radius: 8px; object-fit: contain; }
+  .pastille.logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .tx .info { flex: 1; min-width: 0; }
   .tx .date { font-size: 10px; font-weight: 700; letter-spacing: .13em; color: var(--mut); text-transform: uppercase; margin-bottom: 2px; }
   .tx .titre { font-size: 15.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -229,6 +226,7 @@
   .ligne .mt small { display: block; font-weight: 500; color: var(--mut); font-size: 12px; }
   .ico { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 19px; flex: none; background: var(--card2); }
   .ico img { width: 26px; height: 26px; border-radius: 7px; object-fit: contain; }
+  .ico.logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .jauge { height: 6px; border-radius: 99px; background: var(--card2); margin-top: 6px; overflow: hidden; }
   .jauge span { display: block; height: 100%; border-radius: 99px; }
   .cat.actif .nom { color: var(--accent); }
@@ -339,6 +337,16 @@
   .champ-recherche input { flex: 1; border: 0; background: none; outline: none; font-size: 17px; min-width: 0; }
 
   /* Interrupteur */
+  .a-verifier { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; text-align: left; background: color-mix(in srgb, var(--accent) 12%, var(--card));
+    color: var(--txt); border-radius: 20px; padding: 14px 16px; margin-bottom: 14px; font-size: 15px; }
+  .a-verifier .ic { font-size: 24px; } .a-verifier b { display: block; } .a-verifier small { color: var(--mut); }
+  .a-verifier .fl { margin-left: auto; font-size: 22px; color: var(--accent); }
+  .val { border-top: 1px solid var(--line); padding: 12px 0 10px; }
+  .val .tx { padding: 0; }
+  .val-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .val-actions button { flex: 1; border: 0; border-radius: 14px; padding: 10px 4px; font-size: 13px; font-weight: 700; background: var(--card2); color: var(--txt); }
+  .val-actions .ok { background: color-mix(in srgb, var(--down) 16%, var(--card)); color: var(--down); }
+  .val-actions .sup { flex: none; width: 44px; color: var(--danger); }
   .switch { position: relative; width: 50px; height: 30px; flex: none; }
   .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
   .switch i { position: absolute; inset: 0; border-radius: 99px; background: var(--card2); transition: .2s; border: 1px solid var(--line); }
@@ -551,7 +559,7 @@
 </div>
 
 <script>
-const VERSION = '9.7';
+const VERSION = '8.7';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -568,7 +576,6 @@ const GROUPE_REVENUS = 'Revenus';
 // Émojis de secours (si la catégorie n'en a pas dans le Sheet)
 const EMOJI = {
   'Abonnements': '🔁', 'Appartement Déco': '🛋️', 'Bars / Soirées': '🍻', 'Bien être et compléments santé': '💆',
-  'Sorties & loisirs': '🎳', 'Hygiène & pharmacie': '🧴', 'Jeux vidéo': '🎮', 'High-tech & jeux vidéo': '🎮', 'Maison & déco': '🛋️', "Jeux d'argent": '🎰', 'High-tech': '📱', 'Océane': '💕', 'Nouvel Aménagement chambre': '🛏️',
   'Bouffe / Goûter / Café': '🍔', 'Dépenses diverses': '🙂', 'Plaisir d’offrir / Cadeaux': '🎁', 'Voyage': '✈️', 'Vêtements': '👕',
   'Revolut : Dépenses pro': '💳', 'Assurance voiture': '🛡️', 'Courses': '🛒', 'Covoit': '🚗', 'Essence': '⛽', 'Forfait mobile': '📱',
   'Frais de voiture': '🔧', 'Impôts': '🏛️', 'Internet': '📶', 'Loyer': '🏠', 'Métro/train': '🚇', 'Parking': '🅿️', 'Santé': '❤️',
@@ -584,7 +591,7 @@ const PALETTE = ['#6d5dfc', '#f97316', '#10b981', '#ec4899', '#eab308', '#8b5cf6
 const COULEURS_GROUPES = { 'Dépenses plaisir': '#a855f7', 'Dépenses contraintes': '#4f6bff', 'Dépenses professionnelles': '#475569', 'Revenus': '#16a34a' };
 const PERIODES = [[1, 'Mois'], [3, 'Trim.'], [6, 'Sem.'], [12, 'An']];
 
-// Commerces reconnus dans la note (pour regrouper et deviner la catégorie) : [motif, nom affiché, domaine]
+// Commerces reconnus dans la note : [motif, nom affiché, domaine du logo]
 const COMMERCES = [
   [/\bmc ?do|mcdonald|mc ?flurry/, 'McDonald\'s', 'mcdonalds.fr'],
   [/\bbk\b|burger ?king/, 'Burger King', 'burgerking.fr'],
@@ -677,8 +684,6 @@ const IC = {
   plus: trait('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
   loupe: trait('<circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),
   croix: trait('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
-  etiquette: trait('<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'),
-  rembourse: trait('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>'),
 };
 const REPETITIONS = [[0, 'Ne jamais répéter'], [1, 'Chaque mois'], [3, 'Tous les 3 mois'], [6, 'Tous les 6 mois'], [12, 'Chaque année']];
 const parNom = (a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
@@ -702,7 +707,7 @@ const sousOnglets = { accueil: 'liste', outils: 'recurrentes' };
 let moisSel = cleMois(new Date());
 let catFiltre = null, jourFiltre = null;
 let rechercheActive = false, rechercheTexte = '';
-let voirSupprimees = false, voirReglees = false, ongletPM = 'cours';
+let voirSupprimees = false, voirReglees = false;
 let majA = null, synchro = true, charge = false;
 const enAttenteSuppression = {}; // id → jeton { minuteur } (glisser pour supprimer, annulable 5 s)
 
@@ -729,10 +734,23 @@ function couleurGroupe(g) {
   return PALETTE[(1 + Math.max(autres.indexOf(g), 0)) % PALETTE.length];
 }
 
-// Pastille ronde : émoji sur fond de la couleur de la catégorie (plus de logos de commerces)
+// Pastille ronde : logo du commerce si reconnu, sinon émoji sur fond de la couleur de la catégorie
 function pastille(note, emoji, couleur, classe) {
+  const co = commerce(note);
   const k = classe || 'pastille';
+  if (co) {
+    return `<div class="${k} logo"><img src="${urlLogo(co.domaine)}" alt=""
+      onerror="this.parentNode.classList.remove('logo');this.parentNode.style.background='color-mix(in srgb, ${couleur} 20%, var(--card))';this.parentNode.textContent=${attr(emoji)}"></div>`;
+  }
   return `<div class="${k}" style="background:color-mix(in srgb, ${couleur} 20%, var(--card))">${esc(emoji)}</div>`;
+}
+const urlLogo = domaine => `https://www.google.com/s2/favicons?domain=${domaine}&sz=128`;
+// Hors connexion : les logos sont gardés dans le cache (le service worker les sert ensuite sans réseau)
+function memoriserLogos() {
+  if (!('caches' in window) || !navigator.onLine) return;
+  caches.open('depenses-logos').then(cache => COMMERCES.reduce((p, [, , dom]) => p.then(() =>
+    cache.match(urlLogo(dom)).then(deja => deja || fetch(urlLogo(dom), { mode: 'no-cors' }).then(rep => cache.put(urlLogo(dom), rep)).catch(() => {}))),
+    Promise.resolve())).catch(() => {});
 }
 
 /* ---------- Échanges avec le serveur ---------- */
@@ -760,16 +778,7 @@ function oublierCode() {
   if (m) { enregistrerCode(decodeURIComponent(m[1])); history.replaceState(null, '', location.pathname + location.search); }
 })();
 
-// Le serveur est parfois occupé (« verrouillage ») : on réessaie tout seul, sans rien afficher
-const estErreurVerrou = e => /verrouillage|lock/i.test((e && e.message) || '');
 function appel(action, ...args) {
-  const essai = n => appelUneFois(action, ...args).catch(e => {
-    if (!estErreurVerrou(e) || n >= 3) throw e;
-    return new Promise(r => setTimeout(r, 1500 * (n + 1))).then(() => essai(n + 1));
-  });
-  return essai(0);
-}
-function appelUneFois(action, ...args) {
   if (MODE_DEMO) {
     if (demoHorsLigne) return Promise.reject(new TypeError('Load failed'));
     return new Promise((ok, ko) => setTimeout(() => {
@@ -805,7 +814,7 @@ function charger() {
     if (synchro && charge) { synchro = false; if (!feuilleOuverte()) render(); }
     if (/Accès refusé/.test(err.message)) return; // l'écran du code est déjà affiché
     if (!charge) document.querySelector('main').innerHTML = `<div class="chargement">⚠️ ${esc(err.message)}<br><br><button class="puce" onclick="charger()">Réessayer</button></div>`;
-    else if (estErreurReseau(err) || estErreurVerrou(err)) return; // réseau coupé ou serveur occupé : les données locales restent affichées, sans message
+    else if (estErreurReseau(err)) return; // réseau coupé : les données locales restent affichées, sans message
     else toast('⚠️ Synchro impossible : ' + err.message);
   });
 }
@@ -861,7 +870,6 @@ function envoyerFile() {
       return suivant();
     }, e => {
       if (estErreurReseau(e)) return; // toujours hors ligne : on réessaiera plus tard
-      if (estErreurVerrou(e)) { setTimeout(envoyerFile, 10000); return; } // serveur occupé : on réessaie dans 10 s
       fileAttente.shift(); sauverFile(); // refus du serveur : inutile d'insister
       toast('⚠️ ' + e.message);
       return suivant();
@@ -878,16 +886,16 @@ function envoyerFile() {
     if (charge && !feuilleOuverte()) render();
   });
 }
-window.addEventListener('online', () => { envoyerFile(); });
+window.addEventListener('online', () => { envoyerFile(); memoriserLogos(); });
 
 function ecrire(action, args, appliquerLocal, messageOk) {
   if (appliquerLocal) appliquerLocal();
   sauverCache();
   if (!feuilleOuverte()) render();
-  const mettreEnFile = silencieux => {
+  const mettreEnFile = () => {
     fileAttente.push({ action, args, ts: Date.now() }); sauverFile();
     if (!feuilleOuverte()) render();
-    if (!silencieux) toast('📴 Enregistré hors ligne · envoi au retour du réseau', null, 3000);
+    toast('📴 Enregistré hors ligne · envoi au retour du réseau', null, 3000);
   };
   // Déjà des saisies en attente : on garde l'ordre (la création passe avant une modification)
   if (fileAttente.length || (!MODE_DEMO && !navigator.onLine) || (MODE_DEMO && demoHorsLigne)) { mettreEnFile(); return Promise.resolve(); }
@@ -896,7 +904,6 @@ function ecrire(action, args, appliquerLocal, messageOk) {
     .then(res => { if (messageOk) toast(messageOk); return res; })
     .catch(e => {
       if (estErreurReseau(e)) mettreEnFile();
-      else if (estErreurVerrou(e)) { mettreEnFile(true); setTimeout(envoyerFile, 10000); } // serveur occupé : envoi automatique un peu plus tard
       else toast('⚠️ ' + e.message);
       derniereEcriture = Date.now();
     })
@@ -908,12 +915,11 @@ function ecrire(action, args, appliquerLocal, messageOk) {
 }
 
 function recevoir(t, depuisCache) {
-  const supprEnFile = idsSuppressionEnFile();
   depenses = (t.depenses || []).map(r => ({ ...r, date: new Date(r.d) }))
-    .filter(r => !isNaN(r.date) && r.m > 0 && !enAttenteSuppression[r.id] && !supprEnFile.has(r.id));
+    .filter(r => !isNaN(r.date) && r.m > 0 && !enAttenteSuppression[r.id]);
   categories = t.categories || [];
   recurrentes = t.recurrentes || [];
-  dettes = (t.dettes || []).map(d => ({ ...d, date: new Date(d.d) })).filter(d => !enAttenteSuppression[d.id] && !supprEnFile.has(d.id));
+  dettes = (t.dettes || []).map(d => ({ ...d, date: new Date(d.d) }));
   if (t.dashboard !== undefined) etatDashboard = t.dashboard;
   if (depuisCache) majA = new Date(t.majA || Date.now());
   else { majA = new Date(); synchro = false; sauverCache(); finirTirer(); }
@@ -1081,12 +1087,12 @@ function bilan3(tout, libelleDepenses, aPayer, revAttendus) {
   const tuile = (v, lib, quoi) => `<div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('${quoi}')"` : ''}>
     <b data-v="${v}">${v < -0.5 ? '-' : ''}${eur0(Math.abs(v))}</b><span>${lib}</span></div>`;
   return `<div class="bilan3 bilan4">
-    ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep + (aPayer || 0), libelleDepenses || (aPayer > 0 ? (dep > 0 ? 'Fin de mois' : 'Prévues') : 'Dépenses'), 'dep')}
+    ${tuile(ca + autres, 'Revenus', 'rev')}${tuile(dep, libelleDepenses || 'Dépenses', 'dep')}
     <div class="${clic ? 'clic' : ''}" ${clic ? `onclick="ouvrirDetailBilan('delta')"` : ''}><b data-v="${delta}" class="${delta >= 0 ? 'positif' : 'negatif'}">${delta < -0.5 ? '-' : ''}${eur0(Math.abs(delta))}</b>
       <span>Delta${taux === null ? '' : ` <em class="${taux >= 0 ? 'positif' : 'negatif'}">${taux} %</em>`}</span></div>
     ${aPayer > 0 ? `<div class="total-mois clic" onclick="ouvrirDetailBilan('dep')">
       <div class="jauge-mois"><span style="width:${dep / (dep + aPayer) * 100}%"></span><i></i></div>
-      <div class="total-mois-txt"><span class="paye"><i></i>Déjà payé <b>${eur0(dep)}</b></span><span class="venir"><i></i>À venir <b>${eur0(aPayer)}</b></span></div></div>` : ''}
+      <div class="total-mois-txt"><span><i></i>${eur0(aPayer)} à venir</span><span>Fin de mois <b>${eur0(dep + aPayer)}</b></span></div></div>` : ''}
   </div>`;
 }
 
@@ -1119,23 +1125,63 @@ function feuilleDetailBilan(f) {
   const ligneDatee = (r, sansCat) => `<div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
     <div class="pop-ligne clic" onclick="if(!gesteEnCours)ouvrirDepuisDetail(${attr(r.id)})">
       <span class="d">${jour(r.date)}</span>${sansCat ? '' : `<span class="c">${esc(r.c)}</span>`}<span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b></div></div>`;
-  // Revenus et dépenses : même liste plate (date · catégorie · libellé · montant), à venir compris, de la plus grosse à la plus petite
-  const k = moisSel;
-  const aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => (groupeCat(x.r.categorie) === GROUPE_REVENUS) === rev) : [];
-  const prog = (rev && k < cleMois(new Date())) ? [] : prevuesDuMois(k).filter(r => estRevenu(r) === rev);
-  const toutes = rs.map(r => ({ m: r.m, html: ligneDatee(r) }))
-    .concat(prog.map(r => ({ m: r.m, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
-      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` })))
-    .concat(aVenir.map(({ r, d }) => ({ m: r.montant, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
-      <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
-    .sort((a, b) => b.m - a.m);
+  let corps;
+  if (rev) {
+    f.ouverts = f.ouverts || {};
+    const cats = REVENUS.concat([...new Set(rs.map(r => r.c))].filter(c => !REVENUS.includes(c)));
+    corps = cats.map(c => {
+      const lc = rs.filter(r => r.c === c).sort((a, b) => a.date - b.date);
+      if (!lc.length) return `<div class="pop-groupe vide-g"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(0)}</b></div>`;
+      // un groupe par libellé (« IJ » et « ij » ensemble)
+      const groupes = [];
+      lc.forEach(r => {
+        const k = sansAccents(r.n) || '—';
+        let g = groupes.find(x => x.k === k);
+        if (!g) groupes.push(g = { k, nom: r.n || 'Sans libellé', rs: [] });
+        g.rs.push(r);
+      });
+      const ligneGroupe = (g, seul) => {
+        const cle = c + '|' + g.k, ouvert = !!f.ouverts[cle];
+        return `<div class="pop-groupe clic ${seul ? '' : 'sous'}" onclick="basculerGroupePop(${attr(cle)})">
+            ${seul ? `<span class="c">${esc(c)}</span>` : ''}<span class="n">${esc(g.nom)}${g.rs.length > 1 ? ` <em>×${g.rs.length}</em>` : ''}</span>
+            <b>${eur(somme(g.rs))}</b><span class="chevron ${ouvert ? 'ouvert' : ''}">›</span></div>
+          ${ouvert ? `<div class="pop-deplie">${g.rs.map(r => ligneDatee(r, true)).join('')}</div>` : ''}`;
+      };
+      if (groupes.length === 1) return ligneGroupe(groupes[0], true);
+      return `<div class="pop-groupe"><span class="c">${esc(c)}</span><span class="n"></span><b>${eur(somme(lc))}</b><span class="chevron" style="visibility:hidden">›</span></div>
+        ${groupes.map(g => ligneGroupe(g, false)).join('')}`;
+    }).join('');
+  } else {
+    // Payées + à venir (prélèvements récurrents et dépenses programmées), de la plus grosse à la plus petite
+    const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) !== GROUPE_REVENUS) : [];
+    const prog = prevuesDuMois(k).filter(r => !estRevenu(r));
+    const toutes = rs.map(r => ({ m: r.m, html: ligneDatee(r) }))
+      .concat(prog.map(r => ({ m: r.m, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
+        <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` })))
+      .concat(aVenir.map(({ r, d }) => ({ m: r.montant, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
+        <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
+      .sort((a, b) => b.m - a.m);
+    const aPayer = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
+    corps = toutes.length ? toutes.map(x => x.html).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
+    return `${tete('Dépenses')}
+      <div class="pop-corps">${corps}</div>
+      ${aPayer > 0 ? `<div class="pop-sous-total"><span>Payé</span><b>${eur(somme(rs))}</b></div>
+        <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(aPayer)}</b></div>` : ''}
+      <div class="pop-total"><span>=</span><b>${eur(somme(rs) + aPayer)}</b></div>`;
+  }
+  const k = moisSel, aVenir = k >= cleMois(new Date()) ? aVenirDuMois(k).filter(x => groupeCat(x.r.categorie) === GROUPE_REVENUS) : [];
+  const prog = k >= cleMois(new Date()) ? prevuesDuMois(k).filter(estRevenu) : [];
   const attendu = somme(prog) + aVenir.reduce((t, x) => t + x.r.montant, 0);
-  const corps = toutes.length ? toutes.map(x => x.html).join('') : '<div class="vide" style="padding:14px 0">Rien ce mois-ci</div>';
-  return `${tete(rev ? 'Revenus' : 'Dépenses')}
-    <div class="pop-corps">${corps}</div>
-    ${attendu > 0 ? `<div class="pop-sous-total"><span>${rev ? 'Reçu' : 'Payé'}</span><b>${eur(somme(rs))}</b></div>
+  const lignesAttendues = prog.map(r => ({ d: r.date, html: `<div class="pop-ligne clic pop-avenir" onclick="ouvrirDepuisDetail(${attr(r.id)})">
+      <span class="d">${jour(r.date)}</span><span class="c">${esc(r.c)}</span><span class="n">${esc(r.n)}</span><b>${eur(r.m)}</b><em>à venir</em></div>` }))
+    .concat(aVenir.map(({ r, d }) => ({ d, html: `<div class="pop-ligne clic pop-avenir" onclick="fermerFeuille();setTimeout(()=>ouvrirDepuisRecurrente(${r.ligne}, ${d.getTime()}),260)">
+      <span class="d">${jour(d)}</span><span class="c">${esc(r.categorie)}</span><span class="n">${esc(r.libelle)}</span><b>${eur(r.montant)}</b><em>à venir</em></div>` })))
+    .sort((a, b) => a.d - b.d).map(x => x.html).join('');
+  return `${tete('Revenus')}
+    <div class="pop-corps">${corps}${lignesAttendues}</div>
+    ${attendu > 0 ? `<div class="pop-sous-total"><span>Reçu</span><b>${eur(somme(rs))}</b></div>
       <div class="pop-sous-total avenir"><span>À venir</span><b>${eur(attendu)}</b></div>` : ''}
-    <div class="pop-total"><span>=</span><b${rev ? ' class="positif"' : ''}>${eur(somme(rs) + attendu)}</b></div>`;
+    <div class="pop-total"><span>=</span><b class="positif">${eur(somme(rs) + attendu)}</b></div>`;
 }
 function basculerGroupePop(cle) { feuilleEtat.ouverts[cle] = !feuilleEtat.ouverts[cle]; haptique(); dessinerFeuille(); }
 // Depuis la carte : après l'enregistrement, on revient sur la carte
@@ -1188,6 +1234,7 @@ function vueListe() {
   const libFiltre = jourFiltre ? new Date(dateDeCle(moisSel).getFullYear(), dateDeCle(moisSel).getMonth(), jourFiltre)
     .toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : catFiltre;
   return `
+    ${carteAVerifier()}
     ${carteMois()}
     <section class="card">
       ${bilan3(tout, null, estMoisActuel || futur ? aPayerDuMois(moisSel) : 0, estMoisActuel || futur ? revenusAttendus(moisSel) : 0)}
@@ -1198,6 +1245,59 @@ function vueListe() {
     </section>
     ${liste.length > 2 ? '<div class="maj" style="margin-bottom:8px">Glisse une ligne sur le côté pour la supprimer</div>' : ''}`;
 }
+
+/* ===== Dépenses venues de la banque, à vérifier le soir ===== */
+const aVerifier = () => depenses.filter(r => r.s === 'Banque').sort((a, b) => b.date - a.date);
+function carteAVerifier() {
+  const l = aVerifier();
+  if (!l.length) return '';
+  return `<button class="a-verifier clic" onclick="ouvrirVerification()"><span class="ic">🧾</span>
+    <span><b>${l.length} dépense${l.length > 1 ? 's' : ''} de la banque à vérifier</b><small>${eur(somme(l))} · valide, partage ou corrige</small></span>
+    <span class="fl">›</span></button>`;
+}
+function ouvrirVerification() { haptique(); ouvrirFeuille({ type: 'verifier' }); }
+function feuilleVerifier() {
+  const l = aVerifier();
+  if (!l.length) return `${tete('À vérifier')}<div class="vide" style="padding:30px 0">✅ Tout est vérifié, bravo !</div>
+    <button class="btn principal" onclick="fermerFeuille()">FERMER</button>`;
+  return `<div style="flex:1;overflow-y:auto;margin:0 -18px;padding:0 18px calc(24px + env(safe-area-inset-bottom))">
+    ${tete('À vérifier')}
+    <div class="aide" style="margin:0 0 6px">Ajoutées automatiquement depuis BoursoBank. Le titre et la catégorie sont devinés d'après tes habitudes.</div>
+    ${l.map(r => `<div class="val">
+      <div class="tx">${pastille(r.n, emojiDe(r), couleurDe(r))}
+        <div class="info"><div class="date">${ICONE_CAL}${dateCourte(r.date)}</div><div class="titre">${esc(r.n || r.c)}</div>
+          <div class="sous">${esc(r.c)}${r.qui ? `<span class="badge-mini remb">💸 ${esc(r.qui)}</span>` : ''}</div></div>
+        <div class="mt">-${eur(r.m)}</div></div>
+      <div class="val-actions">
+        <button class="ok" onclick="validerBanque([${attr(r.id)}])">✓ OK</button>
+        <button onclick="modifierDepuisVerif(${attr(r.id)}, 2)">½ Partagée</button>
+        <button onclick="modifierDepuisVerif(${attr(r.id)}, 1)">💸 Remboursée</button>
+        <button onclick="modifierDepuisVerif(${attr(r.id)})">✏️</button>
+        <button class="sup" onclick="supprimerDepuisVerif(${attr(r.id)})" aria-label="Supprimer">🗑</button>
+      </div></div>`).join('')}
+    ${l.length > 1 ? `<button class="btn principal" onclick="validerBanque(aVerifier().map(r => r.id))">TOUT VALIDER (${l.length})</button>` : ''}
+  </div>`;
+}
+function redessinerVerif() { if (feuilleEtat && feuilleEtat.type === 'verifier') dessinerFeuille(); }
+function validerBanque(ids) {
+  haptique();
+  ecrire('validerDepenses', [ids], () => { depenses.forEach(r => { if (ids.includes(r.id) && r.s === 'Banque') r.s = 'Banque ✓'; }); },
+    ids.length > 1 ? `✅ ${ids.length} dépenses validées` : '✅ Validée');
+  redessinerVerif();
+}
+// part : 2 = moitié due, 1 = tout remboursé, rien = simple modification
+function modifierDepuisVerif(id, part) {
+  haptique();
+  ouvrirDepense(id);
+  feuilleEtat.retourVerif = true;
+  if (part) {
+    const r = depenses.find(x => x.id === id);
+    Object.assign(feuilleEtat, { aRembourser: true, du: montantTexte(Math.round(r.m / part * 100) / 100) });
+    dessinerFeuille();
+    setTimeout(() => { const i = document.querySelector('#feuille [data-champ="qui"]'); if (i && !i.value) i.focus(); }, 350);
+  }
+}
+function supprimerDepuisVerif(id) { supprimerAvecAnnuler(id); redessinerVerif(); }
 
 /* « À venir » (comme Buddy) : montant barré, « + Ajouter maintenant » l'ajoute à SA date et le compte tout de suite */
 function lignesAVenir(aVenir, prevues, futur) {
@@ -1241,7 +1341,8 @@ function ligneTx(r, sansDate) {
   const rev = estRevenu(r);
   const badges = (r.s === 'Récurrente' ? '<span class="badge-mini etiq">↻</span>' : '')
     + (estPrevue(r) ? '<span class="badge-mini etiq">🗓️ prévue</span>' : '')
-    + (r.qui ? `<span class="badge-mini remb ${r.remb ? 'ok' : ''}">💸 ${esc(r.qui)}</span>` : '');
+    + (r.qui ? `<span class="badge-mini remb ${r.remb ? 'ok' : ''}">💸 ${esc(r.qui)}</span>` : '')
+    + (r.s === 'Banque' ? '<span class="badge-mini etiq">🏦 à vérifier</span>' : '');
   const attente = fileAttente.length && idsEnAttente().has(r.id) ? '<span class="attente">⏳</span>' : '';
   return `
     <div class="swipe" data-id="${esc(r.id)}"><div class="swipe-fond">Supprimer</div>
@@ -1285,23 +1386,7 @@ function vueApercu() {
   const jours = estMoisActuel ? new Date().getDate() : dernierJour(dateDeCle(moisSel).getFullYear(), dateDeCle(moisSel).getMonth());
   const evol = totalPrec > 0 ? (total - totalPrec) / totalPrec : null;
 
-  // Par catégorie : en premier (juste après la carte Noël)
-  const carteCats = total > 0 ? `
-    <section class="card">
-      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
-      ${cats.map(([c, v]) => `
-        <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
-          <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
-          <div class="info"><div class="nom">${esc(c)}</div>
-            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
-            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois</div></div>
-          <div class="mt">${eur(v)}${delta(c)}</div>
-        </div>`).join('')}
-    </section>` : '';
-
   let html = `${carteMois()}
-    ${carteNoel()}
-    ${carteCats}
     <section class="card">
       <div class="resume">
         <div class="anneau">${anneau(cats, couleurCat, total)}
@@ -1317,7 +1402,8 @@ function vueApercu() {
       ${bilan3(tout)}
     </section>
     <section class="card"><h2>6 derniers mois</h2>${histo6()}
-      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>`;
+      <div class="legende" style="margin-top:12px"><span><i style="background:var(--down)"></i>Revenus</span><span><i style="background:color-mix(in srgb, var(--up) 55%, var(--card2))"></i>Dépenses</span></div></section>
+    ${carteRessources(tout)}`;
 
   if (total > 0) {
     html += `
@@ -1325,8 +1411,22 @@ function vueApercu() {
       <h2>Par groupe</h2>
       <div class="barre">${ordreGroupes.map(g => `<span style="width:${parGroupe[g] / total * 100}%;background:${couleurGroupe(g)}"></span>`).join('')}</div>
       <div class="legende">${ordreGroupes.map(g => `<span><i style="background:${couleurGroupe(g)}"></i>${esc(g)}<b>${eur0(parGroupe[g])}</b></span>`).join('')}</div>
+    </section>
+    <section class="card">
+      <h2>Par catégorie${aDesDonneesPrec ? ` <span style="font-weight:500;color:var(--mut)">· vs ${nomMois(decaler(moisSel, -1), { month: 'long' })}</span>` : ''}</h2>
+      ${cats.map(([c, v]) => {
+        return `
+        <div class="ligne clic cat" onclick="voirCategorieDansListe(${attr(c)})">
+          <div class="ico" style="background:color-mix(in srgb, ${couleurCat[c]} 20%, var(--card))">${esc(emojiCat(c))}</div>
+          <div class="info"><div class="nom">${esc(c)}</div>
+            <div class="jauge"><span style="width:${v / cats[0][1] * 100}%;background:${couleurCat[c]}"></span></div>
+            <div class="sous" style="font-size:12px;margin-top:4px">${(v / total * 100).toFixed(0)} % du mois</div></div>
+          <div class="mt">${eur(v)}${delta(c)}</div>
+        </div>`;
+      }).join('')}
     </section>`;
   }
+  html += carteCalendrier(rs);
   const tops = topCommerces(rs);
   if (tops.length) {
     html += `<section class="card"><h2>Top commerces</h2>
@@ -1341,30 +1441,6 @@ function vueApercu() {
     <section class="card carte-retro" onclick="ouvrirRetro(${annee})"><div class="gros">🎁</div>
       <div><b>Ta rétrospective ${annee}</b><span>Tes chiffres marquants de l'année, en quelques diapos</span></div></section>`;
   return html;
-}
-
-/* ===== NOËL (Aperçu) : toutes les dépenses étiquetées « Noël » de la saison (nov. → janv.), tous mois confondus ===== */
-let noelOuvert = false;
-function basculerNoel() { noelOuvert = !noelOuvert; haptique(); render(); }
-function carteNoel() {
-  const d = dateDeCle(moisSel);
-  // Saison : Noël de l'année du mois affiché (janvier = Noël de l'année d'avant)
-  const an = d.getMonth() === 0 ? d.getFullYear() - 1 : d.getFullYear();
-  const debut = new Date(an, 0, 1), fin = new Date(an + 1, 1, 1);
-  const rs = depenses.filter(r => !estRevenu(r) && /\bnoel\b/.test(sansAccents(r.t)) && r.date >= debut && r.date < fin)
-    .sort((a, b) => b.m - a.m);
-  if (!rs.length) return '';
-  const total = somme(rs);
-  return `<section class="card">
-    <div class="rev-ligne"><div class="ligne clic" onclick="basculerNoel()">
-      <div class="ico" style="background:color-mix(in srgb, #dc2626 20%, var(--card))">🎄</div>
-      <div class="info"><div class="nom">Noël ${an}</div><div class="sous">${rs.length} achat${rs.length > 1 ? 's' : ''} · étiquette « Noël »</div></div>
-      <div class="mt">${eur(total)}</div>
-      <span class="chevron ${noelOuvert ? 'ouvert' : ''}">›</span></div>
-    ${noelOuvert ? `<div class="rev-detail">${rs.map(r => `<div onclick="ouvrirDepense(${attr(r.id)})">
-      <span>${esc(emojiDe(r))} ${r.n ? esc(r.n) : esc(r.c)}</span><b>${eur(r.m)}</b></div>`).join('')}</div>` : ''}
-    </div>
-  </section>`;
 }
 
 /* ===== Rétrospective annuelle ===== */
@@ -1562,96 +1638,42 @@ function histo6() {
 function elementsDettes() {
   const avances = depenses.filter(r => r.qui && r.du > 0).map(r => ({
     type: 'avance', id: r.id, sens: 'On me doit', qui: r.qui, m: r.du, n: r.n || r.c, date: r.date, regle: !!r.remb, total: r.m }));
-  const manuelles = dettes.filter(d => d.sens !== SENS_CB).map(d => ({ type: 'dette', id: d.id, sens: d.sens, qui: d.qui, m: d.m, n: d.n, date: d.date, regle: !!d.regle }));
+  const manuelles = dettes.map(d => ({ type: 'dette', id: d.id, sens: d.sens, qui: d.qui, m: d.m, n: d.n, date: d.date, regle: !!d.regle }));
   return avances.concat(manuelles).sort((a, b) => b.m - a.m);
-}
-/* ===== Cashback Amazon (lignes « Cashback » de l'onglet Dettes) =====
-   Une ligne « Solde actuel » = ce que tu as sur Amazon aujourd'hui ;
-   les autres lignes = cashback qui va revenir (ex. part payée en cashback d'un article retourné). */
-const SENS_CB = 'Cashback', QUI_SOLDE_CB = 'Solde actuel';
-const ligneSoldeCB = () => dettes.find(d => d.sens === SENS_CB && d.qui === QUI_SOLDE_CB);
-const attentesCB = () => dettes.filter(d => d.sens === SENS_CB && d.qui !== QUI_SOLDE_CB && !d.regle).sort((a, b) => b.date - a.date);
-function blocCashback() {
-  const solde = ligneSoldeCB(), att = attentesCB();
-  const s = solde ? solde.m : 0, enAttente = att.reduce((t, d) => t + d.m, 0);
-  const majSolde = solde ? 'mis à jour le ' + solde.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 'touche pour l’indiquer';
-  const ligne = d => `<div class="ligne ligne-pm">
-      <div class="avatar plus">+</div>
-      <div class="info clic" onclick="ouvrirDette(${attr(d.id)})"><div class="nom">${eur(d.m)} · ${esc(d.qui)}</div></div>
-      <button class="puce" onclick="recuCashback(${attr(d.id)})">✓ Reçu</button></div>`;
-  return `<section class="card"><h2>🛒 Cashback Amazon</h2>
-    <div class="duo">
-      <div class="clic" onclick="ouvrirSoldeCB()"><span class="lbl">Tu as</span><b>${solde ? eur(s) : '—'}</b><span class="lbl">${majSolde} ✎</span></div>
-      <div><span class="lbl">Après retours</span><b class="positif">${eur(s + enAttente)}</b><span class="lbl">${att.length ? '+' + eur(enAttente) + ' à revenir' : 'rien en attente'}</span></div>
-    </div>
-    ${att.length ? `<div style="margin-top:10px">${att.map(ligne).join('')}</div>` : ''}
-    <button class="puce" style="margin-top:10px" onclick="ouvrirDette(null, SENS_CB)">+ Cashback à recevoir</button></section>`;
-}
-function ouvrirSoldeCB() {
-  const d = ligneSoldeCB();
-  ouvrirFeuille({ type: 'dette', id: d ? d.id : null, sens: SENS_CB, qui: QUI_SOLDE_CB, montant: d ? montantTexte(d.m) : '',
-    note: d ? d.n : '', date: new Date(), regle: false, nouvelle: !d, soldeCB: true });
-}
-// « ✓ Reçu » : la ligne passe en réglée et son montant s'ajoute au solde
-function recuCashback(id) {
-  const d = dettes.find(x => x.id === id), solde = ligneSoldeCB();
-  if (!d) return;
-  haptique();
-  ecrire('reglerDette', [id, true], () => { d.regle = true; });
-  if (solde) {
-    const m = Math.round((solde.m + d.m) * 100) / 100, date = new Date();
-    ecrire('enregistrerDette', [{ id: solde.id, date: versTexteDate(date), sens: SENS_CB, qui: QUI_SOLDE_CB, montant: m, note: solde.n || '', regle: false }],
-      () => { solde.m = m; solde.date = date; solde.d = versTexteDate(date); }, `✅ Cashback reçu · solde ${eur(m)}`);
-  } else toast(`✅ Reçu · ${eur(d.m)} · indique ton solde Amazon`);
 }
 function vueDettes() {
   const tous = elementsDettes();
-  const ouverts = tous.filter(x => !x.regle), regles = tous.filter(x => x.regle).sort((a, b) => b.date - a.date);
+  const ouverts = tous.filter(x => !x.regle), regles = tous.filter(x => x.regle);
   const onMeDoit = ouverts.filter(x => x.sens === 'On me doit'), jeDois = ouverts.filter(x => x.sens === 'Je dois');
-  // Glisser une ligne en cours = la passer dans « Terminés » ; glisser dans « Terminés » = la supprimer pour de bon
+  // Les mémos (dettes) se suppriment en glissant vers la gauche ; une avance vient d'une dépense, elle se modifie depuis celle-ci
   const ligne = x => {
-    const sous = [x.qui !== x.n ? x.n || '' : '', x.type === 'avance' ? 'sur ' + eur(x.total) : ''].filter(Boolean).join(' · ');
+    const sous = [x.n || '', x.type === 'avance' ? 'sur ' + eur(x.total) : ''].filter(Boolean).join(' · ');
     const corps = `<div class="ligne ligne-pm">
       <div class="avatar ${x.sens === 'On me doit' ? 'plus' : 'moins'}">${x.sens === 'On me doit' ? '+' : '−'}</div>
       <div class="info clic" onclick="if(!gesteEnCours)${x.type === 'avance' ? `ouvrirDepense(${attr(x.id)})` : `ouvrirDette(${attr(x.id)})`}">
-        <div class="nom">${eur(x.m)} · ${esc(x.qui)}</div>
+        <div class="nom">${esc(x.qui)} · ${eur(x.m)}</div>
         ${sous ? `<div class="sous" style="white-space:normal">${esc(sous)}</div>` : ''}</div>
-      ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">↩︎ Remettre</button>` : ''}
+      ${x.regle ? `<button class="puce" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, false)">Annuler</button>`
+        : `<button class="ok-btn" onclick="reglerElement(${attr(x.type)}, ${attr(x.id)}, true)">✓ ${x.sens === 'On me doit' ? 'Reçu' : 'Payé'}</button>`}
     </div>`;
-    if (x.regle && x.type === 'avance') return corps; // une avance vient d'une dépense : on ne la supprime pas d'ici
-    return `<div class="swipe" data-id="${esc(x.id)}" data-type="${x.type}" data-regle="${x.regle ? 1 : 0}"><div class="swipe-fond">${x.regle ? 'Supprimer' : 'Terminé'}</div>${corps}</div>`;
+    return x.type === 'dette' ? `<div class="swipe" data-id="${esc(x.id)}" data-type="dette"><div class="swipe-fond">Supprimer</div>${corps}</div>` : corps;
   };
   const totalPlus = onMeDoit.reduce((s, x) => s + x.m, 0), totalMoins = jeDois.reduce((s, x) => s + x.m, 0);
-  const onglets = `<div class="segments" style="margin:0 0 12px">
-      <button class="${ongletPM === 'cours' ? 'sel' : ''}" onclick="ongletPM='cours';render()">En cours</button>
-      <button class="${ongletPM === 'termines' ? 'sel' : ''}" onclick="ongletPM='termines';render()">Terminés${regles.length ? ' (' + regles.length + ')' : ''}</button></div>`;
-  if (ongletPM === 'termines') return `${onglets}
-    <section class="card">${regles.length ? regles.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien de terminé pour l’instant</div>'}</section>
-    <div class="maj" style="margin-bottom:6px">Touche ↩︎ Remettre pour la renvoyer dans « En cours » · glisse-la sur le côté pour la supprimer</div>`;
-  return `${onglets}
+  return `
     <section class="card"><div class="duo">
       <div><span class="lbl">+ À recevoir</span><b class="positif">${eur(totalPlus)}</b></div>
       <div><span class="lbl">− À payer</span><b class="${jeDois.length ? 'negatif' : ''}">${eur(totalMoins)}</b></div>
     </div>
     <div class="entre" style="margin:12px 2px 0"><span class="lbl">Solde attendu</span>
       <b style="font-size:17px" class="${totalPlus - totalMoins >= 0 ? 'positif' : 'negatif'}">${totalPlus - totalMoins >= 0 ? '+' : '−'}${eur(Math.abs(totalPlus - totalMoins))}</b></div></section>
-    ${blocCashback()}
     <section class="card"><h2>+ À recevoir</h2>
       ${onMeDoit.length ? onMeDoit.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien en attente 🎉</div>'}</section>
     <section class="card"><h2>− À payer</h2>
       ${jeDois.length ? jeDois.map(ligne).join('') : '<div class="vide" style="padding:10px 0">Rien à payer</div>'}</section>
-    <div class="maj" style="margin-bottom:6px">Touche + pour ajouter · glisse une ligne sur le côté quand c’est réglé : elle part dans « Terminés »</div>`;
-}
-// Glisser dans le +/- : en cours → Terminés (annulable) ; dans Terminés → suppression (annulable 5 s)
-function glisserPM(s) {
-  const type = s.dataset.type, id = s.dataset.id;
-  if (s.dataset.regle === '1') return supprimerDetteAvecAnnuler(id);
-  haptique();
-  const x = type === 'avance' ? depenses.find(r => r.id === id) : dettes.find(d => d.id === id);
-  if (!x) return;
-  if (type === 'avance') ecrire('marquerRembourse', [id, true], () => { x.remb = true; });
-  else ecrire('reglerDette', [id, true], () => { x.regle = true; });
-  toast(`✅ Terminé · ${eur(type === 'avance' ? x.du : x.m)} · ${x.qui}`, { texte: 'Annuler', fn: () => reglerElement(type, id, false) }, 5000);
+    ${regles.length ? `<section class="card" style="padding-top:6px;padding-bottom:6px">
+      <div class="action-ligne" onclick="voirReglees=!voirReglees;render()"><span>Terminés (${regles.length})</span><span>${voirReglees ? '⌄' : '›'}</span></div>
+      ${voirReglees ? regles.map(ligne).join('') : ''}</section>` : ''}
+    <div class="maj" style="margin-bottom:6px">Touche + pour ajouter · touche une ligne pour la modifier · glisse-la vers la gauche pour la supprimer</div>`;
 }
 function reglerElement(type, id, oui) {
   if (type === 'avance') {
@@ -1937,7 +1959,7 @@ let gesteEnCours = false;
     ligne.style.transition = '';
     if (sens === 'h' && Math.abs(dx) > s.offsetWidth * 0.35) {
       ligne.style.transform = `translateX(${dx > 0 ? 110 : -110}%)`;
-      setTimeout(() => (s.dataset.type === 'dette' || s.dataset.type === 'avance') ? glisserPM(s) : supprimerAvecAnnuler(s.dataset.id), 180);
+      setTimeout(() => s.dataset.type === 'dette' ? supprimerDetteAvecAnnuler(s.dataset.id) : supprimerAvecAnnuler(s.dataset.id), 180);
     } else {
       ligne.style.transform = '';
       fond.style.opacity = 0;
@@ -1954,54 +1976,24 @@ let gesteEnCours = false;
   document.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') fin(); });
 })();
 
-/* Suppressions « glisser » : gardées sur le téléphone pendant les 5 s d'annulation.
-   Avant ce correctif, si l'appli passait en arrière-plan ou était fermée pendant ces 5 s, iOS gelait le minuteur :
-   la suppression n'était jamais envoyée au Google Sheet et la ligne revenait à l'ouverture suivante. */
-const CLE_SUPPR = MODE_DEMO ? 'depenses-demo-suppr' : 'depenses-suppr';
-function lireSuppr() { try { return JSON.parse(localStorage.getItem(CLE_SUPPR) || '[]'); } catch (e) { return []; } }
-function ecrireSuppr(l) { try { localStorage.setItem(CLE_SUPPR, JSON.stringify(l)); } catch (e) {} }
-function noterSuppr(action, id) { ecrireSuppr(lireSuppr().filter(x => x.id !== id).concat({ action, id })); }
-function oublierSuppr(id) { ecrireSuppr(lireSuppr().filter(x => x.id !== id)); }
-function idsSuppressionEnFile() {
-  const ids = new Set();
-  fileAttente.forEach(x => { if (/^supprimer(Depense|Dette)$/.test(x.action)) ids.add(x.args[0]); });
-  lireSuppr().forEach(x => ids.add(x.id));
-  return ids;
-}
-// Envoie tout de suite les suppressions encore annulables (appli quittée, ou restes d'une fermeture brutale)
-function viderSuppressions() {
-  const l = lireSuppr();
-  if (!l.length) return;
-  l.forEach(x => {
-    const j = enAttenteSuppression[x.id];
-    if (j) { clearTimeout(j.minuteur); delete enAttenteSuppression[x.id]; }
-    if (!fileAttente.some(f => f.action === x.action && f.args[0] === x.id)) fileAttente.push({ action: x.action, args: [x.id], ts: Date.now() });
-  });
-  sauverFile(); ecrireSuppr([]);
-  envoyerFile();
-}
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') viderSuppressions(); });
-window.addEventListener('pagehide', viderSuppressions);
-
 function supprimerAvecAnnuler(id) {
   const r = depenses.find(x => x.id === id);
   if (!r || enAttenteSuppression[id]) return;
   haptique();
   depenses = depenses.filter(x => x.id !== id);
-  noterSuppr('supprimerDepense', id); sauverCache();
   render(); redessinerDetail();
   // Le jeton garantit qu'une suppression annulée n'est jamais envoyée
   const jeton = {};
   jeton.minuteur = setTimeout(() => {
     if (enAttenteSuppression[id] !== jeton) return;
-    delete enAttenteSuppression[id]; oublierSuppr(id);
+    delete enAttenteSuppression[id];
     ecrire('supprimerDepense', [id]);
   }, 5000);
   enAttenteSuppression[id] = jeton;
   toast(`🗑 ${r.n || r.c} · ${eur(r.m)} supprimé`, { texte: 'Annuler', fn: () => {
     if (enAttenteSuppression[id] !== jeton) return;
     clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
-    oublierSuppr(id); depenses = depenses.concat(r); sauverCache(); render(); redessinerDetail(); toast('↩︎ Restauré');
+    depenses = depenses.concat(r); render(); redessinerDetail(); toast('↩︎ Restauré');
   } }, 5000);
 }
 
@@ -2011,19 +2003,18 @@ function supprimerDetteAvecAnnuler(id) {
   if (!d || enAttenteSuppression[id]) return;
   haptique();
   dettes = dettes.filter(x => x.id !== id);
-  noterSuppr('supprimerDette', id); sauverCache();
   render();
   const jeton = {};
   jeton.minuteur = setTimeout(() => {
     if (enAttenteSuppression[id] !== jeton) return;
-    delete enAttenteSuppression[id]; oublierSuppr(id);
+    delete enAttenteSuppression[id];
     ecrire('supprimerDette', [id]);
   }, 5000);
   enAttenteSuppression[id] = jeton;
   toast(`🗑 ${d.qui} · ${eur(d.m)} supprimé`, { texte: 'Annuler', fn: () => {
     if (enAttenteSuppression[id] !== jeton) return;
     clearTimeout(jeton.minuteur); delete enAttenteSuppression[id];
-    oublierSuppr(id); dettes = dettes.concat(d); sauverCache(); render(); toast('↩︎ Restauré');
+    dettes = dettes.concat(d); render(); toast('↩︎ Restauré');
   } }, 5000);
 }
 
@@ -2047,9 +2038,9 @@ function fermerFeuille() {
 function dessinerFeuille() {
   const f = feuilleEtat;
   const vues = { depense: feuilleDepense, recurrente: feuilleRecurrente, categorie: feuilleCategorie, groupe: feuilleGroupe,
-    dette: feuilleDette, confirmer: feuilleConfirmer, choixCat: feuilleChoixCat, retro: feuilleRetro, detailBilan: feuilleDetailBilan };
+    dette: feuilleDette, confirmer: feuilleConfirmer, verifier: feuilleVerifier, choixCat: feuilleChoixCat, retro: feuilleRetro, detailBilan: feuilleDetailBilan };
   const el = document.getElementById('feuille');
-  el.classList.toggle('pleine', f.type === 'choixCat' || f.type === 'depense' || f.type === 'retro');
+  el.classList.toggle('pleine', f.type === 'choixCat' || f.type === 'depense' || f.type === 'retro' || f.type === 'verifier');
   el.classList.toggle('pop', f.type === 'detailBilan');
   el.innerHTML = vues[f.type](f);
   if (f.type === 'depense') ajusterLargeurMontant();
@@ -2132,56 +2123,16 @@ function feuilleDepense(f) {
       <div class="fleches"><button onclick="decalerJour(-1)" aria-label="Jour précédent">‹</button>
         <button onclick="decalerJour(1)" aria-label="Jour suivant">›</button></div></div>
     ${prevue ? `<div class="aide" style="margin:8px 0 0 54px">${f.compte ? '✓ Comptée dès maintenant dans le mois, à la date du ' + f.date.getDate() + '.' : '🗓️ Programmée : elle reste dans « À venir » jusqu\'à sa date. Touche le bouton pour l\'ajouter maintenant.'}</div>` : ''}
-    ${rangeesEtiquette(f)}
     ${f.recurrente ? `<div class="aide" style="margin:8px 0 0 54px">↻ Prélèvement récurrent · <a href="#" style="color:var(--accent)" onclick="event.preventDefault();ouvrirRecurrente(${f.recurrente})">modifier la récurrence</a></div>` : ''}
     ${f.nouvelle && !f.revenu && !f.recurrente ? `
     <div class="rangee"><div class="ic-trait">${IC.repeter}</div>
       <div class="texte" style="color:var(--txt)">${esc(REPETITIONS.find(x => x[0] === Number(f.repeter))[1])}${Number(f.repeter) ? ` · le ${f.date.getDate()}` : ''}</div>
       <select class="cache" onchange="majFeuille({repeter:Number(this.value)})" aria-label="Répéter">
         ${REPETITIONS.map(([n, l]) => `<option value="${n}" ${Number(f.repeter) === n ? 'selected' : ''}>${l}</option>`).join('')}</select></div>` : ''}
+    ${f.revenu ? '' : blocRembourse(f)}
     <button class="btn principal" style="margin-top:26px" onclick="validerDepense()">${f.nouvelle ? (prevue && !f.compte ? 'PROGRAMMER' : 'AJOUTER') : 'ENREGISTRER'}</button>
     ${f.nouvelle ? '' : `<button class="btn danger" onclick="supprimerDepenseUI()">Supprimer</button>`}
   </div>`;
-}
-// Étiquettes déjà utilisées, les plus fréquentes d'abord (ex. « Aménagement chambre »)
-function etiquettesConnues() {
-  const n = {};
-  depenses.forEach(r => { if (r.t) n[r.t] = (n[r.t] || 0) + 1; });
-  return Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 8);
-}
-// Étiquette + « Quelqu'un me rembourse » (ex. papa paie les Fire Stick)
-function rangeesEtiquette(f) {
-  const connues = etiquettesConnues();
-  const actuelle = String(f.etiquette || '').trim();
-  return `<div class="rangee"><div class="ic-trait">${IC.etiquette}</div>
-      <input type="text" data-champ="etiquette" placeholder="Étiquette (ex. Aménagement chambre)" value="${esc(f.etiquette)}" enterkeyhint="done"></div>
-    ${connues.length ? `<div class="grille libelles">${connues.map(t =>
-      `<button class="${t === actuelle ? 'sel' : ''}" onclick="majFeuille({etiquette:${attr(t === actuelle ? '' : t)}})">🏷️ ${esc(t)}</button>`).join('')}</div>` : ''}
-    ${f.revenu ? '' : `
-    <div class="rangee"><div class="ic-trait">${IC.rembourse}</div>
-      <div class="texte" style="color:var(--txt)">Quelqu'un me rembourse</div>
-      <label class="switch"><input type="checkbox" ${f.aRembourser ? 'checked' : ''} onchange="basculerRemboursement(this.checked)"><i></i></label></div>
-    ${f.aRembourser ? `
-    <div class="rangee"><div class="ic-trait"></div>
-      <input type="text" data-champ="qui" placeholder="Qui ? (ex. Papa)" value="${esc(f.qui)}" enterkeyhint="done">
-      <input type="text" data-champ="du" inputmode="decimal" placeholder="Montant dû" value="${esc(f.du)}" style="flex:0 0 96px;text-align:right"><span class="lbl">€</span></div>
-    ${connuesQui().length ? `<div class="grille libelles">${connuesQui().map(q =>
-      `<button class="${q === String(f.qui || '').trim() ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
-    <div class="rangee"><div class="ic-trait"></div>
-      <div class="texte" style="color:var(--txt)">Déjà remboursé</div>
-      <label class="switch"><input type="checkbox" ${f.remb ? 'checked' : ''} onchange="majFeuille({remb:this.checked})"><i></i></label></div>` : ''}`}`;
-}
-function connuesQui() {
-  const n = {};
-  depenses.forEach(r => { if (r.qui) n[r.qui] = (n[r.qui] || 0) + 1; });
-  return Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 6);
-}
-function basculerRemboursement(oui) {
-  lireChamps();
-  const f = feuilleEtat;
-  f.aRembourser = oui;
-  if (oui && !String(f.du || '').trim()) f.du = f.montant;   // par défaut : tout le montant
-  dessinerFeuille();
 }
 function rangeeCategorie(f) {
   const cat = f.categorie;
@@ -2284,6 +2235,33 @@ function choisirCategorie(nom) {
 }
 function retourChoix() { feuilleEtat = feuilleEtat.retour; dessinerFeuille(); }
 function choisirCatDepense(nom) { majFeuille({ categorie: nom }); }
+// « On me rembourse » : qui, combien (moitié, tiers, tout), et si c'est déjà reçu
+function blocRembourse(f) {
+  const personnes = [...new Set(elementsDettes().map(x => x.qui).filter(Boolean))].slice(0, 8);
+  return `<div class="rangee"><div class="ic-trait" style="font-size:24px">💸</div>
+      <div class="texte" style="color:var(--txt);flex:1">On me rembourse</div>
+      <label class="switch"><input type="checkbox" ${f.aRembourser ? 'checked' : ''} onchange="basculerRembourse(this.checked)"><i></i></label></div>
+    ${f.aRembourser ? `
+    <div class="champ"><span class="ic">👤</span><input type="text" data-champ="qui" placeholder="Qui ? (Léa, Allianz…)" value="${esc(f.qui)}" enterkeyhint="done"></div>
+    ${personnes.length ? `<div class="grille" style="margin:0 0 6px 42px">${personnes.map(q =>
+      `<button class="${q === f.qui ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
+    <div class="champ"><span class="ic">💶</span><input type="text" data-champ="du" inputmode="decimal" placeholder="Combien ?" value="${esc(f.du)}" style="flex:1"><span>€</span></div>
+    <div class="grille" style="margin:0 0 6px 42px">${[[2, 'Moitié'], [3, 'Un tiers'], [1, 'Tout']].map(([n, l]) =>
+      `<button onclick="partDue(${n})">${l}</button>`).join('')}</div>
+    ${f.nouvelle ? '' : `<div class="champ"><span class="ic">✅</span><span class="etiq" style="flex:1">Déjà remboursé</span>
+      <label class="switch"><input type="checkbox" ${f.remb ? 'checked' : ''} onchange="majFeuille({remb:this.checked})"><i></i></label></div>`}` : ''}`;
+}
+function basculerRembourse(oui) {
+  lireChamps();
+  const m = lireMontant(feuilleEtat.montant);
+  majFeuille({ aRembourser: oui, du: oui && !feuilleEtat.du && m ? montantTexte(Math.round(m / 2 * 100) / 100) : feuilleEtat.du });
+}
+function partDue(n) {
+  lireChamps();
+  const m = lireMontant(feuilleEtat.montant);
+  if (!m) return toast('⚠️ Indique d\'abord le montant');
+  majFeuille({ du: montantTexte(Math.round(m / n * 100) / 100) });
+}
 function validerDepense() {
   lireChamps();
   const f = feuilleEtat;
@@ -2308,15 +2286,17 @@ function validerDepense() {
   const ancienne = depenses.find(x => x.id === f.id) || {};
   const changeCat = !f.nouvelle && ancienne.c !== f.categorie;
   const locale = { id: f.id || envoi.idClient, d: envoi.date, date: d, m, c: f.categorie, n: envoi.note,
-    s: f.nouvelle ? 'Appli' : ancienne.s,
+    s: f.nouvelle ? 'Appli' : ancienne.s === 'Banque' ? 'Banque ✓' : ancienne.s,
     g: f.nouvelle || changeCat ? groupeCat(f.categorie) : ancienne.g,   // historique figé
     e: f.nouvelle || changeCat ? emojiCat(f.categorie) : ancienne.e,
     t: envoi.etiquette, qui, du, remb: envoi.rembourse, compte };
   const nouvelle = f.nouvelle;
   const repeter = nouvelle && !f.revenu ? Number(f.repeter) || 0 : 0;
   moisSel = cleMois(d);
+  if (f.retourVerif) moisSel = cleMois(new Date());
   if (nouvelle && !f.retourDetail) { onglet = 'accueil'; sousOnglets.accueil = 'liste'; }
   if (f.retourDetail) setTimeout(() => { if (!feuilleOuverte()) ouvrirFeuille({ type: 'detailBilan', quoi: f.retourDetail }); }, 320);
+  if (f.retourVerif) setTimeout(() => { if (!feuilleOuverte() && aVerifier().length) ouvrirFeuille({ type: 'verifier' }); }, 320);
   if (moisSel > moisMax()) moisSel = moisMax();
   feuilleEtat = null; fermerFeuille();
   haptique();
@@ -2343,32 +2323,28 @@ function supprimerDepenseUI() {
 }
 
 /* ===== Feuille : dette ===== */
-function ouvrirDette(id, sensDefaut) {
+function ouvrirDette(id) {
   const d = id ? dettes.find(x => x.id === id) : null;
-  ouvrirFeuille({ type: 'dette', id: d ? d.id : null, sens: d ? d.sens : (sensDefaut || 'On me doit'), qui: d ? d.qui : '', montant: d ? montantTexte(d.m) : '',
+  ouvrirFeuille({ type: 'dette', id: d ? d.id : null, sens: d ? d.sens : 'On me doit', qui: d ? d.qui : '', montant: d ? montantTexte(d.m) : '',
     note: d ? d.n : '', date: d ? new Date(d.date) : new Date(), regle: d ? !!d.regle : false, nouvelle: !d });
 }
 function feuilleDette(f) {
-  if (f.sens === SENS_CB) return feuilleCashback(f);
+  const personnes = [...new Set(elementsDettes().map(x => x.qui))].slice(0, 8);
   return `${tete(f.nouvelle ? 'Nouveau + / -' : 'Modifier')}
     <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}"
       style="color:${f.sens === 'Je dois' ? 'var(--up)' : 'var(--down)'}"><span>€</span></div>
     <div class="segments" style="margin:0 0 6px">
       <button class="${f.sens === 'On me doit' ? 'sel' : ''}" onclick="majFeuille({sens:'On me doit'})">+ À recevoir</button>
       <button class="${f.sens === 'Je dois' ? 'sel' : ''}" onclick="majFeuille({sens:'Je dois'})">− À payer</button></div>
-    <div class="champ" style="margin-top:10px"><span class="ic">📝</span><input type="text" data-champ="qui" placeholder="Petite note (ex. Zalando chaussures retour)" value="${esc(f.qui)}"></div>
+    <div class="champ" style="margin-top:10px"><span class="ic">${f.sens === 'Je dois' ? '📤' : '📥'}</span><input type="text" data-champ="qui" placeholder="${f.sens === 'Je dois' ? 'À qui ? (Allianz, Mimil…)' : 'De qui ? (Allianz, CAF, Axel…)'}" value="${esc(f.qui)}"></div>
+    ${personnes.length ? `<div class="grille" style="margin:0 0 6px 42px">${personnes.map(q =>
+      `<button class="${q === f.qui ? 'sel' : ''}" onclick="majFeuille({qui:${attr(q)}})">${esc(q)}</button>`).join('')}</div>` : ''}
+    <div class="champ"><span class="ic">📝</span><input type="text" data-champ="note" placeholder="Pour quoi ? (ex. remboursement assurance)" value="${esc(f.note)}"></div>
     ${navDate(f)}
-    <button class="btn principal" onclick="validerDette()">ENREGISTRER</button>`;
-}
-function feuilleCashback(f) {
-  const solde = f.soldeCB || f.qui === QUI_SOLDE_CB;
-  return `${tete(solde ? 'Solde cashback Amazon' : (f.nouvelle ? 'Cashback à recevoir' : 'Modifier'))}
-    <div class="gros-montant"><input data-champ="montant" inputmode="decimal" placeholder="0" value="${esc(f.montant)}" style="color:var(--down)"><span>€</span></div>
-    ${solde ? `<input type="hidden" data-champ="qui" value="${esc(QUI_SOLDE_CB)}">
-      <div class="aide" style="margin:6px 2px 12px">Le montant affiché sur la page d’accueil d’Amazon (« Votre solde de Cash Back »).</div>`
-    : `<div class="champ" style="margin-top:10px"><span class="ic">📝</span><input type="text" data-champ="qui" placeholder="Ex. retour soufflette WOLFBOX" value="${esc(f.qui)}"></div>
-      ${navDate(f)}`}
-    <button class="btn principal" onclick="validerDette()">ENREGISTRER</button>`;
+    ${f.nouvelle ? '' : `<div class="champ"><span class="ic">✅</span><span class="etiq">${f.sens === 'Je dois' ? 'Payé' : 'Reçu'}</span>
+      <label class="switch"><input type="checkbox" ${f.regle ? 'checked' : ''} onchange="majFeuille({regle:this.checked})"><i></i></label></div>`}
+    <button class="btn principal" onclick="validerDette()">ENREGISTRER</button>
+    ${f.nouvelle ? '' : '<button class="btn danger" onclick="supprimerDetteUI()">Supprimer</button>'}`;
 }
 function validerDette() {
   lireChamps();
@@ -2376,15 +2352,14 @@ function validerDette() {
   const m = lireMontant(f.montant);
   const qui = String(f.qui || '').trim();
   if (!m) return toast('⚠️ Indique un montant');
-  if (!qui) return toast('⚠️ Écris une petite note');
+  if (!qui) return toast('⚠️ Indique de qui ou à qui');
   const envoi = { id: f.id, date: versTexteDate(f.date), sens: f.sens, qui, montant: m, note: String(f.note || '').trim(), regle: !!f.regle };
   const locale = { id: f.id || 'tmp-' + Date.now(), d: envoi.date, date: new Date(f.date), sens: f.sens, qui, m, n: envoi.note, regle: envoi.regle };
   const nouvelle = f.nouvelle;
   feuilleEtat = null; fermerFeuille();
   ecrire('enregistrerDette', [envoi], () => {
     dettes = nouvelle ? dettes.concat(locale) : dettes.map(x => x.id === f.id ? locale : x);
-  }, f.sens === SENS_CB ? (qui === QUI_SOLDE_CB ? `✅ Solde cashback · ${eur(m)}` : `✅ Cashback à recevoir · ${eur(m)}`)
-    : nouvelle ? `✅ Noté · ${f.sens === 'Je dois' ? '−' : '+'}${eur(m)} ${f.sens === 'Je dois' ? 'à payer à' : 'à recevoir de'} ${qui}` : '✅ Modifié');
+  }, nouvelle ? `✅ Noté · ${f.sens === 'Je dois' ? '−' : '+'}${eur(m)} ${f.sens === 'Je dois' ? 'à payer à' : 'à recevoir de'} ${qui}` : '✅ Modifié');
 }
 function supprimerDetteUI() {
   const id = feuilleEtat.id;
@@ -2669,6 +2644,10 @@ const DEMO = (function () {
   for (let k = 0; k < 6; k++) { rev(k, 5, 818.67, 'CAF', 'AAH'); if (k) rev(k, 10, 272.3, 'Ameli', 'Indemnités journalières'); if (k > 2) rev(k, 3, 1800, 'CA net', ''); }
   rev(0, 8, 171, 'CAF', 'APL'); rev(1, 15, 2700, 'Autres', 'Vente 207'); rev(2, 7, 150, 'Autres', 'Don Mami'); rev(3, 31, 855.81, 'Ameli', 'Bon de transport');
   deps.push({ id: 'd' + (n++), d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), Math.min(now.getDate() + 3, 28), 12)), m: 9.99, c: 'Forfait mobile', n: 'Sosh', s: 'Appli', g: 'Dépenses contraintes', e: '📱', t: '', qui: '', du: 0, remb: false });
+  [['Carte Sumup *Le Petit Bar', 23.4, 'Bars / Soirées', 'Petit Bar', 0], ["McDonald's", 11.9, 'Bouffe / Goûter / Café', "McDonald's", 1], ['Amazon Payments', 34.99, 'Dépenses diverses', 'Amazon', 1]]
+    .forEach(([, m, c0, note, j]) => { const c = cats.some(x => x.nom === c0) ? c0 : depensables[0];
+      deps.push({ id: 'd' + (n++), d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), Math.max(1, now.getDate() - j), 12)),
+        m, c, n: note, s: 'Banque', g: grp(c), e: emo(c), t: '', qui: '', du: 0, remb: false }); });
   let dets = [{ id: 'x1', d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), 2, 20)), sens: 'On me doit', qui: 'Allianz', m: 19.56, n: 'Remboursement assurance auto', regle: false },
     { id: 'x2', d: versTexteDate(new Date(now.getFullYear(), now.getMonth(), 3, 20)), sens: 'Je dois', qui: 'Allianz', m: 8, n: 'Assurance auto', regle: false }];
   const moisCourant = cleMois(now);
@@ -2687,7 +2666,7 @@ const DEMO = (function () {
       if (x.id) {
         const r = deps.find(r => r.id === x.id);
         if (r.c !== x.categorie) Object.assign(r, { g: grp(x.categorie), e: emo(x.categorie) });
-        Object.assign(r, { d: x.date, m: x.montant, c: x.categorie, n: x.note }, extra); return x.id;
+        Object.assign(r, { d: x.date, m: x.montant, c: x.categorie, n: x.note }, extra); if (r.s === 'Banque') r.s = 'Banque ✓'; return x.id;
       }
       const deja = x.idClient && deps.find(r => r.id === x.idClient);
       if (deja) { Object.assign(deja, { d: x.date, m: x.montant, c: x.categorie, n: x.note }, extra); return deja.id; }
@@ -2695,6 +2674,7 @@ const DEMO = (function () {
     },
     supprimerDepense: id => { deps = deps.filter(r => r.id !== id); },
     marquerRembourse: (id, oui) => { deps.find(r => r.id === id).remb = oui; },
+    validerDepenses: ids => { deps.forEach(r => { if (ids.includes(r.id) && r.s === 'Banque') r.s = 'Banque ✓'; }); return ids.length; },
     enregistrerCategorie: x => {
       if (x.ancienNom) {
         Object.assign(cats.find(c => c.nom === x.ancienNom), { nom: x.nom, groupe: x.groupe, emoji: x.emoji, couleur: x.couleur || '' });
@@ -2735,18 +2715,10 @@ ajusterHauteur();
 addEventListener('resize', ajusterHauteur);
 addEventListener('orientationchange', () => setTimeout(ajusterHauteur, 300));
 if ('serviceWorker' in navigator && !MODE_DEMO && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-// Nouvelle version en ligne : l'appli se recharge toute seule une fois (plus besoin de la fermer deux fois)
-if ('serviceWorker' in navigator && !MODE_DEMO) {
-  let dejaRecharge = false;
-  const avaitControleur = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!avaitControleur || dejaRecharge || fileAttente.length || lireSuppr().length) return;
-    dejaRecharge = true; location.reload();
-  });
-}
 if (navigator.storage && navigator.storage.persist && lireCode()) navigator.storage.persist().catch(() => {});
 if (!MODE_DEMO && !lireCode()) afficherConnexion();
-else { chargerCache(); viderSuppressions(); envoyerFile(); charger(); }
+else { chargerCache(); envoyerFile(); charger(); }
+setTimeout(memoriserLogos, 4000);
 </script>
 </body>
 </html>
