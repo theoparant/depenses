@@ -551,7 +551,7 @@
 </div>
 
 <script>
-const VERSION = '9.6';
+const VERSION = '9.7';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzP0PXh-9t9QfsseToTLVq4Nw1JDYRSItEWGmHU3IRk4haS4HcFX2LiVjPPwnIasrgp/exec';
 const LIEN_SHEET = 'https://docs.google.com/spreadsheets/d/1OZA6Ty-VqAaoQlvNu6wRHfCcJcsi0Ua_NQL7AfjapjE/edit';
 const LIEN_DASHBOARD = 'https://docs.google.com/spreadsheets/d/1AV9I-i_44aQIvbNRXQH6x5_1JnL_lysGTtqPDEt64uE/edit';
@@ -760,7 +760,16 @@ function oublierCode() {
   if (m) { enregistrerCode(decodeURIComponent(m[1])); history.replaceState(null, '', location.pathname + location.search); }
 })();
 
+// Le serveur est parfois occupé (« verrouillage ») : on réessaie tout seul, sans rien afficher
+const estErreurVerrou = e => /verrouillage|lock/i.test((e && e.message) || '');
 function appel(action, ...args) {
+  const essai = n => appelUneFois(action, ...args).catch(e => {
+    if (!estErreurVerrou(e) || n >= 3) throw e;
+    return new Promise(r => setTimeout(r, 1500 * (n + 1))).then(() => essai(n + 1));
+  });
+  return essai(0);
+}
+function appelUneFois(action, ...args) {
   if (MODE_DEMO) {
     if (demoHorsLigne) return Promise.reject(new TypeError('Load failed'));
     return new Promise((ok, ko) => setTimeout(() => {
@@ -796,7 +805,7 @@ function charger() {
     if (synchro && charge) { synchro = false; if (!feuilleOuverte()) render(); }
     if (/Accès refusé/.test(err.message)) return; // l'écran du code est déjà affiché
     if (!charge) document.querySelector('main').innerHTML = `<div class="chargement">⚠️ ${esc(err.message)}<br><br><button class="puce" onclick="charger()">Réessayer</button></div>`;
-    else if (estErreurReseau(err)) return; // réseau coupé : les données locales restent affichées, sans message
+    else if (estErreurReseau(err) || estErreurVerrou(err)) return; // réseau coupé ou serveur occupé : les données locales restent affichées, sans message
     else toast('⚠️ Synchro impossible : ' + err.message);
   });
 }
@@ -852,6 +861,7 @@ function envoyerFile() {
       return suivant();
     }, e => {
       if (estErreurReseau(e)) return; // toujours hors ligne : on réessaiera plus tard
+      if (estErreurVerrou(e)) { setTimeout(envoyerFile, 10000); return; } // serveur occupé : on réessaie dans 10 s
       fileAttente.shift(); sauverFile(); // refus du serveur : inutile d'insister
       toast('⚠️ ' + e.message);
       return suivant();
@@ -874,10 +884,10 @@ function ecrire(action, args, appliquerLocal, messageOk) {
   if (appliquerLocal) appliquerLocal();
   sauverCache();
   if (!feuilleOuverte()) render();
-  const mettreEnFile = () => {
+  const mettreEnFile = silencieux => {
     fileAttente.push({ action, args, ts: Date.now() }); sauverFile();
     if (!feuilleOuverte()) render();
-    toast('📴 Enregistré hors ligne · envoi au retour du réseau', null, 3000);
+    if (!silencieux) toast('📴 Enregistré hors ligne · envoi au retour du réseau', null, 3000);
   };
   // Déjà des saisies en attente : on garde l'ordre (la création passe avant une modification)
   if (fileAttente.length || (!MODE_DEMO && !navigator.onLine) || (MODE_DEMO && demoHorsLigne)) { mettreEnFile(); return Promise.resolve(); }
@@ -886,6 +896,7 @@ function ecrire(action, args, appliquerLocal, messageOk) {
     .then(res => { if (messageOk) toast(messageOk); return res; })
     .catch(e => {
       if (estErreurReseau(e)) mettreEnFile();
+      else if (estErreurVerrou(e)) { mettreEnFile(true); setTimeout(envoyerFile, 10000); } // serveur occupé : envoi automatique un peu plus tard
       else toast('⚠️ ' + e.message);
       derniereEcriture = Date.now();
     })
